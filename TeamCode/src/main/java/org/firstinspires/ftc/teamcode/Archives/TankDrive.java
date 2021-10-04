@@ -1,4 +1,6 @@
-package org.firstinspires.ftc.teamcode.Hardware;
+package org.firstinspires.ftc.teamcode.Archives;
+
+import org.firstinspires.ftc.teamcode.Archives.Robot;
 
 public class TankDrive {
     private Robot bot;
