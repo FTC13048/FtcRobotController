@@ -26,10 +26,16 @@ public class Robot {
         // Set motor direction according to their orientation on the bot
         //   motors on the left side will be reversed so that their directions coorespond to
         //      the motors on the right
-        BR.setDirection(DcMotorSimple.Direction.FORWARD);
-        BL.setDirection(DcMotorSimple.Direction.REVERSE);
-        FL.setDirection(DcMotorSimple.Direction.REVERSE);
-        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+        // REMEMBER TO COMMENT OUT SECOND AND UNCOMMENT FIRST FOR CHAIN MOTORS
+//        BR.setDirection(DcMotorSimple.Direction.FORWARD);
+//        BL.setDirection(DcMotorSimple.Direction.REVERSE);
+//        FL.setDirection(DcMotorSimple.Direction.REVERSE);
+//        FR.setDirection(DcMotorSimple.Direction.FORWARD);
+
+        BR.setDirection(DcMotorSimple.Direction.REVERSE);
+        BL.setDirection(DcMotorSimple.Direction.FORWARD);
+        FL.setDirection(DcMotorSimple.Direction.FORWARD);
+        FR.setDirection(DcMotorSimple.Direction.REVERSE);
 
         BR.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         BL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

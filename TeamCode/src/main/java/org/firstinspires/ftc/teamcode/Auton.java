@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
@@ -15,6 +16,9 @@ public class Auton extends OpMode {
 
     Robot bot = new Robot();
 
+    BNO055IMU imu;
+    BNO055IMU.Parameters parameters;
+
     // Variable to keep track of where in the auton the code is
     int auto = 0;
 
@@ -22,6 +26,7 @@ public class Auton extends OpMode {
     public void init() {
         // initialize the robot
         bot.init(hardwareMap, telemetry);
+        initImu();
 
         // when the motors are not powered, brake
         bot.FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -79,5 +84,12 @@ public class Auton extends OpMode {
         } catch(Exception e){
 
         }
+    }
+
+    public void initImu(){
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        parameters = new BNO055IMU.Parameters();
+
+        imu.initialize(parameters);
     }
 }
