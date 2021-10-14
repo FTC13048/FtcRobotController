@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -18,6 +19,7 @@ public class Auton extends OpMode {
     Robot bot;
     BNO055IMU imu;
     BNO055IMU.Parameters parameters;
+    ElapsedTime timer;
 
     int test = 1;
 
@@ -30,6 +32,8 @@ public class Auton extends OpMode {
         // initialize the robot
         this.bot.initBot();
         initImu();
+        timer = new ElapsedTime();
+        timer.startTime();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -48,10 +52,17 @@ public class Auton extends OpMode {
     public void loop() {
         switch(test){
             case 1:
-                int turn = 90;
-                adjustHeading(turn);
-                test++;
-                break;
+                int currHeading = (int)imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle;
+                currHeading = currHeading < 0 ? 360+currHeading : currHeading;
+
+                int turn = 180;
+                bot.turn(0.25);
+
+                if(Math.abs(currHeading) > turn){
+                    bot.stop();
+                    test++;
+                    break;
+                }
         }
     }
 
@@ -62,16 +73,16 @@ public class Auton extends OpMode {
         imu.initialize(parameters);
     }
 
-    public void adjustHeading(int degrees){
-        int turnAngle = degrees;
-        int currHeading = (int)imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle;
-        currHeading = currHeading < 0 ? 360+currHeading : currHeading;
-        telemetry.addData("turn", currHeading);
-
-        if(currHeading < turnAngle-3){
-            bot.turn(0.5);
-        }
-
-        bot.stop();
-    }
+//    public void adjustHeading(int degrees){
+//        int turnAngle = degrees;
+//        int currHeading = (int)imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle;
+//        currHeading = currHeading < 0 ? 360+currHeading : currHeading;
+//        telemetry.addData("turn", currHeading);
+//
+//        if(currHeading > turnAngle-3){
+//            bot.turn(0.5);
+//        }else{
+//            bot.stop();
+//        }
+//    }
 }
