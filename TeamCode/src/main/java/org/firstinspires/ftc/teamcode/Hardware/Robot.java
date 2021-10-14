@@ -11,7 +11,7 @@ public class Robot {
     private Telemetry telemetry;
 
     public Robot(HardwareMap hmap, Telemetry tele){
-        map = hmap;
+        this.map = hmap;
         telemetry = tele;
     }
 
@@ -58,5 +58,19 @@ public class Robot {
         FR.setPower(rightStickY);
         BL.setPower(leftStickY);
         FL.setPower(leftStickY);
+    }
+
+    public void turn(double power){
+        BR.setPower(-power);
+        FR.setPower(-power);
+        BL.setPower(power);
+        FL.setPower(power);
+    }
+
+    public void stop(){
+        BR.setPower(0.0);
+        FR.setPower(0.0);
+        BL.setPower(0.0);
+        FL.setPower(0.0);
     }
 }

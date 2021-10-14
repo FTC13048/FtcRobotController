@@ -1,88 +1,57 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.Archives.MovementEnum;
-import org.firstinspires.ftc.teamcode.Archives.Robot;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
-@com.qualcomm.robotcore.eventloop.opmode.Autonomous(name="Autonomous", group="Autonomous")
-
+@Autonomous(name= "gyro", group="Autonomous")
 public class Auton extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 0;
     private static final double TICKS_PER_INCH = TICKS_PER_REV/(4.0 * Math.PI);
 
-    Robot bot = new Robot();
-
+    Robot bot;
     BNO055IMU imu;
     BNO055IMU.Parameters parameters;
+
+    int test = 1;
 
     // Variable to keep track of where in the auton the code is
     int auto = 0;
 
     @Override
     public void init() {
+         this.bot = new Robot(this.hardwareMap, this.telemetry);
         // initialize the robot
-        bot.init(hardwareMap, telemetry);
+        this.bot.initBot();
         initImu();
-
-        // when the motors are not powered, brake
-        bot.FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bot.BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bot.BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        bot.FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
-
     }
 
     @Override
-    public void init_loop(){ }
+    public void init_loop(){
+        telemetry.addData("is calibrated", imu.isGyroCalibrated());
+        telemetry.update();
+    }
 
     @Override
     public void start() { }
 
     @Override
     public void loop() {
-        try {
-            switch (auto) {
-                case 0:
-                    bot.changeRunModeAuton(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    telemetry.addData(">", bot.FL.getCurrentPosition());
-                    telemetry.addData(">", auto);
-                    telemetry.update();
-
-                    auto++;
-                    break;
-                case 1:
-                    // drive forward 70 inches (to the line) and stop (add all information to
-                    //   telemetry)
-                    int en = bot.autonDrive(MovementEnum.FORWARD, (int)(TICKS_PER_INCH * 10));
-                    bot.changeRunModeAuton(DcMotor.RunMode.RUN_TO_POSITION);
-                    bot.drive(0.5);
-                    telemetry.addData("Cas2, en: ", en);
-                    telemetry.addData("FL: ", bot.FL.getCurrentPosition());
-                    telemetry.addData("FR: ", bot.FR.getCurrentPosition());
-                    telemetry.addData("BL: ", bot.BL.getCurrentPosition());
-                    telemetry.addData("BR: ", bot.BR.getCurrentPosition());
-
-                    telemetry.update();
-
-                    // stop when at 70 inches and move to next case. Reset encoders
-                    if(en >= (int)(TICKS_PER_INCH * 70)){
-                        bot.autonDrive(MovementEnum.STOP, 0);
-                        bot.changeRunModeAuton(DcMotor.RunMode.RUN_USING_ENCODER);
-                        bot.changeRunModeAuton(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                        bot.strafe(0.0);
-                        auto++;
-                    }
-                    break;
-            }
-        } catch(Exception e){
-
+        switch(test){
+            case 1:
+                int turn = 90;
+                adjustHeading(turn);
+                test++;
+                break;
         }
     }
 
@@ -91,5 +60,18 @@ public class Auton extends OpMode {
         parameters = new BNO055IMU.Parameters();
 
         imu.initialize(parameters);
+    }
+
+    public void adjustHeading(int degrees){
+        int turnAngle = degrees;
+        int currHeading = (int)imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle;
+        currHeading = currHeading < 0 ? 360+currHeading : currHeading;
+        telemetry.addData("turn", currHeading);
+
+        if(currHeading < turnAngle-3){
+            bot.turn(0.5);
+        }
+
+        bot.stop();
     }
 }
