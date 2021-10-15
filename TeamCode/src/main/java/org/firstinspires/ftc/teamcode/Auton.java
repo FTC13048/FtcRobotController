@@ -52,16 +52,21 @@ public class Auton extends OpMode {
     public void loop() {
         switch(test){
             case 1:
-                int currHeading = (int)imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle;
-                currHeading = currHeading < 0 ? 360+currHeading : currHeading;
-
+                // the amount to turn
                 int turn = 180;
-                bot.turn(0.25);
 
-                if(Math.abs(currHeading) > turn){
+                // if the heading is at or greater than the target stop the bot, reset the timer,
+                //    and move to the next case
+                if(adjustHeading(turn, 0.5)){
                     bot.stop();
-                    test++;
-                    break;
+
+                    // go in the opposite direction until the bot is at the heading then
+                    //     stop the bot and move to the next case
+                    if(adjustHeading(180, -0.25)){
+                        bot.stop();
+                        test++;
+                        break;
+                    }
                 }
         }
     }
@@ -73,16 +78,34 @@ public class Auton extends OpMode {
         imu.initialize(parameters);
     }
 
-//    public void adjustHeading(int degrees){
-//        int turnAngle = degrees;
-//        int currHeading = (int)imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle;
-//        currHeading = currHeading < 0 ? 360+currHeading : currHeading;
-//        telemetry.addData("turn", currHeading);
-//
-//        if(currHeading > turnAngle-3){
-//            bot.turn(0.5);
-//        }else{
-//            bot.stop();
-//        }
-//    }
+    public boolean adjustHeading(int degrees, double power){
+        // get the current heading of the bot (an angle from -180 to 180)
+        int currHeading = (int)imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle;
+
+        // to convert to a 0-360 scale, if the current heading is negative add
+        //    360 to it
+        currHeading = currHeading < 0 ? 360+currHeading : currHeading;
+
+        // give the turn angle and start turning
+        int turn = degrees;
+        double turnPower = power;
+        bot.turn(turnPower);
+
+        // if the turn power is positive (turning to the left) and the bot's heading is greater
+        //     than or equal to the target stop and return true
+        if(turnPower > 0 && Math.abs(currHeading) >= turn){
+            bot.stop();
+            return true;
+        }
+
+        // if the turn power is negative (turning to the right) and the bot's heading is less
+        //    than or equal to the target return true
+        else if(turnPower < 0 && Math.abs(currHeading) <= turn){
+            bot.stop();
+            return true;
+        }
+
+        // return false otherwise
+        return false;
+    }
 }
