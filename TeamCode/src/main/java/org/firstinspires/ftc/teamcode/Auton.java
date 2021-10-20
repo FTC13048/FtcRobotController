@@ -47,18 +47,18 @@ public class Auton extends OpMode {
     public void start() {
     }
 
-    int i = 0;
+    double easeProgress = 0;
 
     @Override
     public void loop() {
         switch (test) {
             case 1:
                 // the amount to turn
-                int turn = 254;
+                int turn = 180;
 
                 // if the heading is at or greater than the target stop the bot
                 if (adjustHeading(turn, 0.5)) {
-                    i = 0;
+                    easeProgress = 0;
 //                    bot.stop();
                     test++;
                     break;
@@ -87,42 +87,39 @@ public class Auton extends OpMode {
 
         // If the bot is within 30 degrees of the target, slow it down to 25% of the desired speed to prevent overshooting
         if (difference <= 30) {
-            // Easing speed test
-            if (!bot.isEasingTurnSpeed) {
-                i = 0;
-                bot.atTargetTurnSpeed = false;
-            }
-            if (!bot.atTargetTurnSpeed)
-                bot.turnEased(power / 4, i);
-
-            i++;
+            // If we haven't started easing yet, then reset the easeProgress
+            bot.turn(power / 4);
         } else { // Otherwise use normal speed
-            // Easing speed test
-            if (!bot.isEasingTurnSpeed) {
-                i = 0;
-                bot.atTargetTurnSpeed = false;
-            }
-            if (!bot.atTargetTurnSpeed)
-                bot.turnEased(power, i);
+            // If we haven't started easing yet, then reset the easeProgress
+//            if (!bot.isEasingTurnSpeed) {
+//                easeProgress = 0;
+//                bot.atTargetTurnSpeed = false;
+//                bot.setStartPowers();
+//            }
+//            if (!bot.atTargetTurnSpeed) {
+//                bot.turnEased(power, easeProgress);
+//                easeProgress += 0.1;
+//            }
 
-            i++;
+            bot.turn(power);
         }
-
 
         // If the bot is within 1 degree of the target, stop the bot and return true
         if (difference <= 1) {
             telemetry.addData("Stopping the ", "bot");
             // Easing to a stop test
-            if (!bot.isStopping) {
-                i = 0;
-                bot.stopped = false;
-            }
-            if (!bot.stopped)
-                bot.stopEased(i);
-            else
-                return true;
+//            if (!bot.isStopping) {
+//                easeProgress = 0;
+//                bot.stopped = false;
+//                bot.setStartPowers();
+//            }
+//            if (!bot.stopped) {
+//                bot.stopEased(easeProgress);
+//                easeProgress += 0.1;
+//            } else
+            bot.stop();
+            return true;
 
-            i++;
         }
 
         // return false otherwise

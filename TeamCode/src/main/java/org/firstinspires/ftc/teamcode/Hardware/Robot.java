@@ -12,12 +12,14 @@ public class Robot {
     private Telemetry telemetry;
     private boolean isAuton;
 
-    public boolean stopped;
-    public boolean isStopping;
-    public boolean atTargetDriveSpeed;
-    public boolean isEasingDriveSpeed;
-    public boolean atTargetTurnSpeed;
-    public boolean isEasingTurnSpeed;
+    // Easing stuff
+//    public boolean stopped;
+//    public boolean isStopping;
+//    public boolean atTargetDriveSpeed;
+//    public boolean isEasingDriveSpeed;
+//    public boolean atTargetTurnSpeed;
+//    public boolean isEasingTurnSpeed;
+//    public double startPowerFR, startPowerFL, startPowerBR, startPowerBL;
 
     public Robot(HardwareMap hmap, Telemetry tele, boolean auton) {
         this.map = hmap;
@@ -77,12 +79,12 @@ public class Robot {
         FL.setPower(leftStickY);
     }
 
-    public void driveEased(double rightStickY, double leftStickY, int easeStage) {
-        setPowerEased(BR, rightStickY, easeStage, false);
-        setPowerEased(FR, rightStickY, easeStage, false);
-        setPowerEased(BL, leftStickY, easeStage, false);
-        setPowerEased(FL, leftStickY, easeStage, false);
-    }
+//    public void driveEased(double rightStickY, double leftStickY, int easeProgress) {
+//        BR.setPower(setPowerEased(startPowerBR, rightStickY, easeProgress, false));
+//        FR.setPower(setPowerEased(startPowerFR, rightStickY, easeProgress, false));
+//        BL.setPower(setPowerEased(startPowerBL, leftStickY, easeProgress, false));
+//        FL.setPower(setPowerEased(startPowerFL, leftStickY, easeProgress, false));
+//    }
 
     public void turn(double power) {
         BR.setPower(-power);
@@ -91,12 +93,12 @@ public class Robot {
         FL.setPower(power);
     }
 
-    public void turnEased(double power, double easeStage) {
-        setPowerEased(BR, -power, easeStage, true);
-        setPowerEased(FR, -power, easeStage, true);
-        setPowerEased(BL, power, easeStage, true);
-        setPowerEased(FL, power, easeStage, true);
-    }
+//    public void turnEased(double goalPower, double easeProgress) {
+//        BR.setPower(setPowerEased(startPowerBR, -goalPower, easeProgress, true));
+//        FR.setPower(setPowerEased(startPowerFR, -goalPower, easeProgress, true));
+//        BL.setPower(setPowerEased(startPowerBL, goalPower, easeProgress, true));
+//        FL.setPower(setPowerEased(startPowerFL, goalPower, easeProgress, true));
+//    }
 
     public void stop() {
         BR.setPower(0.0);
@@ -105,69 +107,96 @@ public class Robot {
         FL.setPower(0.0);
     }
 
-    public void stopEased(double easeStage) {
-        BR.setPower(0.0);
-        FR.setPower(0.0);
-        BL.setPower(0.0);
-        FL.setPower(0.0);
+//    public void stopEased(double easeProgress) {
+//        BR.setPower(setPowerEased(startPowerBR, 0.0, easeProgress, false));
+//        FR.setPower(setPowerEased(startPowerFR, 0.0, easeProgress, false));
+//        BL.setPower(setPowerEased(startPowerBL, 0.0, easeProgress, false));
+//        FL.setPower(setPowerEased(startPowerFL, 0.0, easeProgress, false));
+//    }
 
-        setPowerEased(BR, 0.0, easeStage, false);
-        setPowerEased(FR, 0.0, easeStage, false);
-        setPowerEased(BL, 0.0, easeStage, false);
-        setPowerEased(FL, 0.0, easeStage, false);
-    }
+    // Set the start power variables
+//    public void setStartPowers() {
+//        startPowerFR = FR.getPower();
+//        startPowerFL = FL.getPower();
+//        startPowerBR = BR.getPower();
+//        startPowerBL = BL.getPower();
+//    }
 
     // Ease in motor power by interpolating between the current power and the goal power using a stage variable
-    public void setPowerEased(Object motorObject, double goalPower, double easeStage, boolean isTurn) {
-        DcMotor motor = (DcMotor) motorObject;
+    // startPower is the start power that we want to ease from
+    // goalPower is the target power that we want to reach after easing
+    // easeProgress is the progress so far in the ease process, this is passed from the loop function in auton.java because it has to go up every loop call
+    // isTurn is true if you want to use this function to turn and its false if you want to use it to drive
+//    public double setPowerEased(double startPower, double goalPower, double easeProgress, boolean isTurn) {
+//        double lerpedPower;
+//
+//        // Use the lerp function to get the new power
+//        lerpedPower = lerpValue(startPower, goalPower, easeProgress);
+//        telemetry.addData("lerpedPower UNCLAMPED", lerpedPower);
+//
+//        // Clamp the lerpedValue between the start and goals powers
+//        if (goalPower < 0)
+//            lerpedPower = -clamp(lerpedPower, startPower, goalPower);
+//        else
+//            lerpedPower = clamp(lerpedPower, startPower, goalPower);
+//
+//        // Print a bunch of useful stuff for debugging
+//        telemetry.addData("easeProgress CLAMPED", easeProgress);
+//        telemetry.addData("lerpedPower", lerpedPower);
+////        telemetry.addData("isEasingTurnSpeed", isEasingTurnSpeed);
+////        telemetry.addData("atTargetTurnSpeed", atTargetTurnSpeed);
+////        telemetry.addData("isEasingDriveSpeed", isEasingDriveSpeed);
+////        telemetry.addData("atTargetDriveSpeed", atTargetDriveSpeed);
+////        telemetry.addData("isStopping", isStopping);
+////        telemetry.addData("stopped", stopped);
+//
+//        // Set the boolean states to the current state of the ease
+//        if (lerpedPower == goalPower) { // Ease process is done
+//            telemetry.addData("Done", "easing");
+//
+//            if (isTurn) {
+//                if (goalPower == 0) {
+//                    isStopping = false;
+//                    stopped = true;
+//                } else {
+//                    isEasingTurnSpeed = false;
+//                    atTargetTurnSpeed = true;
+//                }
+//            } else {
+//                if (goalPower == 0) {
+//                    isEasingDriveSpeed = false;
+//                    stopped = true;
+//                } else {
+//                    isEasingDriveSpeed = false;
+//                    atTargetDriveSpeed = true;
+//                }
+//            }
+//        } else { // Ease process is NOT done
+//            telemetry.addData("NOT done", "easing");
+//            stopped = false;
+//            if (isTurn) {
+//                isEasingTurnSpeed = true;
+//                atTargetTurnSpeed = false;
+//            } else {
+//                if (goalPower == 0) {
+//                    isStopping = true;
+//                    stopped = false;
+//                } else {
+//                    isEasingDriveSpeed = true;
+//                    atTargetDriveSpeed = false;
+//                }
+//            }
+//        }
+//        return lerpedPower;
+//    }
 
-        if (motor != null) {
-            double currPower = motor.getPower();
-            double lerpedPower;
-            lerpedPower = lerpValue(currPower, goalPower, easeStage);
-
-            telemetry.addData(("goalPower for: " + motor.toString()), goalPower);
-            telemetry.addData(("currPower for: " + motor.toString()), currPower);
-            telemetry.addData(("easeStage for: " + motor.toString()), easeStage);
-            telemetry.addData(("lerpedPower for: " + motor.toString()), lerpedPower);
-            motor.setPower(lerpedPower);
-            if (lerpedPower == goalPower) {
-                stopped = false;
-                if (isTurn) {
-                    if (goalPower == 0) {
-                        isStopping = false;
-                        stopped = true;
-                    } else {
-                        isEasingTurnSpeed = false;
-                        atTargetTurnSpeed = true;
-                    }
-                } else {
-                    if (goalPower == 0) {
-                        isEasingDriveSpeed = false;
-                        stopped = true;
-                    } else {
-                        isEasingDriveSpeed = false;
-                        atTargetDriveSpeed = true;
-                    }
-                }
-            } else {
-                stopped = false;
-                if (isTurn) {
-                    isEasingTurnSpeed = true;
-                    atTargetTurnSpeed = false;
-                } else {
-                    if (goalPower == 0) {
-                        isStopping = true;
-                    } else {
-                        isEasingDriveSpeed = true;
-                        atTargetDriveSpeed = false;
-                    }
-                }
-            }
-        }
+    // Make sure a number is inside a defined range
+    public static double clamp(double val, double min, double max) {
+        return Math.max(min, Math.min(max, val));
     }
 
-    double lerpValue(double a, double b, double t) {
+    // Interpolate between two values, a and b, using the time value, t (between 0 to 1)
+    public double lerpValue(double a, double b, double t) {
         return (a * (1.0 - t)) + (b * t);
     }
 }
