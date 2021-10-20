@@ -3,8 +3,6 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -19,7 +17,6 @@ public class Auton extends OpMode {
     Robot bot;
     BNO055IMU imu;
     BNO055IMU.Parameters parameters;
-    ElapsedTime timer;
 
     int test = 1;
 
@@ -28,12 +25,11 @@ public class Auton extends OpMode {
 
     @Override
     public void init() {
-        this.bot = new Robot(this.hardwareMap, this.telemetry);
-        // initialize the robot
+        this.bot = new Robot(this.hardwareMap, this.telemetry, true);
+
+        // initialize the robot and the onboard gyro
         this.bot.initBot();
         initImu();
-        timer = new ElapsedTime();
-        timer.startTime();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -41,6 +37,7 @@ public class Auton extends OpMode {
 
     @Override
     public void init_loop() {
+        // when the gyro is calibrated print true to the screen
         telemetry.addData("is calibrated", imu.isGyroCalibrated());
         telemetry.update();
     }
@@ -79,18 +76,19 @@ public class Auton extends OpMode {
         // to convert to a 0-360 scale, if the current heading is negative add
         //    360 to it
         currHeading = currHeading < 0 ? 360 + currHeading : currHeading;
-        // give the turn angle and start turning
+
+        // difference between target and current heading
         double difference = degrees - currHeading;
         telemetry.addData("Difference is ", difference);
 
         // If the bot is within 30 degrees of the target, slow it down to 25% of the desired speed to prevent overshooting
         if (difference <= 30) {
-            bot.turn(0.0625);
+            bot.turn((power/4));
         } else { // Otherwise use normal speed
             bot.turn(power);
         }
 
-        // If the bot is within 2 degrees of the target, stop the bot
+        // If the bot is within 1 degree of the target, stop the bot and return true
         if (difference <= 1) {
             telemetry.addData("Stopping the ", "bot");
             bot.stop();
