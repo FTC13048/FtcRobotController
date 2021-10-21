@@ -87,39 +87,16 @@ public class Auton extends OpMode {
 
         // If the bot is within 30 degrees of the target, slow it down to 25% of the desired speed to prevent overshooting
         if (difference <= 30) {
-            // If we haven't started easing yet, then reset the easeProgress
             bot.turn(power / 4);
         } else { // Otherwise use normal speed
-            // If we haven't started easing yet, then reset the easeProgress
-//            if (!bot.isEasingTurnSpeed) {
-//                easeProgress = 0;
-//                bot.atTargetTurnSpeed = false;
-//                bot.setStartPowers();
-//            }
-//            if (!bot.atTargetTurnSpeed) {
-//                bot.turnEased(power, easeProgress);
-//                easeProgress += 0.1;
-//            }
-
             bot.turn(power);
         }
 
         // If the bot is within 1 degree of the target, stop the bot and return true
         if (difference <= 1) {
             telemetry.addData("Stopping the ", "bot");
-            // Easing to a stop test
-//            if (!bot.isStopping) {
-//                easeProgress = 0;
-//                bot.stopped = false;
-//                bot.setStartPowers();
-//            }
-//            if (!bot.stopped) {
-//                bot.stopEased(easeProgress);
-//                easeProgress += 0.1;
-//            } else
             bot.stop();
             return true;
-
         }
 
         // return false otherwise
