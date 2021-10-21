@@ -12,7 +12,7 @@ public class TankTele extends OpMode {
     @Override
     // Initialize the robot (this is what happens when the play button is pressed)
     public void init() {
-        bot = new Robot(hardwareMap, telemetry);
+        bot = new Robot(hardwareMap, telemetry, false);
         bot.initBot();
         telemetry.addData("Bot", "Initialized");
     }
