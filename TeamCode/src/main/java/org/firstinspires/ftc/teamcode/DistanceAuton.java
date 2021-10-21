@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcontroller.external.samples.SensorMRRangeSenso
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
-@Autonomous(name="DistanceSensor", group="Autonomous")
+@Autonomous(name = "DistanceSensor", group = "Autonomous")
 
 public class DistanceAuton extends OpMode {
     private Robot bot;

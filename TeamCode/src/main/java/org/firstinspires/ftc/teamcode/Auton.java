@@ -22,10 +22,7 @@ public class Auton extends OpMode {
     BNO055IMU imu;
     BNO055IMU.Parameters parameters;
 
-    int test = 1;
-
-    // Variable to keep track of where in the auton the code is
-    int auto = 0;
+    int test = 0;
 
     @Override
     public void init() {
@@ -54,25 +51,31 @@ public class Auton extends OpMode {
     @Override
     public void loop() {
         switch (test) {
-            case 1:
-                // Drive the bot forward until the distance sensor reads under a certain distance
-                if (distSensor.getDistance(DistanceUnit.CM) < 30) {
-                    bot.stop();
-                    test++;
-                    break;
-                }
-                else
-                    bot.drive(1,1);
-            case 2:
-                // the amount to turn
-                int turn = 90;
+            case 0:
+                double stopDistance = 50;
+                double dist = distSensor.getDistance(DistanceUnit.CM);
+                telemetry.addData("Distance", dist);
 
-                // if the heading is at or greater than the target stop the bot
-                if (bot.adjustHeading(turn, 0.5, imu)) {
+                // Drive the bot forward until the distance sensor reads under a certain distance
+                if (dist <= stopDistance * 1.5 && dist > stopDistance) {
+                    bot.drive(-0.5, -0.5);
+                } else if (dist <= stopDistance) {
                     bot.stop();
                     test++;
                     break;
-                }
+                } else
+                    bot.drive(-1.0, -1.0);
+
+//            case 1:
+//                // the amount to turn
+//                int turn = 90;
+//
+//                // if the heading is at or greater than the target stop the bot
+//                if (bot.adjustHeading(turn, 0.5, imu)) {
+//                    bot.stop();
+//                    test++;
+//                    break;
+//                }
         }
     }
 
