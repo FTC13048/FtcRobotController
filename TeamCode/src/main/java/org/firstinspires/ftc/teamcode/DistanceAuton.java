@@ -13,22 +13,41 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
 public class DistanceAuton extends OpMode {
     private Robot bot;
-    private ModernRoboticsI2cRangeSensor dist;
+    private ModernRoboticsI2cRangeSensor distSensor;
+    int auto = 0;
 
     @Override
     public void init() {
         bot = new Robot(hardwareMap, telemetry, true);
         bot.initBot();
-        dist = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distSensor");
+        distSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distSensor");
     }
 
     @Override
     public void init_loop() {
-        telemetry.addData("Distance", dist.getDistance(DistanceUnit.CM));
+        telemetry.addData("Distance", distSensor.getDistance(DistanceUnit.CM));
     }
 
     @Override
     public void loop() {
+        switch(auto){
+            case 0:
 
+
+            case 1:
+                double stopDistance = 50;
+                double dist = distSensor.getDistance(DistanceUnit.CM);
+                telemetry.addData("Distance", dist);
+
+                // Drive the bot forward until the distance sensor reads under a certain distance
+                if (dist <= stopDistance * 1.5 && dist > stopDistance) {
+                    bot.drive(-0.5, -0.5);
+                } else if (dist <= stopDistance) {
+                    bot.stop();
+                    auto++;
+                    break;
+                } else
+                    bot.drive(-1.0, -1.0);
+        }
     }
 }
