@@ -16,12 +16,22 @@ public class Auton extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 0;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
-    private ModernRoboticsI2cRangeSensor distSensor;
 
+    // The bot, gyro (with parameters), and distance sensor objects
     Robot bot;
     BNO055IMU imu;
     BNO055IMU.Parameters parameters;
+    private ModernRoboticsI2cRangeSensor distSensor;
 
+    // These variables 'debounce' the bumpers. They make sure the user can hold down
+    //    the bumper for longer than a tick without the system repeatedly switching the value
+    private boolean debounceAlliance = false;
+    private int rBumpPressed = 1;
+
+    private boolean debounceSide = false;
+    private int lBumpPressed = 1;
+
+    // Variable that keeps track of where in the loop you are
     int test = 0;
 
     @Override
@@ -42,6 +52,11 @@ public class Auton extends OpMode {
         // when the gyro is calibrated print true to the screen
         telemetry.addData("is calibrated", imu.isGyroCalibrated());
         telemetry.update();
+
+        // These variables 'debounce' the bumpers. They make sure the user can hold down
+        //    the bumper for longer than a tick without the system repeatedly switching the value
+        checkAlliance();
+        checkSide();
     }
 
     @Override
@@ -52,6 +67,8 @@ public class Auton extends OpMode {
     public void loop() {
         switch (test) {
             case 0:
+                // distance away from target to stop the wheels and the current distance
+                //    away from the target (0-255cm)
                 double stopDistance = 50;
                 double dist = distSensor.getDistance(DistanceUnit.CM);
                 telemetry.addData("Distance", dist);
@@ -66,16 +83,16 @@ public class Auton extends OpMode {
                 } else
                     bot.drive(-1.0, -1.0);
 
-//            case 1:
-//                // the amount to turn
-//                int turn = 90;
-//
-//                // if the heading is at or greater than the target stop the bot
-//                if (bot.adjustHeading(turn, 0.5, imu)) {
-//                    bot.stop();
-//                    test++;
-//                    break;
-//                }
+            case 1:
+                // the amount to turn
+                int turn = 90;
+
+                // if the heading is at or greater than the target stop the bot
+                if (bot.adjustHeading(turn, 0.5, imu)) {
+                    bot.stop();
+                    test++;
+                    break;
+                }
         }
     }
 
@@ -84,5 +101,41 @@ public class Auton extends OpMode {
         parameters = new BNO055IMU.Parameters();
 
         imu.initialize(parameters);
+    }
+
+    private void checkAlliance(){
+        // Makes sure that when a bumper is pressed it does not switch with every loop
+        //    Lets the team set the alliance (red or blue) they are on
+        if(gamepad2.right_bumper){
+            if(!debounceAlliance && rBumpPressed == -1){
+                telemetry.addData("Alliance", "RED");
+                telemetry.update();
+                rBumpPressed *= -1;
+                debounceAlliance = true;
+            } else if(!debounceAlliance && rBumpPressed == 1){
+                telemetry.addData("Alliance", "BLUE");
+                telemetry.update();
+                rBumpPressed *= -1;
+                debounceAlliance = true;
+            } else{ debounceAlliance = false; }
+        }
+    }
+
+    private void checkSide(){
+        // Makes sure that when a bumper is pressed it does not switch with every loop
+        //   Lets the team set the side (right or left) that the bot is on
+        if(gamepad2.left_bumper){
+            if(!debounceSide && lBumpPressed == -1){
+                telemetry.addData("Side", "RIGHT");
+                telemetry.update();
+                lBumpPressed *= -1;
+                debounceSide = true;
+            } else if(!debounceSide && lBumpPressed == 1){
+                telemetry.addData("Side", "LEFT");
+                telemetry.update();
+                lBumpPressed *= -1;
+                debounceSide = true;
+            } else{ debounceSide = false; }
+        }
     }
 }

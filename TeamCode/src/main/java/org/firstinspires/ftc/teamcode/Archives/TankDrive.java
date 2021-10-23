@@ -1,14 +1,14 @@
 package org.firstinspires.ftc.teamcode.Archives;
 
-import org.firstinspires.ftc.teamcode.Archives.Robot;
+import org.firstinspires.ftc.teamcode.Archives.Bot;
 
 public class TankDrive {
-    private Robot bot;
+    private Bot bot;
 
     // How much the button needs to be pressed down to activate (1 is the max)
     private static final double BUFFER_AREA = 0.15;
 
-    public TankDrive(Robot robot){ bot = robot; }
+    public TankDrive(Bot robot){ bot = robot; }
 
     public void driveBot(double leftStickY, double rightStickY, double rightTrigger,
                          double leftTrigger, double powerPercentage){

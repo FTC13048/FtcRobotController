@@ -32,7 +32,8 @@ public class DistanceAuton extends OpMode {
     public void loop() {
         switch(auto){
             case 0:
-
+                auto++;
+                break;
 
             case 1:
                 double stopDistance = 50;
