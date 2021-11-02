@@ -48,7 +48,7 @@ public class DistanceAuton extends OpMode {
                     auto++;
                     break;
                 } else
-                    bot.drive(-1.0, -1.0);
+                    bot.drive(1.0, 1.0);
         }
     }
 }

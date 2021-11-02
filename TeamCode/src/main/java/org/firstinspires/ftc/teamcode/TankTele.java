@@ -20,23 +20,27 @@ public class TankTele extends OpMode {
     }
 
     @Override
-    public void init_loop() {
-    }
+    public void init_loop() { }
 
     @Override
-    public void start() {
-    }
+    public void start() { }
 
     @Override
     // loop code to be continuously cycled through after init
     public void loop() {
         leftChangePower();
         rightChangePower();
+
         // get double numbers for each control to be inputted for the power functions of the bot
         double rightTrigger = gamepad1.right_trigger;
         double leftTrigger = gamepad1.left_trigger;
         double leftStickY = gamepad1.left_stick_y;
         double rightStickY = gamepad1.right_stick_y;
+
+        double intake = gamepad2.right_trigger;
+        double outtake = gamepad2.left_trigger;
+        double duckPower = gamepad2.left_stick_y;
+        double slidePower = gamepad2.right_stick_y;
 
         // if the controls are not at least 15% pushed down, the bot will not move
         //     this is to account for drift in the hardware
@@ -44,6 +48,10 @@ public class TankTele extends OpMode {
         leftTrigger = Math.abs(leftTrigger) > 0.15 ? leftTrigger : 0.0;
         leftStickY = Math.abs(leftStickY) > 0.15 ? leftStickY : 0.0;
         rightStickY = Math.abs(rightStickY) > 0.15 ? rightStickY : 0.0;
+
+        intake = intake > 0.15 ? intake : 0.0;
+        duckPower = Math.abs(duckPower) > 0.15 ? duckPower : 0.0;
+        slidePower = Math.abs(slidePower) > 0.15 ? slidePower : 0.0;
 
         // if the right trigger is pressed down strafe at that power
         if (rightTrigger > 0.0) {
@@ -56,6 +64,18 @@ public class TankTele extends OpMode {
             // Otherwise, set the power to whatever the Y sticks are
             bot.drive(rightStickY, leftStickY);
         }
+
+        // if either the left or right triggers on gamepad two are pressed, run the
+        //    intake at that power
+        if(intake > 0.0){
+            bot.runIntake(intake);
+        } else{ bot.runIntake(0.0); }
+
+        if(Math.abs(duckPower) > 0.0){ bot.runDuckSpinner(duckPower); }
+        else{ bot.runDuckSpinner(0.0); }
+
+        if(Math.abs(slidePower) > 0.0){ bot.runLinSlide(slidePower); }
+        else{ bot.runLinSlide(0.0); }
     }
 
     boolean rightBumperPressed = false;
