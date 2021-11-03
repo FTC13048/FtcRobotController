@@ -7,9 +7,9 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Archives.MovementEnum;
+import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 
-public class Robot {
+public class Bot {
     // All motors required to drive
     public static DcMotorEx BR, FR, BL, FL;
 
@@ -27,7 +27,7 @@ public class Robot {
     public static BNO055IMU gyro;
     public static PIDFCoefficients pid;
 
-    public Robot(){}
+    public Bot(){}
 
     // Method that initializes all motors, digital bot map, and other systems of the bot
     public void init(HardwareMap map, Telemetry tele){
