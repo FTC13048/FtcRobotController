@@ -74,11 +74,11 @@ public class Auton extends OpMode {
                 break;
 
             case 1:
-                int target = bot.autonDrive(MovementEnum.BACKWARD, (int)(TICKS_PER_INCH * 20));
+                int target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 7.5));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if(target >= (int)(TICKS_PER_INCH * 20)){
+                if (target >= (int) (TICKS_PER_INCH * 7.5)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     test++;
@@ -88,30 +88,30 @@ public class Auton extends OpMode {
 
             case 2:
                 // the amount to turn
-                int turn = 90;
+                int turn = 180;
 
                 // if the heading is at or greater than the target stop the bot
-                if (bot.adjustHeading(turn, 0.7, imu)) {
+                if (bot.adjustHeading(turn, 0.5, imu)) {
                     bot.stop();
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     test++;
                 }
 
                 break;
 
             case 3:
-                double stopDistance = 50;
-                double dist = distSensor.getDistance(DistanceUnit.CM);
-                telemetry.addData("Distance", dist);
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 7.5));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(0.5, 0.5);
 
-                // Drive the bot forward until the distance sensor reads under a certain distance
-                if (dist <= stopDistance * 1.5 && dist > stopDistance) {
-                    bot.drive(0.5, 0.5);
-                } else if (dist <= stopDistance) {
-                    bot.stop();
+                if (target >= (int) (TICKS_PER_INCH * 7.5)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     test++;
-                    break;
-                } else
-                    bot.drive(1.0, 1.0);
+                }
+
+                break;
         }
 
         telemetry.addData("case", test);
