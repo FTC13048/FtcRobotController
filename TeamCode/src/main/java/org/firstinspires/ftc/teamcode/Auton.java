@@ -76,7 +76,7 @@ public class Auton extends OpMode {
             case 1:
                 int target = bot.autonDrive(MovementEnum.BACKWARD, (int)(TICKS_PER_INCH * 20));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.7, 0.7);
+                bot.drive(0.5, 0.5);
 
                 if(target >= (int)(TICKS_PER_INCH * 20)){
                     bot.autonDrive(MovementEnum.STOP, 0);
@@ -91,7 +91,7 @@ public class Auton extends OpMode {
                 int turn = 90;
 
                 // if the heading is at or greater than the target stop the bot
-                if (bot.adjustHeading(turn, 0.8, imu)) {
+                if (bot.adjustHeading(turn, 0.7, imu)) {
                     bot.stop();
                     test++;
                 }

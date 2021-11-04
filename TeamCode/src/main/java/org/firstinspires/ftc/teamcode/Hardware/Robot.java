@@ -17,7 +17,7 @@ public class Robot {
     // Declare system motors (not driving motors)
     private DcMotor intakeRight, intakeLeft, duckSpinner, linSlide;
 
-    private Servo cargoFlipper;
+    public Servo cargoFlipper;
     private HardwareMap map;
     private Telemetry telemetry;
     private boolean isAuton;
@@ -41,6 +41,8 @@ public class Robot {
         intakeLeft = map.get(DcMotor.class, "intakeLeft");
         duckSpinner = map.get(DcMotor.class, "duckSpinner");
         linSlide = map.get(DcMotor.class, "linSlide");
+
+        cargoFlipper = map.get(Servo.class, "cargoFlipper");
 
         // Set motor direction according to their orientation on the bot
         //   motors on the left side will be reversed so that their directions coorespond to
