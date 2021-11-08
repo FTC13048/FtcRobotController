@@ -5,7 +5,7 @@ import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
-
+import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -16,25 +16,18 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 @Autonomous(name = "gyro", group = "Autonomous")
 public class Auton extends OpMode {
     // Figure out ticks per revolution and ticks per inch
-    private static final double TICKS_PER_REV = 134.4;
+    private static final double TICKS_PER_REV = 403.9;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
 
     // The bot, gyro (with parameters), and distance sensor objects
-    Robot bot;
-    BNO055IMU imu;
-    BNO055IMU.Parameters parameters;
-    private ModernRoboticsI2cRangeSensor distSensor;
-
-    // These variables 'debounce' the bumpers. They make sure the user can hold down
-    //    the bumper for longer than a tick without the system repeatedly switching the value
-    private boolean debounceAlliance = false;
-    private int rBumpPressed = 1;
-
-    private boolean debounceSide = false;
-    private int lBumpPressed = 1;
+    private Robot bot;
+    private BNO055IMU imu;
+    private BNO055IMU.Parameters parameters;
+    // private ModernRoboticsI2cRangeSensor distSensor;
 
     // Variable that keeps track of where in the loop you are
-    int test = 0;
+    private int caseNum = 0;
+    private ElapsedTime timer;
 
     @Override
     public void init() {
@@ -43,7 +36,9 @@ public class Auton extends OpMode {
         // initialize the robot and the onboard gyro
         this.bot.initBot();
         initImu();
-        distSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distSensor");
+
+        // initialize the timer
+        timer = new ElapsedTime();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -51,77 +46,97 @@ public class Auton extends OpMode {
 
     @Override
     public void init_loop() {
-        // when the gyro is calibrated print true to the screen
-        telemetry.addData("is calibrated", imu.isGyroCalibrated());
-        telemetry.update();
+        if(imu.isGyroCalibrated()){
+            telemetry.addData("Gyro status", "calibrated");
+        } else{
+            telemetry.addData("Wait", "Gyro calibrating!");
+        }
 
-        // These variables 'debounce' the bumpers. They make sure the user can hold down
-        //    the bumper for longer than a tick without the system repeatedly switching the value
-        checkAlliance();
-        checkSide();
+        telemetry.update();
     }
 
     @Override
-    public void start() {
-    }
+    public void start() { }
 
     @Override
     public void loop() {
-        // Set the bot script's distance sensor values
-        bot.soundDist = distSensor.getDistance(DistanceUnit.CM);
-        bot.lightAmount = distSensor.getLightDetected();
-        bot.updateStats();
-
-        switch (test) {
+        switch (caseNum) {
             case 0:
+                bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                test++;
+                caseNum++;
                 break;
 
             case 1:
-                int target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 20));
+                int target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 8));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.7, 0.7);
+                bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 20)) {
+                if (target >= (int) (TICKS_PER_INCH * 8)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    test++;
+                    bot.stop();
+                    caseNum++;
                 }
 
                 break;
 
             case 2:
                 // the amount to turn
-                int turn = 90;
+                int turn = 180;
 
                 // if the heading is at or greater than the target stop the bot
-                if (bot.adjustHeading(turn, 0.8, imu)) {
+                if (bot.adjustHeading(turn, 0.5, imu)) {
                     bot.stop();
-                    test++;
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    caseNum++;
                 }
 
                 break;
 
             case 3:
-                double stopDistance = 50;
-                double dist = distSensor.getDistance(DistanceUnit.CM);
-                telemetry.addData("Distance", dist);
+                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 25));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.strafe(0.5);
 
-                // Drive the bot forward until the distance sensor reads under a certain distance
-                if (dist <= stopDistance * 1.5 && dist > stopDistance) {
-                    bot.drive(0.5, 0.5);
-                } else if (dist <= stopDistance) {
+                if (target >= (int) (TICKS_PER_INCH * 25)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();
-                    test++;
-                    break;
-                } else
-                    bot.drive(1.0, 1.0);
-        }
+                    caseNum++;
+                }
 
-        telemetry.addData("case", test);
-        telemetry.addData("curr heading", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-        telemetry.update();
+                break;
+                
+            case 4:
+                target = bot.autonDrive(MovementEnum.FORWARD, (int)(TICKS_PER_INCH * 6));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(0.2, 0.2);
+                
+                if(target >= (int)(TICKS_PER_INCH * 6)){
+                    bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
+                    timer.reset();
+                    caseNum++;
+                }
+                
+                break;
+
+            case 5:
+                bot.runDuckSpinner(0.3);
+
+                if(timer.seconds() > 3){
+                    bot.runDuckSpinner(0.0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    caseNum++;
+                }
+        }
     }
 
     public void initImu() {
@@ -129,45 +144,5 @@ public class Auton extends OpMode {
         parameters = new BNO055IMU.Parameters();
 
         imu.initialize(parameters);
-    }
-
-    private void checkAlliance() {
-        // Makes sure that when a bumper is pressed it does not switch with every loop
-        //    Lets the team set the alliance (red or blue) they are on
-        if (gamepad2.right_bumper) {
-            if (!debounceAlliance && rBumpPressed == -1) {
-                telemetry.addData("Alliance", "RED");
-                telemetry.update();
-                rBumpPressed *= -1;
-                debounceAlliance = true;
-            } else if (!debounceAlliance && rBumpPressed == 1) {
-                telemetry.addData("Alliance", "BLUE");
-                telemetry.update();
-                rBumpPressed *= -1;
-                debounceAlliance = true;
-            } else {
-                debounceAlliance = false;
-            }
-        }
-    }
-
-    private void checkSide() {
-        // Makes sure that when a bumper is pressed it does not switch with every loop
-        //   Lets the team set the side (right or left) that the bot is on
-        if (gamepad2.left_bumper) {
-            if (!debounceSide && lBumpPressed == -1) {
-                telemetry.addData("Side", "RIGHT");
-                telemetry.update();
-                lBumpPressed *= -1;
-                debounceSide = true;
-            } else if (!debounceSide && lBumpPressed == 1) {
-                telemetry.addData("Side", "LEFT");
-                telemetry.update();
-                lBumpPressed *= -1;
-                debounceSide = true;
-            } else {
-                debounceSide = false;
-            }
-        }
     }
 }

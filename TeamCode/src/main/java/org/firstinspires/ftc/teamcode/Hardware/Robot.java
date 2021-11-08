@@ -5,36 +5,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.teamcode.BotView;
-
-import java.util.Timer;
 
 public class Robot {
-    public MovementEnum CurrentMovementState;
-
     // Declare driving motors
     private DcMotor FR, FL, BR, BL;
 
     // Declare system motors (not driving motors)
     private DcMotor intakeRight, intakeLeft, duckSpinner, linSlide;
 
-    // Declare sensor stats
-    private double currHeading;
-    public double soundDist;
-    public double lightAmount;
-
-    private BotView botDebugger;
-    private Servo cargoFlipper;
+    public Servo cargoFlipper;
     private HardwareMap map;
     private Telemetry telemetry;
     private boolean isAuton;
-    ElapsedTime timer = new ElapsedTime();
 
     public Robot(HardwareMap hmap, Telemetry tele, boolean auton) {
         this.map = hmap;
@@ -44,9 +30,6 @@ public class Robot {
 
     // initializes all key systems of the bot (motors, servos, etc.)
     public void initBot() {
-        timer.reset();
-        this.botDebugger = new BotView(map, telemetry);
-
         // Assign all motors to ports, name it this exact thing in the driver hub
         BR = map.get(DcMotor.class, "back_right");
         FR = map.get(DcMotor.class, "front_right");
@@ -58,6 +41,8 @@ public class Robot {
         intakeLeft = map.get(DcMotor.class, "intakeLeft");
         duckSpinner = map.get(DcMotor.class, "duckSpinner");
         linSlide = map.get(DcMotor.class, "linSlide");
+
+        cargoFlipper = map.get(Servo.class, "cargoFlipper");
 
         // Set motor direction according to their orientation on the bot
         //   motors on the left side will be reversed so that their directions coorespond to
@@ -91,28 +76,6 @@ public class Robot {
             BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        }
-    }
-
-    int displayMode = 1;
-
-    public void updateStats() {
-        switch (displayMode) {
-            case 1:
-                botDebugger.ShowBotView(FL, FR, BL, BR, linSlide, intakeLeft, intakeRight, duckSpinner, currHeading);
-            case 2:
-                botDebugger.ShowSensorView(currHeading, soundDist, lightAmount);
-            case 3:
-                botDebugger.ShowMotorView(FL, FR, BL, BR, linSlide, intakeLeft, intakeRight, duckSpinner, cargoFlipper, CurrentMovementState);
-        }
-
-        if (timer.seconds() >= 5) {
-            if (displayMode == 3)
-                displayMode = 1;
-            else
-                displayMode++;
-
-            timer.reset();
         }
     }
 
@@ -151,7 +114,7 @@ public class Robot {
     }
 
     // Sets the mode for the motors (this is how it should be using the encoders)
-    public void setMode(DcMotor.RunMode mode) {
+    public void setMode(DcMotor.RunMode mode){
         BR.setMode(mode);
         FR.setMode(mode);
         BL.setMode(mode);
@@ -160,23 +123,19 @@ public class Robot {
 
     // Runs the intake motors at a given power, positive will suck cargo and negative will
     //     spit it out
-    public void runIntake(double power) {
+    public void runIntake(double power){
         intakeRight.setPower(power);
         intakeLeft.setPower(power);
     }
 
-    public void runDuckSpinner(double power) {
-        duckSpinner.setPower(power);
-    }
+    public void runDuckSpinner(double power){ duckSpinner.setPower(power); }
 
-    public void runLinSlide(double power) {
-        linSlide.setPower(power);
-    }
+    public void runLinSlide(double power){ linSlide.setPower(power); }
 
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
     public boolean adjustHeading(int degrees, double power, BNO055IMU imu) {
         // get the current heading of the bot (an angle from -180 to 180)
-        currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+        float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
         // to convert to a 0-360 scale, if the current heading is negative add
         //    360 to it
@@ -194,7 +153,7 @@ public class Robot {
         }
 
         // If the bot is within 1 degree of the target, stop the bot and return true
-        if (Math.abs(difference) <= .5) {
+        if (Math.abs(difference) <= 0.005) {
             telemetry.addData("Stopping the ", "bot");
             stop();
             return true;
