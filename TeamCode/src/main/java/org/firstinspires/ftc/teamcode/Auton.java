@@ -67,6 +67,11 @@ public class Auton extends OpMode {
 
     @Override
     public void loop() {
+        // Set the bot script's distance sensor values
+        bot.soundDist = distSensor.getDistance(DistanceUnit.CM);
+        bot.lightAmount = distSensor.getLightDetected();
+        bot.updateStats();
+
         switch (test) {
             case 0:
                 bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -74,11 +79,11 @@ public class Auton extends OpMode {
                 break;
 
             case 1:
-                int target = bot.autonDrive(MovementEnum.BACKWARD, (int)(TICKS_PER_INCH * 20));
+                int target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 20));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.7, 0.7);
 
-                if(target >= (int)(TICKS_PER_INCH * 20)){
+                if (target >= (int) (TICKS_PER_INCH * 20)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     test++;
@@ -126,39 +131,43 @@ public class Auton extends OpMode {
         imu.initialize(parameters);
     }
 
-    private void checkAlliance(){
+    private void checkAlliance() {
         // Makes sure that when a bumper is pressed it does not switch with every loop
         //    Lets the team set the alliance (red or blue) they are on
-        if(gamepad2.right_bumper){
-            if(!debounceAlliance && rBumpPressed == -1){
+        if (gamepad2.right_bumper) {
+            if (!debounceAlliance && rBumpPressed == -1) {
                 telemetry.addData("Alliance", "RED");
                 telemetry.update();
                 rBumpPressed *= -1;
                 debounceAlliance = true;
-            } else if(!debounceAlliance && rBumpPressed == 1){
+            } else if (!debounceAlliance && rBumpPressed == 1) {
                 telemetry.addData("Alliance", "BLUE");
                 telemetry.update();
                 rBumpPressed *= -1;
                 debounceAlliance = true;
-            } else{ debounceAlliance = false; }
+            } else {
+                debounceAlliance = false;
+            }
         }
     }
 
-    private void checkSide(){
+    private void checkSide() {
         // Makes sure that when a bumper is pressed it does not switch with every loop
         //   Lets the team set the side (right or left) that the bot is on
-        if(gamepad2.left_bumper){
-            if(!debounceSide && lBumpPressed == -1){
+        if (gamepad2.left_bumper) {
+            if (!debounceSide && lBumpPressed == -1) {
                 telemetry.addData("Side", "RIGHT");
                 telemetry.update();
                 lBumpPressed *= -1;
                 debounceSide = true;
-            } else if(!debounceSide && lBumpPressed == 1){
+            } else if (!debounceSide && lBumpPressed == 1) {
                 telemetry.addData("Side", "LEFT");
                 telemetry.update();
                 lBumpPressed *= -1;
                 debounceSide = true;
-            } else{ debounceSide = false; }
+            } else {
+                debounceSide = false;
+            }
         }
     }
 }

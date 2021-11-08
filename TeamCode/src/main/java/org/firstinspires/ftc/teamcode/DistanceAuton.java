@@ -38,6 +38,8 @@ public class DistanceAuton extends OpMode {
             case 1:
                 double stopDistance = 50;
                 double dist = distSensor.getDistance(DistanceUnit.CM);
+                bot.soundDist = dist;
+                bot.lightAmount = distSensor.getLightDetected();
                 telemetry.addData("Distance", dist);
 
                 // Drive the bot forward until the distance sensor reads under a certain distance
