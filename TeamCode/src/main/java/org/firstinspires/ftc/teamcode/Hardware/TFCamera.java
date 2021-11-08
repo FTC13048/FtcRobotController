@@ -49,7 +49,7 @@ public class TFCamera {
         hardwareMap = hmap;
     }
 
-    public void init() {
+    public void initCamera() {
         // The TFObjectDetector uses the camera frames from the VuforiaLocalizer, so we create that
         // first.
         initVuforia();
@@ -106,9 +106,9 @@ public class TFCamera {
     }
 
 
-    // -------------------------------------------------------
-    //                      HELPER METHODS
-    // -------------------------------------------------------
+    // ---------------------------------------------------------------------------------------
+    //                                     HELPER METHODS
+    // ---------------------------------------------------------------------------------------
 
     private void initVuforia() {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();

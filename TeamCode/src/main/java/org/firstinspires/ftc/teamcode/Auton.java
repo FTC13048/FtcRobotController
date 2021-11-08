@@ -87,7 +87,7 @@ public class Auton extends OpMode {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    test = -1;
+                    test++;
                 }
 
                 break;
@@ -108,9 +108,9 @@ public class Auton extends OpMode {
                 break;
                 
             case 4:
-                target = bot.autonDrive(MovementEnum.FORWARD, (int)(TICKS_PER_INCH * 2));
+                target = bot.autonDrive(MovementEnum.FORWARD, (int)(TICKS_PER_INCH * 6));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.3, 0.3);
+                bot.drive(0.2, 0.2);
                 
                 if(target >= (int)(TICKS_PER_INCH * 6)){
                     bot.autonDrive(MovementEnum.STOP, 0);
