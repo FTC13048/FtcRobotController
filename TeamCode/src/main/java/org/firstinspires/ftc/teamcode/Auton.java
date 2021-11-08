@@ -26,7 +26,7 @@ public class Auton extends OpMode {
     // private ModernRoboticsI2cRangeSensor distSensor;
 
     // Variable that keeps track of where in the loop you are
-    private int test = 0;
+    private int caseNum = 0;
     private ElapsedTime timer;
 
     @Override
@@ -46,8 +46,12 @@ public class Auton extends OpMode {
 
     @Override
     public void init_loop() {
-        // when the gyro is calibrated print true to the screen
-        telemetry.addData("Gyro calibration status", imu.isGyroCalibrated());
+        if(imu.isGyroCalibrated()){
+            telemetry.addData("Gyro status", "calibrated");
+        } else{
+            telemetry.addData("Wait", "Gyro calibrating!");
+        }
+
         telemetry.update();
     }
 
@@ -56,11 +60,11 @@ public class Auton extends OpMode {
 
     @Override
     public void loop() {
-        switch (test) {
+        switch (caseNum) {
             case 0:
                 bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                test++;
+                caseNum++;
                 break;
 
             case 1:
@@ -73,7 +77,7 @@ public class Auton extends OpMode {
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();
-                    test++;
+                    caseNum++;
                 }
 
                 break;
@@ -87,7 +91,7 @@ public class Auton extends OpMode {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    test++;
+                    caseNum++;
                 }
 
                 break;
@@ -102,7 +106,7 @@ public class Auton extends OpMode {
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();
-                    test++;
+                    caseNum++;
                 }
 
                 break;
@@ -118,7 +122,7 @@ public class Auton extends OpMode {
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();
                     timer.reset();
-                    test++;
+                    caseNum++;
                 }
                 
                 break;
@@ -130,7 +134,7 @@ public class Auton extends OpMode {
                     bot.runDuckSpinner(0.0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    test++;
+                    caseNum++;
                 }
         }
     }
