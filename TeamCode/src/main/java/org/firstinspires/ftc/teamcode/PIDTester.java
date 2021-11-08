@@ -11,7 +11,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.MiniPID;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
-@Autonomous(name = "PIDTester", group = "Autonomous")
+//@Autonomous(name = "PIDTester", group = "Autonomous")
 
 public class PIDTester extends OpMode {
     // Figure out ticks per revolution and ticks per inch

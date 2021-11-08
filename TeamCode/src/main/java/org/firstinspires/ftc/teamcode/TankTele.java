@@ -1,11 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.Gamepad;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
-import org.firstinspires.ftc.teamcode.Hardware.*;
-
-@com.qualcomm.robotcore.eventloop.opmode.TeleOp(name = "TankDrive", group = "Teleop")
+@TeleOp(name = "TankDrive", group = "Teleop")
 
 public class TankTele extends OpMode {
     private Robot bot;
