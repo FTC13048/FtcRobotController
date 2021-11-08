@@ -4,7 +4,6 @@ import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
@@ -48,7 +47,7 @@ public class PIDTester extends OpMode {
 
         // Pass in the PID coefficients, set maximum error allowed to 1 of whatever unit, and
         //      scale the output so that it is between -1 and 1 (can be passed to motors)
-        pid = new MiniPID(0.1, 0.8, 0.8);
+        pid = new MiniPID(0.1, 0, 0);
         pid.setSetpointRange(1);
         pid.setOutputLimits(-1, 1);
         pid.setOutputRampRate(0.1);
@@ -93,6 +92,24 @@ public class PIDTester extends OpMode {
                 currHeading = currHeading < 0 ? 360 + currHeading : currHeading;
                 telemetry.addData("Angle", currHeading);
 
+                if(currHeading >= 180){
+                    bot.stop();
+                    caseNum++;
+                    break;
+                } else{
+                    bot.turn(1);
+                }
+
+                telemetry.update();
+                //break;
+
+            case 2:
+                // Get the current heading of the bot and set it to a 0-359 scale by adding
+                //    360 to it if it comes out less than 0 and print this to the driver hub
+                currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZXY, AngleUnit.DEGREES).firstAngle;
+                currHeading = currHeading < 0 ? 360 + currHeading : currHeading;
+                telemetry.addData("Angle", currHeading);
+
                 // Get the pid output from the current heading (will give a power for the motors
                 //   to run at) and print this to the driver hub
                 double pidVal = pid.getOutput(currHeading);
@@ -108,7 +125,6 @@ public class PIDTester extends OpMode {
                 }
 
                 bot.turn(pidVal);
-                telemetry.update();
         }
     }
 
@@ -126,14 +142,14 @@ public class PIDTester extends OpMode {
             if(!debounceAlliance && rBumpPressed == -1){
                 telemetry.addData("Alliance", "RED");
                 rBumpPressed *= -1;
-                debounceAlliance = true;
             } else if(!debounceAlliance && rBumpPressed == 1){
                 telemetry.addData("Alliance", "BLUE");
                 telemetry.update();
                 rBumpPressed *= -1;
-                debounceAlliance = true;
-            } else{ debounceAlliance = false; }
-        }
+            }
+
+            debounceAlliance = true;
+        } else{ debounceAlliance = false; }
     }
 
     private void checkSide(){
@@ -143,13 +159,13 @@ public class PIDTester extends OpMode {
             if(!debounceSide && lBumpPressed == -1){
                 telemetry.addData("Side", "RIGHT");
                 lBumpPressed *= -1;
-                debounceSide = true;
             } else if(!debounceSide && lBumpPressed == 1){
                 telemetry.addData("Side", "LEFT");
                 telemetry.update();
                 lBumpPressed *= -1;
-                debounceSide = true;
-            } else{ debounceSide = false; }
-        }
+            }
+
+            debounceSide = true;
+        } else{ debounceSide = false; }
     }
 }

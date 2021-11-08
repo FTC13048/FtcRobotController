@@ -153,7 +153,7 @@ public class Robot {
         }
 
         // If the bot is within 1 degree of the target, stop the bot and return true
-        if (Math.abs(difference) <= .5) {
+        if (Math.abs(difference) <= 0.005) {
             telemetry.addData("Stopping the ", "bot");
             stop();
             return true;
