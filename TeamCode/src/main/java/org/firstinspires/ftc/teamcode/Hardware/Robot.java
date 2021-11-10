@@ -15,7 +15,7 @@ public class Robot {
     private DcMotor FR, FL, BR, BL;
 
     // Declare system motors (not driving motors)
-    private DcMotor intakeRight, intakeLeft, duckSpinner, linSlide;
+    public DcMotor intakeRight, intakeLeft, duckSpinner, linSlide;
 
     public Servo cargoFlipper;
     private HardwareMap map;
@@ -62,12 +62,13 @@ public class Robot {
         linSlide.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set all system motors to run using encoders
-//        intakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        intakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        duckSpinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        duckSpinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         linSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        duckSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
         // If this method is being called from an auton function set the zero power behavior of
         //    all the motors to brake, making lock when there is no power being applied
@@ -131,6 +132,7 @@ public class Robot {
     public void runDuckSpinner(double power){ duckSpinner.setPower(power); }
 
     public void runLinSlide(double power){ linSlide.setPower(power); }
+    public int getLinSlidePos(){ return linSlide.getCurrentPosition(); }
 
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
     public boolean adjustHeading(int degrees, double power, BNO055IMU imu) {
@@ -153,7 +155,7 @@ public class Robot {
         }
 
         // If the bot is within 1 degree of the target, stop the bot and return true
-        if (Math.abs(difference) <= 0.005) {
+        if (Math.abs(difference) <= 0.5) {
             telemetry.addData("Stopping the ", "bot");
             stop();
             return true;
@@ -169,34 +171,34 @@ public class Robot {
         int curPos = -1;
         switch (movement) {
             case FORWARD:
-                FL.setTargetPosition(target);
-                FR.setTargetPosition(target);
-                BL.setTargetPosition(target);
-                BR.setTargetPosition(target);
-                curPos = Math.max(-BR.getCurrentPosition(), Math.max(-BL.getCurrentPosition(), Math.max(FR.getCurrentPosition(), FL.getCurrentPosition())));
-                break;
-
-            case BACKWARD:
                 FL.setTargetPosition(-target);
                 FR.setTargetPosition(-target);
                 BL.setTargetPosition(-target);
                 BR.setTargetPosition(-target);
+                curPos = Math.max(-BR.getCurrentPosition(), Math.max(-BL.getCurrentPosition(), Math.max(FR.getCurrentPosition(), FL.getCurrentPosition())));
+                break;
+
+            case BACKWARD:
+                FL.setTargetPosition(target);
+                FR.setTargetPosition(target);
+                BL.setTargetPosition(target);
+                BR.setTargetPosition(target);
                 curPos = Math.max(BR.getCurrentPosition(), Math.max(BL.getCurrentPosition(), Math.max(-FR.getCurrentPosition(), -FL.getCurrentPosition())));
                 break;
 
             case LEFTSTRAFE:
                 FL.setTargetPosition(target);
                 FR.setTargetPosition(-target);
-                BL.setTargetPosition(target);
-                BR.setTargetPosition(-target);
+                BL.setTargetPosition(-target);
+                BR.setTargetPosition(target);
                 curPos = Math.max(BR.getCurrentPosition(), Math.max(BL.getCurrentPosition(), Math.max(FR.getCurrentPosition(), FL.getCurrentPosition())));
                 break;
 
             case RIGHTSTRAFE:
                 FL.setTargetPosition(-target);
                 FR.setTargetPosition(target);
-                BL.setTargetPosition(-target);
-                BR.setTargetPosition(target);
+                BL.setTargetPosition(target);
+                BR.setTargetPosition(-target);
                 curPos = Math.max(-BR.getCurrentPosition(), Math.max(-BL.getCurrentPosition(), Math.max(-FR.getCurrentPosition(), -FL.getCurrentPosition())));
                 break;
 

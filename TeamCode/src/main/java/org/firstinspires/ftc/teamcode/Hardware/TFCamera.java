@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import java.util.List;
 import org.firstinspires.ftc.robotcore.external.ClassFactory;
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer;
 import org.firstinspires.ftc.robotcore.external.navigation.VuforiaLocalizer.CameraDirection;
 import org.firstinspires.ftc.robotcore.external.tfod.TFObjectDetector;
@@ -21,17 +22,16 @@ public class TFCamera {
      *  FreightFrenzy_BC.tflite  0: Ball,  1: Cube
      *  FreightFrenzy_DM.tflite  0: Duck,  1: Marker
      */
-    private static final String TFOD_MODEL_ASSET = "FreightFrenzy_BCDM.tflite";
+    private static final String TFOD_MODEL_ASSET = "FreightFrenzy_DM.tflite";
     private static final String[] LABELS = {
-            "Ball",
-            "Cube",
             "Duck",
             "Marker"
     };
 
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
-    private int cameraPixelWidth = 0; // FIND OUT PIXEL WIDTH AND CHANGE
+    private int cameraPixelWidth = 768; // FIND OUT PIXEL WIDTH AND CHANGE
+    public static int targetLevel = 1;
 
     private static final String VUFORIA_KEY = "ARzU3JD/////AAABmeac74tsC0F5u4/HaLL2p3RlQWFd9jHF" +
             "L1EDGkmDQbwR7SXcuqRD89Qh9ZQGpvORTUN90hpB0KOifhJuCZMVyrid08K8LNezho4whpoJGoYVdVfWby" +
@@ -54,10 +54,8 @@ public class TFCamera {
         // first.
         initVuforia();
         initTfod();
-        if (tfod != null) {
-            tfod.activate();
-            tfod.setZoom(2.5, 16.0/9.0);
-        }
+        tfod.activate();
+        tfod.setZoom(1.0, 16.0/9.0);
     }
 
     public void findTargetLevel(){
@@ -70,6 +68,7 @@ public class TFCamera {
 
                 if(updatedRecognitions.size() == 0){
                     telemetry.addData("No items detected", "Level 1");
+                    targetLevel = 1;
                     telemetry.update();
                     stop();
                 }
@@ -85,18 +84,18 @@ public class TFCamera {
                     i++;
 
                     // check label to see which target zone to go after.
-                    if (recognition.getLabel().equals("Marker") && recognition.getRight() <
-                            cameraPixelWidth/2) {
-                        telemetry.addData("Target Zone", "2");
+                    if (recognition.getLabel().equals("Marker") && recognition.getLeft() > 850 && recognition.getRight() > 1200) {
+                        telemetry.addData("Target Zone", "1");
+                        targetLevel = 1;
                         telemetry.update();
                         stop();
-                    } else if (recognition.getLabel().equals("Marker") && recognition.getRight() >
-                            cameraPixelWidth/2) {
-                        telemetry.addData("Target Zone", "3");
+                    } else if (recognition.getLabel().equals("Marker") && recognition.getLeft() > 50 && recognition.getRight() > 460 && recognition.getLeft() < 600) {
+                        telemetry.addData("Target Zone", "2");
+                        targetLevel = 2;
                         telemetry.update();
                         stop();
                     } else {
-                        telemetry.addData("Target Zone", "UNKNOWN");
+                        telemetry.addData("Target Zone", "unknown, sending to level 3");
                         telemetry.update();
                         stop();
                     }
@@ -114,7 +113,7 @@ public class TFCamera {
         VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
 
         parameters.vuforiaLicenseKey = VUFORIA_KEY;
-        parameters.cameraDirection = CameraDirection.BACK;
+        parameters.cameraName = hardwareMap.get(WebcamName.class, "pp2");
 
         //  Instantiate the Vuforia engine
         vuforia = ClassFactory.getInstance().createVuforia(parameters);
