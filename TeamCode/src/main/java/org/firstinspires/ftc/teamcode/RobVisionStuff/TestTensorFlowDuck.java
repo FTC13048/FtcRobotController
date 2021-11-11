@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RobVisionStuff;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.RobVisionStuff.TFWrapperRob.BonusLevel;
 
 @TeleOp(name = "TEST DUCK VISION DETECTION ROP", group = "ROB")
 //@Disabled
@@ -17,26 +18,33 @@ public class TestTensorFlowDuck extends OpMode {
     this.tensorflow = new TFWrapperRob();
     this.tensorflow.init(hardwareMap);
 
+    this.bonusLevel = BonusLevel.UNKNOWN; // immediately overwritten but safer without null
+
     this.one = 0;
     this.two = 0;
     this.three = 0;
+
+    telemetry.addLine("Initialized. :)");
+    telemetry.update();
   }
 
   @Override
   public void init_loop() {
-
+    telemetry.addLine("Nothing happens here press start after ~2 seconds.");
+    telemetry.update();
   }
 
   @Override
   public void start() {
     // start camera detection
     this.tensorflow.start();
+    telemetry.clear();
   }
 
 
   @Override
   public void loop() {
-    // Get current detection
+    // Get current detection every loop
     this.bonusLevel = this.tensorflow.getDeterminedLevel();
 
     if (this.bonusLevel != null) {
@@ -55,6 +63,10 @@ public class TestTensorFlowDuck extends OpMode {
       telemetry.addData("Current detected level: ", this.bonusLevel);
       telemetry.addData("Number of removed recognitions this run: ", this.tensorflow.getNumRemovedRecognitions());
     }
+
+    // Typically for auton we would sample the detector for 0.5-1.5 seconds
+    // then use the most-polled output as our proper value
+    // Here we just see all the outputs as telemetry for testing purposes
 
     // Reset values if desired
     if (gamepad1.a) {
