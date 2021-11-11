@@ -28,9 +28,6 @@ public class AutonRedDuck extends OpMode {
     // Variable that keeps track of where in the loop you are
     private int caseNum = 0;
     private ElapsedTime timer;
-    private final int FIRST_LEVEL = 0;
-    private final int SECOND_LEVEL = 0;
-    private final int THIRD_LEVEL = -1240;
 
     @Override
     public void init() {
@@ -176,11 +173,11 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 8:
-                bot.linSlide.setTargetPosition(THIRD_LEVEL);
+                bot.linSlide.setTargetPosition(bot.THIRD_LEVEL);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);
 
-                if(bot.linSlide.getCurrentPosition() <= THIRD_LEVEL){
+                if(bot.linSlide.getCurrentPosition() <= bot.THIRD_LEVEL){
                     bot.linSlide.setPower(0.0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

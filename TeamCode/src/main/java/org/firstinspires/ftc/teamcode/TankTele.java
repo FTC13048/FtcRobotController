@@ -11,10 +11,6 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 public class TankTele extends OpMode {
     private Robot bot;
 
-    private final int FIRST_LEVEL = 0;
-    private final int SECOND_LEVEL = 0;
-    private final int THIRD_LEVEL = -1240;
-
     @Override
     // Initialize the robot (this is what happens when the play button is pressed)
     public void init() {
@@ -126,16 +122,16 @@ public class TankTele extends OpMode {
 
     private void checkLevelThree(){
         if(gamepad2.a){
-            // Arm goes to pushing position if it is at rest
+            // Slide goes to height needed for level three if it is down
             if(!levelThree && slideUpThree == -1){
-                bot.linSlide.setTargetPosition(THIRD_LEVEL);
+                bot.linSlide.setTargetPosition(bot.THIRD_LEVEL);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);
                 armPos *= -1;
             }
 
-            // Arm goes to rest position if a is pressed an it is pushing
-            else if(!debounceArm && armPos == 1){
+            // slide goes back to rest if it is up
+            else if(!debounceArm && slideUpThree == 1){
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);

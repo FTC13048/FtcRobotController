@@ -22,6 +22,10 @@ public class Robot {
     private Telemetry telemetry;
     private boolean isAuton;
 
+    public final int FIRST_LEVEL = 0;
+    public final int SECOND_LEVEL = 0;
+    public final int THIRD_LEVEL = -1240;
+
     public Robot(HardwareMap hmap, Telemetry tele, boolean auton) {
         this.map = hmap;
         telemetry = tele;
@@ -90,11 +94,11 @@ public class Robot {
     }
 
     // Sets all motors to drive with the given power (positive forward negative backward)
-    public void drive(double rightStickY, double leftStickY) {
-        BR.setPower(rightStickY);
-        FR.setPower(rightStickY);
-        BL.setPower(leftStickY);
-        FL.setPower(leftStickY);
+    public void drive(double rightSide, double leftSide) {
+        BR.setPower(rightSide);
+        FR.setPower(rightSide);
+        BL.setPower(leftSide);
+        FL.setPower(leftSide);
     }
 
     // Turning by making right side motors go backwards and left side motors go forward

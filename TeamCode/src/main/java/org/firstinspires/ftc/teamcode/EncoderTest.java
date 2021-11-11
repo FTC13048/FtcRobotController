@@ -6,7 +6,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
 @TeleOp(name = "EncoderTest", group = "Teleop")
 
-public class SlideTester extends OpMode {
+public class EncoderTest extends OpMode {
     private Robot bot;
 
     @Override

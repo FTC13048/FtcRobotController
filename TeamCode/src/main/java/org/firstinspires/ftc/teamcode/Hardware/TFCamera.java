@@ -30,7 +30,6 @@ public class TFCamera {
 
     private Telemetry telemetry;
     private HardwareMap hardwareMap;
-    private int cameraPixelWidth = 768; // FIND OUT PIXEL WIDTH AND CHANGE
     public static int targetLevel = 1;
 
     private static final String VUFORIA_KEY = "ARzU3JD/////AAABmeac74tsC0F5u4/HaLL2p3RlQWFd9jHF" +
@@ -67,8 +66,8 @@ public class TFCamera {
                 telemetry.addData("# Object Detected", updatedRecognitions.size());
 
                 if(updatedRecognitions.size() == 0){
-                    telemetry.addData("No items detected", "Level 1");
-                    targetLevel = 1;
+                    telemetry.addData("No items detected", "Level 3");
+                    targetLevel = 3;
                     telemetry.update();
                     stop();
                 }
@@ -84,12 +83,12 @@ public class TFCamera {
                     i++;
 
                     // check label to see which target zone to go after.
-                    if (recognition.getLabel().equals("Marker") && recognition.getLeft() > 850 && recognition.getRight() > 1200) {
+                    if (recognition.getLeft() >= 0 && recognition.getRight() <= 960) {
                         telemetry.addData("Target Zone", "1");
                         targetLevel = 1;
                         telemetry.update();
                         stop();
-                    } else if (recognition.getLabel().equals("Marker") && recognition.getLeft() > 50 && recognition.getRight() > 460 && recognition.getLeft() < 600) {
+                    } else if (recognition.getLeft() > 960 && recognition.getRight() < 1920) {
                         telemetry.addData("Target Zone", "2");
                         targetLevel = 2;
                         telemetry.update();
