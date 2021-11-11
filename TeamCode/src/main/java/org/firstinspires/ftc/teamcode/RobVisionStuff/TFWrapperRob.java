@@ -78,6 +78,9 @@ public class TFWrapperRob {
         "tfodMonitorViewId", "id", hardwareMap.appContext.getPackageName());
     TFObjectDetector.Parameters tfodParameters = new TFObjectDetector.Parameters(tfodMonitorViewId);
     tfodParameters.isModelTensorFlow2 = true;
+    tfodParameters.minResultConfidence = 0.5f;
+    tfodParameters.inputSize = 320; //higher value here should make more accurate but slower I think
+    tfodParameters.maxNumDetections = 1; // Let's see if this removes noise or just sucks
 
     tfod = ClassFactory.getInstance().createTFObjectDetector(tfodParameters, vuforia);
     tfod.loadModelFromAsset(TFOD_MODEL_ASSET, LABELS);
@@ -90,6 +93,13 @@ public class TFWrapperRob {
   public void start() {
     if (tfod != null) {
       tfod.activate();
+      // The TensorFlow software will scale the input images from the camera to a lower resolution.
+      // This can result in lower detection accuracy at longer distances (> 55cm or 22").
+      // If your target is at distance greater than 50 cm (20") you can adjust the magnification value
+      // to artificially zoom in to the center of image.  For best results, the "aspectRatio" argument
+      // should be set to the value of the images used to create the TensorFlow Object Detection model
+      // (typically 16/9).
+      //tfod.setZoom(2.5, 16.0/9.0);
     }
   }
 
@@ -132,7 +142,7 @@ public class TFWrapperRob {
         this.numRemovedRecognitions = 0;
         this.totalRecognitions = updatedRecognitions.size();
 
-        for (int i = updatedRecognitions.size() - 1; i >= 0; i--) {
+        /*for (int i = updatedRecognitions.size() - 1; i >= 0; i--) {
           Recognition recognition = updatedRecognitions.get(i);
           if (recognition.getWidth() * recognition.getHeight() < 500
               || recognition.getWidth() - recognition.getHeight() > 50) {
@@ -141,7 +151,7 @@ public class TFWrapperRob {
             updatedRecognitions.remove(i); // So, remove the recognition
             this.numRemovedRecognitions++;
           }
-        }
+        }*/
 
         // If nothing detected
         if (updatedRecognitions.size() == 0) {
@@ -150,8 +160,10 @@ public class TFWrapperRob {
         }
         // If one object detected
         else if (updatedRecognitions.size() == 1) {
+          Recognition recognition = updatedRecognitions.get(0);
+
           // If on the left half of camera view, level is 2 (middle position)
-          if (updatedRecognitions.get(0).getRight() < updatedRecognitions.get(0).getImageWidth() / 2.0) {
+          if (recognition.getRight() - (recognition.getWidth() / 2.0) < recognition.getImageWidth() / 2.0) {
             return BonusLevel.LEVEL_TWO;
           }
           // Otherwise, on right half of screen, so level 3 (right position)
@@ -176,7 +188,7 @@ public class TFWrapperRob {
             return BonusLevel.UNKNOWN;
           }
           // Determine as we did above which half the object is in
-          else if (best.getRight() < best.getImageWidth() / 2.0) {
+          else if (best.getRight() - (best.getWidth() / 2.0) < best.getImageWidth() / 2.0) {
             return BonusLevel.LEVEL_TWO;
           } else {
             return BonusLevel.LEVEL_THREE;

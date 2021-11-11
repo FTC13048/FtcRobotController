@@ -35,6 +35,7 @@ public class TestTensorFlowDuck extends OpMode {
   public void start() {
     // start camera detection
     this.tensorflow.start();
+    this.tensorflow.getDeterminedLevel();
     telemetry.clear();
   }
 
@@ -56,10 +57,10 @@ public class TestTensorFlowDuck extends OpMode {
         this.three++;
         break;
     }
+
     telemetry.addData("Current detected level: ", bonusLevel);
     telemetry.addData("Total # of Recognitions this run: ", this.tensorflow.getTotalRecognitions());
     telemetry.addData("# of removed recognitions this run: ", this.tensorflow.getNumRemovedRecognitions());
-
 
     // Typically for auton we would sample the detector for 0.5-1.5 seconds
     // then use the most-polled output as our proper value
