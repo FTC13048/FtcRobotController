@@ -37,15 +37,15 @@ public class TFWrapperRob {
 
   private VuforiaLocalizer vuforia;
   private TFObjectDetector tfod;
-  private BonusLevel determinedLevel;
   private int numRemovedRecognitions;
+  private int totalRecognitions;
 
   /**
    * Construct a TFWrapper object
    */
   public TFWrapperRob() {
-    this.determinedLevel = BonusLevel.UNKNOWN;
     this.numRemovedRecognitions = 0;
+    this.totalRecognitions = 0;
   }
 
   /**
@@ -99,8 +99,7 @@ public class TFWrapperRob {
    * @return The Bonus Level as determined by the network
    */
   public BonusLevel getDeterminedLevel() {
-    this.updateDetermination();
-    return this.determinedLevel;
+    return this.updateDetermination();
   }
 
   /**
@@ -111,11 +110,16 @@ public class TFWrapperRob {
     return this.numRemovedRecognitions;
   }
 
+  public int getTotalRecognitions() {
+    return this.totalRecognitions;
+  }
+
   /**
    * Do the thing!!! FOR THIS TO WORK CAMERA MUST BE CENTERED ON TWO RIGHT SQUARES WITH THE
    * THIRD NOT IN VIEW
    */
-  private void updateDetermination() {
+  private BonusLevel updateDetermination() {
+
     if (tfod != null) {
 
       // Initialize a list of all the current recognitions
@@ -126,6 +130,7 @@ public class TFWrapperRob {
         // REMOVE ALL THINGS THAT ARE PROBABLY NOT A DUCK OR TEAM SHIPPING ELEMENT
         // OPTIONAL STEP: IF # RECOGNITIONS ALWAYS GOOD THEN UNECESSARY
         this.numRemovedRecognitions = 0;
+        this.totalRecognitions = updatedRecognitions.size();
 
         for (int i = updatedRecognitions.size() - 1; i >= 0; i--) {
           Recognition recognition = updatedRecognitions.get(i);
@@ -141,17 +146,17 @@ public class TFWrapperRob {
         // If nothing detected
         if (updatedRecognitions.size() == 0) {
           // Element is off-screen, so it's level 1
-          this.determinedLevel = BonusLevel.LEVEL_ONE;
+          return BonusLevel.LEVEL_ONE;
         }
         // If one object detected
         else if (updatedRecognitions.size() == 1) {
           // If on the left half of camera view, level is 2 (middle position)
           if (updatedRecognitions.get(0).getRight() < updatedRecognitions.get(0).getImageWidth() / 2.0) {
-            this.determinedLevel = BonusLevel.LEVEL_TWO;
+            return BonusLevel.LEVEL_TWO;
           }
           // Otherwise, on right half of screen, so level 3 (right position)
           else {
-            this.determinedLevel = BonusLevel.LEVEL_THREE;
+            return  BonusLevel.LEVEL_THREE;
           }
         }
         // If there are multiple objects still recognized in view
@@ -168,17 +173,19 @@ public class TFWrapperRob {
           }
           // should never happen but just in case i messed up set to unknown state
           if (best == null) {
-            this.determinedLevel = BonusLevel.UNKNOWN;
+            return BonusLevel.UNKNOWN;
           }
           // Determine as we did above which half the object is in
           else if (best.getRight() < best.getImageWidth() / 2.0) {
-            this.determinedLevel = BonusLevel.LEVEL_TWO;
+            return BonusLevel.LEVEL_TWO;
           } else {
-            this.determinedLevel = BonusLevel.LEVEL_THREE;
+            return BonusLevel.LEVEL_THREE;
           }
         }
       }
     }
+
+    return BonusLevel.UNKNOWN;
   }
 
   public void stop() {

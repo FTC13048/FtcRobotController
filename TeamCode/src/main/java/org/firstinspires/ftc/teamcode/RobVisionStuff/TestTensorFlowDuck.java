@@ -9,7 +9,6 @@ import org.firstinspires.ftc.teamcode.RobVisionStuff.TFWrapperRob.BonusLevel;
 public class TestTensorFlowDuck extends OpMode {
 
   private TFWrapperRob tensorflow;
-  private TFWrapperRob.BonusLevel bonusLevel;
 
   private int one, two, three;
 
@@ -17,8 +16,6 @@ public class TestTensorFlowDuck extends OpMode {
   public void init() {
     this.tensorflow = new TFWrapperRob();
     this.tensorflow.init(hardwareMap);
-
-    this.bonusLevel = BonusLevel.UNKNOWN; // immediately overwritten but safer without null
 
     this.one = 0;
     this.two = 0;
@@ -45,24 +42,24 @@ public class TestTensorFlowDuck extends OpMode {
   @Override
   public void loop() {
     // Get current detection every loop
-    this.bonusLevel = this.tensorflow.getDeterminedLevel();
+    TFWrapperRob.BonusLevel bonusLevel = this.tensorflow.getDeterminedLevel();
 
-    if (this.bonusLevel != null) {
-      // Add to value if detected
-      switch (this.bonusLevel) {
-        case LEVEL_ONE:
-          this.one++;
-          break;
-        case LEVEL_TWO:
-          this.two++;
-          break;
-        case LEVEL_THREE:
-          this.three++;
-          break;
-      }
-      telemetry.addData("Current detected level: ", this.bonusLevel);
-      telemetry.addData("Number of removed recognitions this run: ", this.tensorflow.getNumRemovedRecognitions());
+    // Add to value if detected
+    switch (bonusLevel) {
+      case LEVEL_ONE:
+        this.one++;
+        break;
+      case LEVEL_TWO:
+        this.two++;
+        break;
+      case LEVEL_THREE:
+        this.three++;
+        break;
     }
+    telemetry.addData("Current detected level: ", bonusLevel);
+    telemetry.addData("Total # of Recognitions this run: ", this.tensorflow.getTotalRecognitions());
+    telemetry.addData("# of removed recognitions this run: ", this.tensorflow.getNumRemovedRecognitions());
+
 
     // Typically for auton we would sample the detector for 0.5-1.5 seconds
     // then use the most-polled output as our proper value
