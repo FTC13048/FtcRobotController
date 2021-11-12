@@ -156,7 +156,7 @@ public class TFWrapperRob {
         // If nothing detected
         if (updatedRecognitions.size() == 0) {
           // Element is off-screen, so it's level 1
-          return BonusLevel.LEVEL_ONE;
+          return BonusLevel.LEVEL_THREE;
         }
         // If one object detected
         else if (updatedRecognitions.size() == 1) {
@@ -164,11 +164,11 @@ public class TFWrapperRob {
 
           // If on the left half of camera view, level is 2 (middle position)
           if (recognition.getRight() - (recognition.getWidth() / 2.0) < recognition.getImageWidth() / 2.0) {
-            return BonusLevel.LEVEL_TWO;
+            return BonusLevel.LEVEL_ONE;
           }
           // Otherwise, on right half of screen, so level 3 (right position)
           else {
-            return  BonusLevel.LEVEL_THREE;
+            return  BonusLevel.LEVEL_TWO;
           }
         }
         // If there are multiple objects still recognized in view
@@ -189,9 +189,9 @@ public class TFWrapperRob {
           }
           // Determine as we did above which half the object is in
           else if (best.getRight() - (best.getWidth() / 2.0) < best.getImageWidth() / 2.0) {
-            return BonusLevel.LEVEL_TWO;
+            return BonusLevel.LEVEL_ONE;
           } else {
-            return BonusLevel.LEVEL_THREE;
+            return BonusLevel.LEVEL_TWO;
           }
         }
       }
