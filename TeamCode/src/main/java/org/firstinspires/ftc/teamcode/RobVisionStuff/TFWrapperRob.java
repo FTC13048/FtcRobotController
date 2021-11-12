@@ -65,7 +65,7 @@ public class TFWrapperRob {
     VuforiaLocalizer.Parameters parameters = new VuforiaLocalizer.Parameters();
     parameters.vuforiaLicenseKey = VUFORIA_KEY;
     // MAKE SURE TO NAME CAMERA IN CONFIG AS BELOW OR CHANGE AS NEEDED
-    parameters.cameraName = hardwareMap.get(WebcamName.class, "camera");
+    parameters.cameraName = hardwareMap.get(WebcamName.class, "pp2");
 
     vuforia = ClassFactory.getInstance().createVuforia(parameters);
   }
@@ -188,6 +188,7 @@ public class TFWrapperRob {
             return BonusLevel.UNKNOWN;
           }
           // Determine as we did above which half the object is in
+
           else if (best.getRight() - (best.getWidth() / 2.0) < best.getImageWidth() / 2.0) {
             return BonusLevel.LEVEL_ONE;
           } else {

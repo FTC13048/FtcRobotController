@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.TFCamera;
+import org.firstinspires.ftc.teamcode.RobVisionStuff.TFWrapperRob;
 
 @Autonomous(name = "Red Side Duck", group = "Autonomous")
 public class AutonRedDuck extends OpMode {
@@ -21,13 +22,16 @@ public class AutonRedDuck extends OpMode {
     private Robot bot;
     private BNO055IMU imu;
     private BNO055IMU.Parameters parameters;
-    private TFCamera camera;
+    private TFWrapperRob tensorFlow;
+    private TFWrapperRob.BonusLevel bonusLevel;
     private ModernRoboticsI2cRangeSensor distSensor;
     // private ModernRoboticsI2cRangeSensor distSensor;
 
     // Variable that keeps track of where in the loop you are
     private int caseNum = 0;
     private ElapsedTime timer;
+    private int one, two, three;
+    private int targetLevel;
 
     @Override
     public void init() {
@@ -36,12 +40,22 @@ public class AutonRedDuck extends OpMode {
         // initialize the robot and the onboard gyro
         this.bot.initBot();
         initImu();
-        camera = new TFCamera(telemetry, hardwareMap);
-        camera.initCamera();
         distSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distSensor");
+
+        // initialize the ai object recognition
+        tensorFlow = new TFWrapperRob();
+        tensorFlow.init(hardwareMap);
+        this.bonusLevel = TFWrapperRob.BonusLevel.UNKNOWN; // immediately overwritten but safer without null
+        this.one = 0;
+        this.two = 0;
+        this.three = 0;
 
         // initialize the timer
         timer = new ElapsedTime();
+
+
+        // start camera detection
+        this.tensorFlow.start();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -49,23 +63,46 @@ public class AutonRedDuck extends OpMode {
 
     @Override
     public void init_loop() {
-        if(imu.isGyroCalibrated()){
-            telemetry.addData("Gyro status", "calibrated");
-        } else{
-            telemetry.addData("Wait", "Gyro calibrating!");
-        }
+        // Get current detection every loop
+        this.bonusLevel = this.tensorFlow.getDeterminedLevel();
 
-      telemetry.update();
+        if (this.bonusLevel != null) {
+            // Add to value if detected
+            switch (this.bonusLevel) {
+                case LEVEL_ONE:
+                    this.one++;
+                    targetLevel = 1;
+                    break;
+                case LEVEL_TWO:
+                    this.two++;
+                    targetLevel = 2;
+                    break;
+                case LEVEL_THREE:
+                    this.three++;
+                    targetLevel = 3;
+                    break;
+            }
+
+            telemetry.addData("Current detected level: ", this.bonusLevel);
+            telemetry.addData("Number of removed recognitions this run: ", this.tensorFlow.getNumRemovedRecognitions());
+
+            telemetry.addLine("-------------------------------------");
+            telemetry.addLine("Overall detection numbers: (PRESS A TO RESET)");
+            telemetry.addData("LEVEL 1: ", this.one);
+            telemetry.addData("LEVEL 2: ", this.two);
+            telemetry.addData("LEVEL 3: ", this.three);
+
+            telemetry.update();
+        }
     }
 
     @Override
-    public void start() { }
+    public void start() {    }
 
     @Override
     public void loop() {
         switch (caseNum) {
             case 0:
-                camera.findTargetLevel();
                 bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 caseNum++;
@@ -101,11 +138,11 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 3:
-                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 25));
+                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 20));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 25)) {
+                if (target >= (int) (TICKS_PER_INCH * 15)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -158,7 +195,7 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 7:
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 36));
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 43));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
@@ -173,18 +210,47 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 8:
-                bot.linSlide.setTargetPosition(bot.THIRD_LEVEL);
+                if(targetLevel == 1){
+                    bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
+
+                    if(bot.linSlide.getCurrentPosition() <= bot.FIRST_LEVEL){
+                        bot.linSlide.setPower(0.0);
+                        bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        bot.stop();
+                        timer.reset();
+                        caseNum++;
+                    }
+                }
+
+                if(targetLevel == 2){
+                    bot.linSlide.setTargetPosition(bot.SECOND_LEVEL);
+
+                    if(bot.linSlide.getCurrentPosition() <= bot.SECOND_LEVEL){
+                        bot.linSlide.setPower(0.0);
+                        bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        bot.stop();
+                        timer.reset();
+                        caseNum++;
+                    }
+                }
+
+                if(targetLevel == 3){
+                    bot.linSlide.setTargetPosition(bot.THIRD_LEVEL);
+
+                    if(bot.linSlide.getCurrentPosition() <= bot.THIRD_LEVEL){
+                        bot.linSlide.setPower(0.0);
+                        bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                        bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        bot.stop();
+                        timer.reset();
+                        caseNum++;
+                    }
+                }
+
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);
-
-                if(bot.linSlide.getCurrentPosition() <= bot.THIRD_LEVEL){
-                    bot.linSlide.setPower(0.0);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
-                    timer.reset();
-                    caseNum++;
-                }
 
                 break;
 
@@ -193,7 +259,7 @@ public class AutonRedDuck extends OpMode {
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
 
-                if(timer.seconds() > 2){
+                if(timer.seconds() > 3){
                     bot.cargoFlipper.setPosition(0.1);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -203,11 +269,11 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 10:
-                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 15));
+                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 29));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 15)) {
+                if (target >= (int) (TICKS_PER_INCH * 29)){
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -218,9 +284,12 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 11:
-                bot.drive(1.0, 1.0);
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 70));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.strafe(0.5);
 
-                if(distSensor.getDistance(DistanceUnit.CM) <= 30){
+                if (target >= (int) (TICKS_PER_INCH * 70)){
+                    bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();
@@ -244,6 +313,9 @@ public class AutonRedDuck extends OpMode {
 
                 break;
         }
+
+        telemetry.addLine("target" + targetLevel);
+        telemetry.update();
     }
 
     public void initImu() {

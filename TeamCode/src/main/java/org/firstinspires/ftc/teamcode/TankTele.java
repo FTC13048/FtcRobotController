@@ -53,10 +53,10 @@ public class TankTele extends OpMode {
         duckPower = Math.abs(duckPower) > 0.15 ? duckPower : 0.0;
         slidePower = Math.abs(slidePower) > 0.15 ? slidePower : 0.0;
 
+        updateServo();
         updateDriving(rightTrigger, leftTrigger, leftStickY, rightStickY);
         updateSystem(intake, outtake, duckPower, slidePower);
-        updateServo();
-        checkLevelThree();
+        //checkLevelThree();
         telemetry.update();
     }
 
