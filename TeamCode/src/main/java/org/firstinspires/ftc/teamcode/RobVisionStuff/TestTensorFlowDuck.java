@@ -35,7 +35,7 @@ public class TestTensorFlowDuck extends OpMode {
   public void start() {
     // start camera detection
     this.tensorflow.start();
-    this.tensorflow.getDeterminedLevel();
+    this.tensorflow.getDeterminedLevelRed();
     telemetry.clear();
   }
 
@@ -43,7 +43,7 @@ public class TestTensorFlowDuck extends OpMode {
   @Override
   public void loop() {
     // Get current detection every loop
-    TFWrapperRob.BonusLevel bonusLevel = this.tensorflow.getDeterminedLevel();
+    TFWrapperRob.BonusLevel bonusLevel = this.tensorflow.getDeterminedLevelRed();
 
     // Add to value if detected
     switch (bonusLevel) {

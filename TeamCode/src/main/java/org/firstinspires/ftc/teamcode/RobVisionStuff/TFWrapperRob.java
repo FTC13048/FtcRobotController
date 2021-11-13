@@ -108,9 +108,11 @@ public class TFWrapperRob {
    *
    * @return The Bonus Level as determined by the network
    */
-  public BonusLevel getDeterminedLevel() {
-    return this.updateDetermination();
+  public BonusLevel getDeterminedLevelRed() {
+    return this.updateDeterminationRed();
   }
+
+  public BonusLevel getDeterminedLevelBlue(){ return this.updateDeterminationBlue(); }
 
   /**
    *
@@ -128,7 +130,7 @@ public class TFWrapperRob {
    * Do the thing!!! FOR THIS TO WORK CAMERA MUST BE CENTERED ON TWO RIGHT SQUARES WITH THE
    * THIRD NOT IN VIEW
    */
-  private BonusLevel updateDetermination() {
+  private BonusLevel updateDeterminationRed() {
 
     if (tfod != null) {
 
@@ -193,6 +195,79 @@ public class TFWrapperRob {
             return BonusLevel.LEVEL_ONE;
           } else {
             return BonusLevel.LEVEL_TWO;
+          }
+        }
+      }
+    }
+
+    return BonusLevel.UNKNOWN;
+  }
+
+  private BonusLevel updateDeterminationBlue() {
+
+    if (tfod != null) {
+
+      // Initialize a list of all the current recognitions
+      // (note: updated recognitions can be a null value if no change in recognitions)
+      List<Recognition> updatedRecognitions = tfod.getUpdatedRecognitions();
+      if (updatedRecognitions != null) {
+
+        // REMOVE ALL THINGS THAT ARE PROBABLY NOT A DUCK OR TEAM SHIPPING ELEMENT
+        // OPTIONAL STEP: IF # RECOGNITIONS ALWAYS GOOD THEN UNECESSARY
+        this.numRemovedRecognitions = 0;
+        this.totalRecognitions = updatedRecognitions.size();
+
+        /*for (int i = updatedRecognitions.size() - 1; i >= 0; i--) {
+          Recognition recognition = updatedRecognitions.get(i);
+          if (recognition.getWidth() * recognition.getHeight() < 500
+              || recognition.getWidth() - recognition.getHeight() > 50) {
+            // If the difference between height and width is larger than 50, or the object is
+            // very small, it's unlikely to be useful
+            updatedRecognitions.remove(i); // So, remove the recognition
+            this.numRemovedRecognitions++;
+          }
+        }*/
+
+        // If nothing detected
+        if (updatedRecognitions.size() == 0) {
+          // Element is off-screen, so it's level 1
+          return BonusLevel.LEVEL_THREE;
+        }
+        // If one object detected
+        else if (updatedRecognitions.size() == 1) {
+          Recognition recognition = updatedRecognitions.get(0);
+
+          // If on the left half of camera view, level is 2 (middle position)
+          if (recognition.getRight() - (recognition.getWidth() / 2.0) > recognition.getImageWidth() / 2.0) {
+            return BonusLevel.LEVEL_ONE;
+          }
+          // Otherwise, on right half of screen, so level 3 (right position)
+          else {
+            return  BonusLevel.LEVEL_TWO;
+          }
+        }
+        // If there are multiple objects still recognized in view
+        else {
+          float maxConfidence = 0;
+          Recognition best = null;
+
+          // Determine which has the highest confidence
+          for (Recognition recognition : updatedRecognitions) {
+            if (recognition.getConfidence() > maxConfidence) {
+              maxConfidence = recognition.getConfidence();
+              best = recognition;
+            }
+          }
+          // should never happen but just in case i messed up set to unknown state
+          if (best == null) {
+            return BonusLevel.UNKNOWN;
+          }
+          // Determine as we did above which half the object is in
+
+          else if (best.getRight() - (best.getWidth() / 2.0) < best.getImageWidth() / 2.0) {
+            return BonusLevel.LEVEL_TWO;
+          } else {
+            return BonusLevel.LEVEL_ONE;
           }
         }
       }

@@ -12,8 +12,8 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.Hardware.TFCamera;
 import org.firstinspires.ftc.teamcode.RobVisionStuff.TFWrapperRob;
 
-@Autonomous(name = "Red Side Duck", group = "Autonomous")
-public class AutonRedDuck extends OpMode {
+@Autonomous(name = "Blue Side Duck", group = "Autonomous")
+public class AutonBlueDuck extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 403.9;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
@@ -64,7 +64,7 @@ public class AutonRedDuck extends OpMode {
     @Override
     public void init_loop() {
         // Get current detection every loop
-        this.bonusLevel = this.tensorFlow.getDeterminedLevelRed();
+        this.bonusLevel = this.tensorFlow.getDeterminedLevelBlue();
 
         if (this.bonusLevel != null) {
             // Add to value if detected
@@ -126,7 +126,7 @@ public class AutonRedDuck extends OpMode {
 
             case 2:
                 // the amount to turn
-                int turn = 180;
+                int turn = 90;
 
                 // if the heading is at or greater than the target stop the bot
                 if (bot.adjustHeading(turn, 0.5, imu)) {
@@ -139,9 +139,9 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 3:
-                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 22));
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 22));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.strafe(0.5);
+                bot.drive(0.5, 0.5);
 
                 if (target >= (int) (TICKS_PER_INCH * 22)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
@@ -167,29 +167,15 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 5:
-                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 39));
+                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 26));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
+                bot.strafe(0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 39)) {
+                if (target >= (int) (TICKS_PER_INCH * 26)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();
-                    caseNum++;
-                }
-
-                break;
-
-            case 6:
-                // the amount to turn
-                turn = 270;
-
-                // if the heading is at or greater than the target stop the bot
-                if (bot.adjustHeading(turn, 0.5, imu)) {
-                    bot.stop();
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     caseNum++;
                 }
 
@@ -270,7 +256,7 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 10:
-                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 29));
+                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 29));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
 
@@ -285,11 +271,11 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 11:
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 90));
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 80));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(1.0, 1.0);
 
-                if (target >= (int) (TICKS_PER_INCH * 90)){
+                if (target >= (int) (TICKS_PER_INCH * 80)){
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
