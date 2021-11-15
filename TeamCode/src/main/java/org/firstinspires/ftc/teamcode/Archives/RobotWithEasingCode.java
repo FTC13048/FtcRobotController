@@ -190,6 +190,29 @@ public class RobotWithEasingCode {
 //        return lerpedPower;
 //    }
 
+    boolean rightBumperPressed = false;
+    boolean leftBumperPressed = false;
+
+    // LEFT: change the movement power by -0.1 if the right bumper on the gamepad is pressed, and visa-versa
+    public void leftChangePower(boolean left_bumper) {
+        if (left_bumper) {
+            leftBumperPressed = true;
+        } else
+            leftBumperPressed = false;
+
+        telemetry.addData("left bumper: speed", "rand");
+    }
+
+    // RIGHT: change the movement power by -0.1 if the right bumper on the gamepad is pressed, and visa-versa
+    public void rightChangePower(boolean right_bumper) {
+        if (right_bumper && !rightBumperPressed) {
+            rightBumperPressed = true;
+        } else
+            rightBumperPressed = false;
+
+        telemetry.addData("right bumper: speed", "rand");
+    }
+
     // Make sure a number is inside a defined range
     public static double clamp(double val, double min, double max) {
         return Math.max(min, Math.min(max, val));
