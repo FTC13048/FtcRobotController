@@ -22,9 +22,9 @@ public class Robot {
     private Telemetry telemetry;
     private boolean isAuton;
 
-    public final int FIRST_LEVEL = -850;
-    public final int SECOND_LEVEL = -1200;
-    public final int THIRD_LEVEL = -1620;
+    public final int FIRST_LEVEL = -400;
+    public final int SECOND_LEVEL = -850;
+    public final int THIRD_LEVEL = -1200;
 
     public Robot(HardwareMap hmap, Telemetry tele, boolean auton) {
         this.map = hmap;
@@ -215,5 +215,12 @@ public class Robot {
         }
 
         return curPos;
+    }
+
+    public void wheelTelem(){
+        telemetry.addData("FR", FR.getCurrentPosition());
+        telemetry.addData("FL", FL.getCurrentPosition());
+        telemetry.addData("BR", BR.getCurrentPosition());
+        telemetry.addData("BL", BL.getCurrentPosition());
     }
 }

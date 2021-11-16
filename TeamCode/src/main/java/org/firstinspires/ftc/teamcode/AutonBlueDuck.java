@@ -114,7 +114,7 @@ public class AutonBlueDuck extends OpMode {
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 8)) {
+                if (target >= (int) (TICKS_PER_INCH * 10)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -256,36 +256,18 @@ public class AutonBlueDuck extends OpMode {
                 break;
 
             case 10:
-                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 29));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.strafe(0.5);
+                bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 29)){
-                    bot.autonDrive(MovementEnum.STOP, 0);
+                if(distSensor.getDistance(DistanceUnit.CM) <= 30){
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     caseNum++;
                 }
 
                 break;
 
             case 11:
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 80));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(1.0, 1.0);
-
-                if (target >= (int) (TICKS_PER_INCH * 80)){
-                    bot.autonDrive(MovementEnum.STOP, 0);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
-                    caseNum++;
-                }
-
-                break;
-
-            case 12:
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);
