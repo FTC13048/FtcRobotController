@@ -26,6 +26,7 @@ public class EncoderTest extends OpMode {
     @Override
     // loop code to be continuously cycled through after init
     public void loop() {
+        bot.wheelTelem();
         telemetry.addData("slide pos", bot.linSlide.getCurrentPosition());
         telemetry.addData("intake left", bot.intakeLeft.getCurrentPosition());
         telemetry.addData("intake right", bot.intakeRight.getCurrentPosition());

@@ -28,6 +28,7 @@ public class TankTele extends OpMode {
     @Override
     // loop code to be continuously cycled through after init
     public void loop() {
+        telemetry.addData("haha lol alex go brrrrr", "");
 //        leftChangePower();
 //        rightChangePower();
 
@@ -53,10 +54,11 @@ public class TankTele extends OpMode {
         duckPower = Math.abs(duckPower) > 0.15 ? duckPower : 0.0;
         slidePower = Math.abs(slidePower) > 0.15 ? slidePower : 0.0;
 
+        updateServo();
+        updateServoPos2();
         updateDriving(rightTrigger, leftTrigger, leftStickY, rightStickY);
         updateSystem(intake, outtake, duckPower, slidePower);
-        updateServo();
-        checkLevelThree();
+        //checkLevelThree();
         telemetry.update();
     }
 
@@ -115,6 +117,23 @@ public class TankTele extends OpMode {
 
             debounceArm = true;
         } else{ debounceArm = false; }
+    }
+
+    private boolean debounceHalf = false;
+
+    private void updateServoPos2(){
+        // if x is pressed, the arm can only switch position if the debounce variable if false
+        //     if it is, then it will become true after the  position switches, allowing the
+        //     player to hold down the button without it trying to switch positions
+        if(gamepad2.a){
+            // Arm goes to pushing position if it is at rest
+            if(!debounceHalf){
+                bot.cargoFlipper.setPosition(0.3);
+                telemetry.addData(">", "0.3");
+            }
+
+            debounceHalf = true;
+        } else{ debounceHalf = false; }
     }
 
     private boolean levelThree = false;
