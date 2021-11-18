@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
-import org.firstinspires.ftc.teamcode.Hardware.TFCamera;
 import org.firstinspires.ftc.teamcode.RobVisionStuff.TFWrapperRob;
 
 @Autonomous(name = "Blue Side Duck", group = "Autonomous")
