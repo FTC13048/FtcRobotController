@@ -48,7 +48,7 @@ public class GripPipeline extends OpenCvPipeline {
 		// Step Blur0:
 		Mat blurInput = cvResizeOutput;
 		BlurType blurType = BlurType.get("Gaussian Blur");
-		double blurRadius = 5.405405405405405;
+		double blurRadius = 8.108108108108109;
 		blur(blurInput, blurType, blurRadius, blurOutput);
 
 		// Step CV_cvtColor0:
@@ -58,9 +58,9 @@ public class GripPipeline extends OpenCvPipeline {
 
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = cvCvtcolorOutput;
-		double[] hsvThresholdHue = {0.0, 49.69696969696969};
-		double[] hsvThresholdSaturation = {130.71043165467623, 218.51010101010098};
-		double[] hsvThresholdValue = {71.08812949640287, 233.53535353535355};
+		double[] hsvThresholdHue = {3.237410071942446, 34.54545454545454};
+		double[] hsvThresholdSaturation = {128.41726618705036, 201.3383838383838};
+		double[] hsvThresholdValue = {96.31294964028777, 255.0};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
 
 		// Step Find_Contours0:
