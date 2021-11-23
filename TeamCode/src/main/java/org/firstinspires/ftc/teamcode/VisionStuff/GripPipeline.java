@@ -113,7 +113,6 @@ public class GripPipeline extends OpenCvPipeline{
 	public ArrayList<MatOfPoint> findContoursOutput() {
 		return findContoursOutput;
 	}
-
 	/**
 	 * This method is a generated getter for the output of a Convex_Hulls.
 	 * @return ArrayList<MatOfPoint> output from Convex_Hulls.

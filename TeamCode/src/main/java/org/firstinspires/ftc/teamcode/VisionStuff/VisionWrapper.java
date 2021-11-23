@@ -21,8 +21,9 @@ public class VisionWrapper {
 
     private static final int CAMERA_WIDTH = 1280;
 
+    public VisionWrapper(){ grip = new GripPipeline(); }
+
     public void init(HardwareMap hmap){
-        grip = new GripPipeline();
         initVision(hmap);
     }
 
@@ -32,9 +33,7 @@ public class VisionWrapper {
 
         webcam.setPipeline(grip);
         webcam.setMillisecondsPermissionTimeout(2500); // Timeout for obtaining permission is configurable. Set before opening.
-    }
 
-    public void startStream(){
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {

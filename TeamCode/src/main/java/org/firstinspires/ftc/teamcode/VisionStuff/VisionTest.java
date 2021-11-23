@@ -1,22 +1,18 @@
 package org.firstinspires.ftc.teamcode.VisionStuff;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.VisionStuff.GripPipeline;
-import org.openftc.easyopencv.OpenCvCamera;
-import org.openftc.easyopencv.OpenCvCameraFactory;
-import org.openftc.easyopencv.OpenCvCameraRotation;
-import org.openftc.easyopencv.OpenCvWebcam;
+@TeleOp(name = "vision with camera", group = "")
 
 public class VisionTest extends OpMode {
     private VisionWrapper vision;
 
     @Override
     public void init() {
+        vision = new VisionWrapper();
         vision.init(hardwareMap);
-        vision.startStream();
+        telemetry.addData("status", "initialized");
     }
 
     @Override
