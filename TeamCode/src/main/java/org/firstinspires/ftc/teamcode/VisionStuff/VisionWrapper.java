@@ -16,7 +16,6 @@ import java.util.List;
 
 public class VisionWrapper {
     private OpenCvWebcam webcam;
-    private DetectionLevel level;
     private GripPipeline grip;
 
     private static final int CAMERA_WIDTH = 1280;
@@ -45,7 +44,7 @@ public class VisionWrapper {
         });
     }
 
-    private void updateDetermination(){
+    private DetectionLevel updateDetermination(){
         List<MatOfPoint> hulls = grip.convexHullsOutput();
         for(int i = 0; i < hulls.size(); i++){
             Rect boundingRect = Imgproc.boundingRect(hulls.get(i));
@@ -56,7 +55,7 @@ public class VisionWrapper {
         }
 
         if(hulls.size() == 0){
-            level = DetectionLevel.LEVEL_THREE;
+            return DetectionLevel.LEVEL_THREE;
         }else{
             hulls.size();
             double areaSum = 0;
@@ -72,17 +71,14 @@ public class VisionWrapper {
             xAvg = xAvg / areaSum;
 
             if (xAvg > CAMERA_WIDTH/2) {
-                this.level = DetectionLevel.LEVEL_TWO;
+                return DetectionLevel.LEVEL_TWO;
             } else {
-                this.level = DetectionLevel.LEVEL_ONE;
+                return DetectionLevel.LEVEL_ONE;
             }
         }
     }
 
-    public DetectionLevel currentDetermination(){
-        this.updateDetermination();
-        return this.level;
-    }
+    public DetectionLevel currentDetermination(){ return this.updateDetermination(); }
 
     public void stop(){ webcam.stopStreaming(); }
 
