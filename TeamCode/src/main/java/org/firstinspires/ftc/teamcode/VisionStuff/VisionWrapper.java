@@ -42,14 +42,7 @@ public class VisionWrapper {
 
     private DetectionLevel updateDetermination(){
         List<MatOfPoint> contours = grip.filterContoursOutput();
-        for(int i = 0; i < contours.size(); i++){
-            Rect boundingRect = Imgproc.boundingRect(contours.get(i));
-            if(boundingRect.area() < 20){
-                contours.remove(i);
-                i--;
-            }
-        }
-
+        
         if(contours.size() == 0){
             return DetectionLevel.LEVEL_THREE;
         }else{
