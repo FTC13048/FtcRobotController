@@ -109,11 +109,11 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 1:
-                int target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 10));
+                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 12));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 10)) {
+                if (target >= (int) (TICKS_PER_INCH * 12)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -124,25 +124,11 @@ public class AutonRedDuck extends OpMode {
                 break;
 
             case 2:
-                // the amount to turn
-                int turn = 180;
-
-                // if the heading is at or greater than the target stop the bot
-                if (bot.adjustHeading(turn, 0.5, imu)) {
-                    bot.stop();
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    caseNum++;
-                }
-
-                break;
-
-            case 3:
-                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 22));
+                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 25));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 22)) {
+                if (target >= (int) (TICKS_PER_INCH * 25)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -153,7 +139,7 @@ public class AutonRedDuck extends OpMode {
 
                 break;
 
-            case 4:
+            case 3:
                 bot.runDuckSpinner(0.5);
 
                 if(timer.seconds() > 4){
@@ -165,7 +151,7 @@ public class AutonRedDuck extends OpMode {
 
                 break;
 
-            case 5:
+            case 4:
                 target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 39));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
@@ -180,9 +166,9 @@ public class AutonRedDuck extends OpMode {
 
                 break;
 
-            case 6:
+            case 5:
                 // the amount to turn
-                turn = 270;
+                int turn = 90;
 
                 // if the heading is at or greater than the target stop the bot
                 if (bot.adjustHeading(turn, 0.5, imu)) {
@@ -194,7 +180,7 @@ public class AutonRedDuck extends OpMode {
 
                 break;
 
-            case 7:
+            case 6:
                 target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 40));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
@@ -209,7 +195,7 @@ public class AutonRedDuck extends OpMode {
 
                 break;
 
-            case 8:
+            case 7:
                 if(targetLevel == 1){
                     bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
 
@@ -254,7 +240,7 @@ public class AutonRedDuck extends OpMode {
 
                 break;
 
-            case 9:
+            case 8:
                 telemetry.addData("case", "9");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
@@ -268,7 +254,7 @@ public class AutonRedDuck extends OpMode {
 
                 break;
 
-            case 10:
+            case 9:
                 target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 35));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
@@ -283,7 +269,7 @@ public class AutonRedDuck extends OpMode {
 
                 break;
 
-            case 11:
+            case 10:
                 target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 90));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(1.0, 1.0);
@@ -298,7 +284,7 @@ public class AutonRedDuck extends OpMode {
 
                 break;
 
-            case 12:
+            case 11:
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);

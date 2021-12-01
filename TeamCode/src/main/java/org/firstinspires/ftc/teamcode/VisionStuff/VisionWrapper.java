@@ -1,9 +1,7 @@
 package org.firstinspires.ftc.teamcode.VisionStuff;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.RoverRuckus.RoverRuckus.MineralPosition;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
@@ -22,9 +20,7 @@ public class VisionWrapper {
 
     public VisionWrapper(){ grip = new GripPipeline(); }
 
-    public void init(HardwareMap hmap){
-        initVision(hmap);
-    }
+    public void init(HardwareMap hmap){ initVision(hmap); }
 
     private void initVision(HardwareMap hmap){
         int cameraMonitorViewId = hmap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hmap.appContext.getPackageName());
@@ -45,24 +41,24 @@ public class VisionWrapper {
     }
 
     private DetectionLevel updateDetermination(){
-        List<MatOfPoint> hulls = grip.convexHullsOutput();
-        for(int i = 0; i < hulls.size(); i++){
-            Rect boundingRect = Imgproc.boundingRect(hulls.get(i));
+        List<MatOfPoint> contours = grip.filterContoursOutput();
+        for(int i = 0; i < contours.size(); i++){
+            Rect boundingRect = Imgproc.boundingRect(contours.get(i));
             if(boundingRect.area() < 20){
-                hulls.remove(i);
+                contours.remove(i);
                 i--;
             }
         }
 
-        if(hulls.size() == 0){
+        if(contours.size() == 0){
             return DetectionLevel.LEVEL_THREE;
         }else{
-            hulls.size();
+            contours.size();
             double areaSum = 0;
             double xAvg = 0;
             //double yAvg = 0;
-            for (int i = 0; i < hulls.size(); i++) {
-                Rect boundingRect = Imgproc.boundingRect(hulls.get(i));
+            for (int i = 0; i < contours.size(); i++) {
+                Rect boundingRect = Imgproc.boundingRect(contours.get(i));
                 double areaTotal = boundingRect.area();
                 areaSum = areaSum + areaTotal;
                 xAvg = xAvg + areaTotal * (boundingRect.x + boundingRect.width / 2d);
@@ -83,7 +79,7 @@ public class VisionWrapper {
     public void stop(){ webcam.stopStreaming(); }
 
     public enum DetectionLevel{
-        LEVEL_ONE("1 - Lowest level"), LEVEL_TWO("2 - Second level"),
+        LEVEL_ONE("1 - Lowest level"), LEVEL_TWO("2 - Middle level"),
         LEVEL_THREE("3 - Top level"), UNKNOWN("Unknown");
 
         private final String level;

@@ -85,7 +85,7 @@ public class TankTele extends OpMode {
                 bot.runIntake(-outtake);
         } else{ bot.runIntake(0.0); }
 
-        if(Math.abs(duck) > 0.0){ bot.runDuckSpinner(duck); }
+        if(Math.abs(duck) > 0.0){ bot.runDuckSpinner(duck * 0.7); }
         else{ bot.runDuckSpinner(0.0); }
 
         if(Math.abs(slide) > 0.0){ bot.runLinSlide(slide * 0.5); }
