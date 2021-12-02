@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.RobVisionStuff.TFWrapperRob;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
 @Autonomous(name = "Blue Side Duck", group = "Autonomous")
-public class AutonBlueDuck extends OpMode {
+public class VisionBlueDuckAuton extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 403.9;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
