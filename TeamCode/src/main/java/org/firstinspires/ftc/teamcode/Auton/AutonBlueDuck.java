@@ -10,6 +10,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.RobVisionStuff.TFWrapperRob;
+import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
 @Autonomous(name = "Blue Side Duck", group = "Autonomous")
 public class AutonBlueDuck extends OpMode {
@@ -21,8 +22,8 @@ public class AutonBlueDuck extends OpMode {
     private Robot bot;
     private BNO055IMU imu;
     private BNO055IMU.Parameters parameters;
-    private TFWrapperRob tensorFlow;
-    private TFWrapperRob.BonusLevel bonusLevel;
+    private VisionWrapper vision;
+    private VisionWrapper.DetectionLevel level;
     private ModernRoboticsI2cRangeSensor distSensor;
     // private ModernRoboticsI2cRangeSensor distSensor;
 
@@ -42,19 +43,15 @@ public class AutonBlueDuck extends OpMode {
         distSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distSensor");
 
         // initialize the ai object recognition
-        tensorFlow = new TFWrapperRob();
-        tensorFlow.init(hardwareMap);
-        this.bonusLevel = TFWrapperRob.BonusLevel.UNKNOWN; // immediately overwritten but safer without null
+        vision = new VisionWrapper();
+        vision.init(hardwareMap);
+        this.level = VisionWrapper.DetectionLevel.UNKNOWN; // immediately overwritten but safer without null
         this.one = 0;
         this.two = 0;
         this.three = 0;
 
         // initialize the timer
         timer = new ElapsedTime();
-
-
-        // start camera detection
-        this.tensorFlow.start();
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -63,11 +60,11 @@ public class AutonBlueDuck extends OpMode {
     @Override
     public void init_loop() {
         // Get current detection every loop
-        this.bonusLevel = this.tensorFlow.getDeterminedLevelBlue();
+        this.level = this.vision.currentDetermination();
 
-        if (this.bonusLevel != null) {
+        if (this.level != null) {
             // Add to value if detected
-            switch (this.bonusLevel) {
+            switch (this.level) {
                 case LEVEL_ONE:
                     this.one++;
                     targetLevel = 1;
@@ -82,8 +79,7 @@ public class AutonBlueDuck extends OpMode {
                     break;
             }
 
-            telemetry.addData("Current detected level: ", this.bonusLevel);
-            telemetry.addData("Number of removed recognitions this run: ", this.tensorFlow.getNumRemovedRecognitions());
+            telemetry.addData("Current detected level: ", this.level);
 
             telemetry.addLine("-------------------------------------");
             telemetry.addLine("Overall detection numbers: (PRESS A TO RESET)");
@@ -102,18 +98,18 @@ public class AutonBlueDuck extends OpMode {
     public void loop() {
         switch (caseNum) {
             case 0:
-                this.tensorFlow.stop();
+                this.vision.stop();
                 bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 caseNum++;
                 break;
 
             case 1:
-                int target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 10));
+                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 6));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 10)) {
+                if (target >= (int) (TICKS_PER_INCH * 6)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -138,11 +134,11 @@ public class AutonBlueDuck extends OpMode {
                 break;
 
             case 3:
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 22));
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 32));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 22)) {
+                if (target >= (int) (TICKS_PER_INCH * 32)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -154,7 +150,7 @@ public class AutonBlueDuck extends OpMode {
                 break;
 
             case 4:
-                bot.runDuckSpinner(0.5);
+                bot.runDuckSpinner(-0.5);
 
                 if(timer.seconds() > 4){
                     bot.runDuckSpinner(0.0);
@@ -166,11 +162,11 @@ public class AutonBlueDuck extends OpMode {
                 break;
 
             case 5:
-                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 26));
+                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 47));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 26)) {
+                if (target >= (int) (TICKS_PER_INCH * 47)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -180,12 +176,25 @@ public class AutonBlueDuck extends OpMode {
 
                 break;
 
+            case 6:
+                turn = 270;
+
+                // if the heading is at or greater than the target stop the bot
+                if (bot.adjustHeading(turn, 0.5, imu)) {
+                    bot.stop();
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    caseNum++;
+                }
+
+                break;
+
             case 7:
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 40));
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 29));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 40)) {
+                if (target >= (int) (TICKS_PER_INCH * 29)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -255,18 +264,36 @@ public class AutonBlueDuck extends OpMode {
                 break;
 
             case 10:
+                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 27));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if(distSensor.getDistance(DistanceUnit.CM) <= 30){
-                    bot.stop();
+                if (target >= (int) (TICKS_PER_INCH * 27)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
                     caseNum++;
                 }
 
                 break;
 
             case 11:
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 100));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(1.0, 1.0);
+
+                if (target >= (int) (TICKS_PER_INCH * 100)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
+                    caseNum++;
+                }
+
+                break;
+
+            case 12:
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);

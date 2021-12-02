@@ -14,11 +14,11 @@ import java.util.List;
 
 public class VisionWrapper {
     private OpenCvWebcam webcam;
-    private GripPipeline grip;
+    private GripPipelineNoColor grip;
 
-    private static final int CAMERA_WIDTH = 1280;
+    private static final int CAMERA_WIDTH = 360;
 
-    public VisionWrapper(){ grip = new GripPipeline(); }
+    public VisionWrapper(){ grip = new GripPipelineNoColor(); }
 
     public void init(HardwareMap hmap){ initVision(hmap); }
 
@@ -41,8 +41,8 @@ public class VisionWrapper {
     }
 
     private DetectionLevel updateDetermination(){
-        List<MatOfPoint> contours = grip.filterContoursOutput();
-        
+        List<MatOfPoint> contours = grip.findContoursOutput();
+
         if(contours.size() == 0){
             return DetectionLevel.LEVEL_THREE;
         }else{

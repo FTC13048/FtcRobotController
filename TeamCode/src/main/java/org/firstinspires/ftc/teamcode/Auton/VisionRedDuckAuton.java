@@ -105,11 +105,11 @@ public class VisionRedDuckAuton extends OpMode {
                 break;
 
             case 1:
-                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 12));
+                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 9));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 12)) {
+                if (target >= (int) (TICKS_PER_INCH * 9)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

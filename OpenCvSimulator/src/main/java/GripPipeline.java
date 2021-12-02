@@ -40,36 +40,36 @@ public class GripPipeline extends OpenCvPipeline {
 	 */
 	public void process(Mat source0) {
 		// Step CV_resize0:
-		//Mat cvResizeSrc = source0;
-		//Size cvResizeDsize = new Size(0, 0);
-		//double cvResizeFx = 0.25;
-		//double cvResizeFy = 0.25;
-		//int cvResizeInterpolation = Imgproc.INTER_LINEAR;
-		//cvResize(cvResizeSrc, cvResizeDsize, cvResizeFx, cvResizeFy, cvResizeInterpolation, cvResizeOutput);
+		Mat cvResizeSrc = source0;
+		Size cvResizeDsize = new Size(0, 0);
+		double cvResizeFx = 0.25;
+		double cvResizeFy = 0.25;
+		int cvResizeInterpolation = Imgproc.INTER_LINEAR;
+		cvResize(cvResizeSrc, cvResizeDsize, cvResizeFx, cvResizeFy, cvResizeInterpolation, cvResizeOutput);
 
 		// Step Blur0:
-		Mat blurInput = source0;
+		Mat blurInput = cvResizeOutput;
 		BlurType blurType = BlurType.get("Gaussian Blur");
-		double blurRadius = 10.0;
+		double blurRadius = 2.7027027027027035;
 		blur(blurInput, blurType, blurRadius, blurOutput);
 
 		// Step CV_cvtColor0:
 		Mat cvCvtcolorSrc = blurOutput;
-		int cvCvtcolorCode = Imgproc.COLOR_Lab2LBGR ;
+		int cvCvtcolorCode = Imgproc.COLOR_BGR2HSV;
 		cvCvtcolor(cvCvtcolorSrc, cvCvtcolorCode, cvCvtcolorOutput);
 
 		// Step HSV_Threshold0:
 		Mat hsvThresholdInput = cvCvtcolorOutput;
-		double[] hsvThresholdHue = {100, 250};
-		double[] hsvThresholdSaturation = {200, 256};
-		double[] hsvThresholdValue = {140, 256};
+		double[] hsvThresholdHue = {8.093525179856115, 158.78787878787878};
+		double[] hsvThresholdSaturation = {0.0, 177.72727272727275};
+		double[] hsvThresholdValue = {0.0, 255.0};
 		hsvThreshold(hsvThresholdInput, hsvThresholdHue, hsvThresholdSaturation, hsvThresholdValue, hsvThresholdOutput);
-/*
+
 		// Step CV_erode0:
 		Mat cvErodeSrc = hsvThresholdOutput;
 		Mat cvErodeKernel = new Mat();
 		Point cvErodeAnchor = new Point(-1, -1);
-		double cvErodeIterations = 3.0;
+		double cvErodeIterations = 2.0;
 		int cvErodeBordertype = Core.BORDER_CONSTANT;
 		Scalar cvErodeBordervalue = new Scalar(-1);
 		cvErode(cvErodeSrc, cvErodeKernel, cvErodeAnchor, cvErodeIterations, cvErodeBordertype, cvErodeBordervalue, cvErodeOutput);
@@ -78,7 +78,7 @@ public class GripPipeline extends OpenCvPipeline {
 		Mat cvDilateSrc = cvErodeOutput;
 		Mat cvDilateKernel = new Mat();
 		Point cvDilateAnchor = new Point(-1, -1);
-		double cvDilateIterations = 10.0;
+		double cvDilateIterations = 2.0;
 		int cvDilateBordertype = Core.BORDER_CONSTANT;
 		Scalar cvDilateBordervalue = new Scalar(-1);
 		cvDilate(cvDilateSrc, cvDilateKernel, cvDilateAnchor, cvDilateIterations, cvDilateBordertype, cvDilateBordervalue, cvDilateOutput);
@@ -89,20 +89,20 @@ public class GripPipeline extends OpenCvPipeline {
 		findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
 
 		// Step Filter_Contours0:
-		//ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
-		//double filterContoursMinArea = 200.0;
-		//double filterContoursMinPerimeter = 0;
-		//double filterContoursMinWidth = 0;
-		//double filterContoursMaxWidth = 1000;
-		//double filterContoursMinHeight = 0;
-		//double filterContoursMaxHeight = 1000;
-		//double[] filterContoursSolidity = {0.0, 100};
-		//double filterContoursMaxVertices = 1000000;
-		//double filterContoursMinVertices = 0;
-		//double filterContoursMinRatio = 0;
-		//double filterContoursMaxRatio = 1000;
-		//filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
-*/
+		ArrayList<MatOfPoint> filterContoursContours = findContoursOutput;
+		double filterContoursMinArea = 200.0;
+		double filterContoursMinPerimeter = 0.0;
+		double filterContoursMinWidth = 0.0;
+		double filterContoursMaxWidth = 1000.0;
+		double filterContoursMinHeight = 0.0;
+		double filterContoursMaxHeight = 1000.0;
+		double[] filterContoursSolidity = {0.0, 100};
+		double filterContoursMaxVertices = 1000000.0;
+		double filterContoursMinVertices = 0.0;
+		double filterContoursMinRatio = 0.0;
+		double filterContoursMaxRatio = 1000.0;
+		filterContours(filterContoursContours, filterContoursMinArea, filterContoursMinPerimeter, filterContoursMinWidth, filterContoursMaxWidth, filterContoursMinHeight, filterContoursMaxHeight, filterContoursSolidity, filterContoursMaxVertices, filterContoursMinVertices, filterContoursMinRatio, filterContoursMaxRatio, filterContoursOutput);
+
 	}
 
 	/**
@@ -190,7 +190,7 @@ public class GripPipeline extends OpenCvPipeline {
 	@Override
 	public Mat processFrame(Mat input) {
 		this.process(input);
-		return this.cvDilateOutput();
+		return this.cvCvtcolorOutput();
 	}
 
 	/**

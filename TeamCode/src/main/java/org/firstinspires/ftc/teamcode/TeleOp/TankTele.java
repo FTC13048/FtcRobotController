@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
-@TeleOp(name = "TankDrive", group = "Teleop")
+@TeleOp(name = "TankDrive", group = "TeleOp")
 
 public class TankTele extends OpMode {
     private Robot bot;

@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.VisionStuff;
+package org.firstinspires.ftc.teamcode.Testing;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-@TeleOp(name = "vision with camera", group = "")
+import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
+
+@TeleOp(name = "vision test", group = "testing")
 
 public class VisionTest extends OpMode {
     private VisionWrapper vision;
