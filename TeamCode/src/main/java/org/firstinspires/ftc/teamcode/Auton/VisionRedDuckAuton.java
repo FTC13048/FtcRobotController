@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Auton;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,7 +8,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
-import org.firstinspires.ftc.teamcode.RobVisionStuff.TFWrapperRob;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
 @Autonomous(name = "Red Duck Warehouse", group = "Warehouse")
@@ -86,7 +84,8 @@ public class VisionRedDuckAuton extends OpMode {
     }
 
     @Override
-    public void start() {    }
+    public void start() {
+    }
 
     @Override
     public void loop() {
@@ -132,7 +131,7 @@ public class VisionRedDuckAuton extends OpMode {
             case 3:
                 bot.runDuckSpinner(0.5);
 
-                if(timer.seconds() > 4){
+                if (timer.seconds() > 4) {
                     bot.runDuckSpinner(0.0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -186,10 +185,10 @@ public class VisionRedDuckAuton extends OpMode {
                 break;
 
             case 7:
-                if(this.level == VisionWrapper.DetectionLevel.LEVEL_ONE){
+                if (this.level == VisionWrapper.DetectionLevel.LEVEL_ONE) {
                     bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
 
-                    if(bot.linSlide.getCurrentPosition() <= bot.FIRST_LEVEL){
+                    if (bot.linSlide.getCurrentPosition() <= bot.FIRST_LEVEL) {
                         bot.linSlide.setPower(0.0);
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -199,10 +198,10 @@ public class VisionRedDuckAuton extends OpMode {
                     }
                 }
 
-                if(this.level == VisionWrapper.DetectionLevel.LEVEL_TWO){
+                if (this.level == VisionWrapper.DetectionLevel.LEVEL_TWO) {
                     bot.linSlide.setTargetPosition(bot.SECOND_LEVEL);
 
-                    if(bot.linSlide.getCurrentPosition() <= bot.SECOND_LEVEL){
+                    if (bot.linSlide.getCurrentPosition() <= bot.SECOND_LEVEL) {
                         bot.linSlide.setPower(0.0);
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -212,10 +211,10 @@ public class VisionRedDuckAuton extends OpMode {
                     }
                 }
 
-                if(this.level == VisionWrapper.DetectionLevel.LEVEL_THREE){
+                if (this.level == VisionWrapper.DetectionLevel.LEVEL_THREE) {
                     bot.linSlide.setTargetPosition(bot.THIRD_LEVEL);
 
-                    if(bot.linSlide.getCurrentPosition() <= bot.THIRD_LEVEL){
+                    if (bot.linSlide.getCurrentPosition() <= bot.THIRD_LEVEL) {
                         bot.linSlide.setPower(0.0);
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -235,7 +234,7 @@ public class VisionRedDuckAuton extends OpMode {
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
 
-                if(timer.seconds() > 3){
+                if (timer.seconds() > 3) {
                     bot.cargoFlipper.setPosition(0.1);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -249,7 +248,7 @@ public class VisionRedDuckAuton extends OpMode {
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 35)){
+                if (target >= (int) (TICKS_PER_INCH * 35)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -264,7 +263,7 @@ public class VisionRedDuckAuton extends OpMode {
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(1.0, 1.0);
 
-                if (target >= (int) (TICKS_PER_INCH * 90)){
+                if (target >= (int) (TICKS_PER_INCH * 90)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -279,7 +278,7 @@ public class VisionRedDuckAuton extends OpMode {
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);
 
-                if(bot.linSlide.getCurrentPosition() >= 0){
+                if (bot.linSlide.getCurrentPosition() >= 0) {
                     bot.linSlide.setPower(0.0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
