@@ -18,18 +18,18 @@ public class VisionRedDuckAuton extends OpMode {
     private static final double TICKS_PER_REV = 403.9;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
 
-    // The bot, gyro (with parameters), and distance sensor objects
+    // The bot, gyro (with parameters), and vision objects
     private Robot bot;
     private BNO055IMU imu;
     private BNO055IMU.Parameters parameters;
     private VisionWrapper vision;
     private VisionWrapper.DetectionLevel level;
 
-    // Variable that keeps track of where in the loop you are
+    // Variable that keeps track of where in the loop you are, a timer, and variables to keep
+    //    track of the detection level
     private int caseNum = 0;
     private ElapsedTime timer;
     private int one, two, three;
-    private int targetLevel;
 
     @Override
     public void init() {
@@ -39,7 +39,7 @@ public class VisionRedDuckAuton extends OpMode {
         this.bot.initBot();
         initImu();
 
-        // initialize the ai object recognition
+        // initialize the vision detection
         vision = new VisionWrapper();
         vision.init(hardwareMap);
         this.level = VisionWrapper.DetectionLevel.UNKNOWN; // immediately overwritten but safer without null
@@ -64,15 +64,12 @@ public class VisionRedDuckAuton extends OpMode {
             switch (this.level) {
                 case LEVEL_ONE:
                     this.one++;
-                    targetLevel = 1;
                     break;
                 case LEVEL_TWO:
                     this.two++;
-                    targetLevel = 2;
                     break;
                 case LEVEL_THREE:
                     this.three++;
-                    targetLevel = 3;
                     break;
             }
 
@@ -189,7 +186,7 @@ public class VisionRedDuckAuton extends OpMode {
                 break;
 
             case 7:
-                if(targetLevel == 1){
+                if(this.level == VisionWrapper.DetectionLevel.LEVEL_ONE){
                     bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
 
                     if(bot.linSlide.getCurrentPosition() <= bot.FIRST_LEVEL){
@@ -202,7 +199,7 @@ public class VisionRedDuckAuton extends OpMode {
                     }
                 }
 
-                if(targetLevel == 2){
+                if(this.level == VisionWrapper.DetectionLevel.LEVEL_TWO){
                     bot.linSlide.setTargetPosition(bot.SECOND_LEVEL);
 
                     if(bot.linSlide.getCurrentPosition() <= bot.SECOND_LEVEL){
@@ -215,7 +212,7 @@ public class VisionRedDuckAuton extends OpMode {
                     }
                 }
 
-                if(targetLevel == 3){
+                if(this.level == VisionWrapper.DetectionLevel.LEVEL_THREE){
                     bot.linSlide.setTargetPosition(bot.THIRD_LEVEL);
 
                     if(bot.linSlide.getCurrentPosition() <= bot.THIRD_LEVEL){

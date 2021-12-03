@@ -29,7 +29,6 @@ public class AutonBlueDuckTape extends OpMode {
     private int caseNum = 0;
     private ElapsedTime timer;
     private int one, two, three;
-    private int targetLevel;
 
     @Override
     public void init() {
@@ -64,15 +63,12 @@ public class AutonBlueDuckTape extends OpMode {
             switch (this.level) {
                 case LEVEL_ONE:
                     this.one++;
-                    targetLevel = 1;
                     break;
                 case LEVEL_TWO:
                     this.two++;
-                    targetLevel = 2;
                     break;
                 case LEVEL_THREE:
                     this.three++;
-                    targetLevel = 3;
                     break;
             }
 
@@ -202,7 +198,7 @@ public class AutonBlueDuckTape extends OpMode {
                 break;
 
             case 8: // Extend the liner slide
-                if(targetLevel == 1){
+                if(this.level == VisionWrapper.DetectionLevel.LEVEL_ONE){
                     bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
 
                     if(bot.linSlide.getCurrentPosition() <= bot.FIRST_LEVEL){
@@ -215,7 +211,7 @@ public class AutonBlueDuckTape extends OpMode {
                     }
                 }
 
-                if(targetLevel == 2){
+                if(this.level == VisionWrapper.DetectionLevel.LEVEL_TWO){
                     bot.linSlide.setTargetPosition(bot.SECOND_LEVEL);
 
                     if(bot.linSlide.getCurrentPosition() <= bot.SECOND_LEVEL){
@@ -228,7 +224,7 @@ public class AutonBlueDuckTape extends OpMode {
                     }
                 }
 
-                if(targetLevel == 3){
+                if(this.level == VisionWrapper.DetectionLevel.LEVEL_THREE){
                     bot.linSlide.setTargetPosition(bot.THIRD_LEVEL);
 
                     if(bot.linSlide.getCurrentPosition() <= bot.THIRD_LEVEL){
