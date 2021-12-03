@@ -12,7 +12,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.RobVisionStuff.TFWrapperRob;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name = "Red Side Duck With Vision", group = "Vision")
+@Autonomous(name = "Red Duck Warehouse", group = "Warehouse")
 public class VisionRedDuckAuton extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 403.9;

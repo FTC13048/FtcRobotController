@@ -11,7 +11,8 @@ import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name = "Blue Side Duck Tape", group = "Autonomous")
+@Autonomous(name = "Blue Duck Storage", group = "Storage")
+
 public class AutonBlueDuckTape extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 403.9;

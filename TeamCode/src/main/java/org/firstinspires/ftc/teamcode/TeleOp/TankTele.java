@@ -80,9 +80,9 @@ public class TankTele extends OpMode {
         // if either the left or right triggers on gamepad two are pressed, run the
         //    intake at that power
         if(intake > 0.0){
-            bot.runIntake(intake);
+            bot.runIntake(1.0);
         } else if(outtake > 0.0) {
-                bot.runIntake(-outtake);
+                bot.runIntake(-1.0);
         } else{ bot.runIntake(0.0); }
 
         if(Math.abs(duck) > 0.0){ bot.runDuckSpinner(duck * 0.7); }
