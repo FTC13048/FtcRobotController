@@ -15,7 +15,8 @@ public class Robot {
     private DcMotor FR, FL, BR, BL;
 
     // Declare system motors (not driving motors)
-    public DcMotor intakeRight, intakeLeft, duckSpinner, linSlide;
+    private DcMotor intakeRight, intakeLeft, duckSpinner;
+    public DcMotor linSlide;
 
     public Servo cargoFlipper;
     private HardwareMap map;
