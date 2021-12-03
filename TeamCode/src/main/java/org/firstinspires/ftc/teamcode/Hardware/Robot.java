@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -120,7 +121,7 @@ public class Robot {
     }
 
     // Sets the mode for the motors (this is how it should be using the encoders)
-    public void setMode(DcMotor.RunMode mode){
+    public void setMode(DcMotor.RunMode mode) {
         BR.setMode(mode);
         FR.setMode(mode);
         BL.setMode(mode);
@@ -129,15 +130,22 @@ public class Robot {
 
     // Runs the intake motors at a given power, positive will suck cargo and negative will
     //     spit it out
-    public void runIntake(double power){
+    public void runIntake(double power) {
         intakeRight.setPower(power);
         intakeLeft.setPower(power);
     }
 
-    public void runDuckSpinner(double power){ duckSpinner.setPower(power); }
+    public void runDuckSpinner(double power) {
+        duckSpinner.setPower(power);
+    }
 
-    public void runLinSlide(double power){ linSlide.setPower(power); }
-    public int getLinSlidePos(){ return linSlide.getCurrentPosition(); }
+    public void runLinSlide(double power) {
+        linSlide.setPower(power);
+    }
+
+    public int getLinSlidePos() {
+        return linSlide.getCurrentPosition();
+    }
 
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
     public boolean adjustHeading(int degrees, double power, BNO055IMU imu) {
@@ -218,7 +226,7 @@ public class Robot {
         return curPos;
     }
 
-    public void wheelTelem(){
+    public void wheelTelem() {
         telemetry.addData("FR", FR.getCurrentPosition());
         telemetry.addData("FL", FL.getCurrentPosition());
         telemetry.addData("BR", BR.getCurrentPosition());
