@@ -24,8 +24,6 @@ public class AutonBlueDuckTape extends OpMode {
     private BNO055IMU.Parameters parameters;
     private VisionWrapper vision;
     private VisionWrapper.DetectionLevel level;
-    private ModernRoboticsI2cRangeSensor distSensor;
-    // private ModernRoboticsI2cRangeSensor distSensor;
 
     // Variable that keeps track of where in the loop you are
     private int caseNum = 0;
@@ -40,7 +38,6 @@ public class AutonBlueDuckTape extends OpMode {
         // initialize the robot and the onboard gyro
         this.bot.initBot();
         initImu();
-        distSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distSensor");
 
         // initialize the ai object recognition
         vision = new VisionWrapper();
