@@ -10,9 +10,8 @@ import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name = "Blue Duck Storage", group = "Storage")
-
-public class AutonBlueDuckTape extends OpMode {
+@Autonomous(name = "Red Duck Storage", group = "Storage")
+public class RedDuckStorage extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 403.9;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
@@ -90,19 +89,19 @@ public class AutonBlueDuckTape extends OpMode {
     @Override
     public void loop() {
         switch (caseNum) {
-            case 0: // Stop openCV and set the motor modes
+            case 0:
                 this.vision.stop();
                 bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 caseNum++;
                 break;
 
-            case 1: //  Drive forward 6 inches
-                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 6));
+            case 1:
+                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 9));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 6)) {
+                if (target >= (int) (TICKS_PER_INCH * 9)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -112,7 +111,50 @@ public class AutonBlueDuckTape extends OpMode {
 
                 break;
 
-            case 2: // Turn 90 degrees
+            case 2:
+                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 22));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.strafe(0.5);
+
+                if (target >= (int) (TICKS_PER_INCH * 22)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
+                    timer.reset();
+                    caseNum++;
+                }
+
+                break;
+
+            case 3:
+                bot.runDuckSpinner(0.5);
+
+                if (timer.seconds() > 4) {
+                    bot.runDuckSpinner(0.0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    caseNum++;
+                }
+
+                break;
+
+            case 4:
+                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 39));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(0.5, 0.5);
+
+                if (target >= (int) (TICKS_PER_INCH * 39)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
+                    caseNum++;
+                }
+
+                break;
+
+            case 5:
                 // the amount to turn
                 int turn = 90;
 
@@ -126,40 +168,12 @@ public class AutonBlueDuckTape extends OpMode {
 
                 break;
 
-            case 3: // Drive backward 32 inches
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 32));
+            case 6:
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 40));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 32)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
-                    timer.reset();
-                    caseNum++;
-                }
-
-                break;
-
-            case 4: // Run the duck spinner for 4 seconds
-                bot.runDuckSpinner(-0.5);
-
-                if (timer.seconds() > 4) {
-                    bot.runDuckSpinner(0.0);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    caseNum++;
-                }
-
-                break;
-
-            case 5: // Strafe right 47 inches
-                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 47));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.strafe(0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 47)) {
+                if (target >= (int) (TICKS_PER_INCH * 40)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -169,35 +183,7 @@ public class AutonBlueDuckTape extends OpMode {
 
                 break;
 
-            case 6: // Turn 270 degrees
-                turn = 270;
-
-                // if the heading is at or greater than the target stop the bot
-                if (bot.adjustHeading(turn, 0.5, imu)) {
-                    bot.stop();
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    caseNum++;
-                }
-
-                break;
-
-            case 7: // Drive backward 29 inches
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 29));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 29)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
-                    caseNum++;
-                }
-
-                break;
-
-            case 8: // Extend the liner slide
+            case 7:
                 if (this.level == VisionWrapper.DetectionLevel.LEVEL_ONE) {
                     bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
 
@@ -242,7 +228,7 @@ public class AutonBlueDuckTape extends OpMode {
 
                 break;
 
-            case 9: // Flip the basket
+            case 8:
                 telemetry.addData("case", "9");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
@@ -256,10 +242,10 @@ public class AutonBlueDuckTape extends OpMode {
 
                 break;
 
-            case 10: // Strafe right 16 inches
-                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 16));
+            case 9:
+                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 16));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
+                bot.strafe(0.5);
 
                 if (target >= (int) (TICKS_PER_INCH * 16)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
@@ -271,7 +257,7 @@ public class AutonBlueDuckTape extends OpMode {
 
                 break;
 
-            case 11: // Drive forward 40 inches
+            case 10:
                 target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 40));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(1.0, 1.0);
@@ -286,7 +272,7 @@ public class AutonBlueDuckTape extends OpMode {
 
                 break;
 
-            case 12: // Retract the linear slide and stop the bot
+            case 11:
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);

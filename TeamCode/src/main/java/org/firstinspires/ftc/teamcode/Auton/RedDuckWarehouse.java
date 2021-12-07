@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
 @Autonomous(name = "Red Duck Warehouse", group = "Warehouse")
-public class VisionRedDuckAuton extends OpMode {
+public class RedDuckWarehouse extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 403.9;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
@@ -90,14 +90,14 @@ public class VisionRedDuckAuton extends OpMode {
     @Override
     public void loop() {
         switch (caseNum) {
-            case 0:
+            case 0: // stop vision detection and reset encoders
                 this.vision.stop();
                 bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 caseNum++;
                 break;
 
-            case 1:
+            case 1: // drive forward 9 inches then reset encoders
                 int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 9));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
@@ -112,12 +112,12 @@ public class VisionRedDuckAuton extends OpMode {
 
                 break;
 
-            case 2:
-                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 25));
+            case 2: // strafe to duck spinner and reset encoders
+                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 22));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 25)) {
+                if (target >= (int) (TICKS_PER_INCH * 22)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -128,7 +128,7 @@ public class VisionRedDuckAuton extends OpMode {
 
                 break;
 
-            case 3:
+            case 3: // spin the carousel for 4 seconds and reset encoders
                 bot.runDuckSpinner(0.5);
 
                 if (timer.seconds() > 4) {
@@ -140,12 +140,12 @@ public class VisionRedDuckAuton extends OpMode {
 
                 break;
 
-            case 4:
-                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 39));
+            case 4: // drive to line up w shipping hub and reset encoders
+                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 32));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 39)) {
+                if (target >= (int) (TICKS_PER_INCH * 32)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -155,7 +155,7 @@ public class VisionRedDuckAuton extends OpMode {
 
                 break;
 
-            case 5:
+            case 5: // turn to 90 degrees from original position to line up lin slide w hub
                 // the amount to turn
                 int turn = 90;
 
@@ -169,7 +169,7 @@ public class VisionRedDuckAuton extends OpMode {
 
                 break;
 
-            case 6:
+            case 6: // drive to hub and reset encoders
                 target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 40));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
@@ -184,7 +184,7 @@ public class VisionRedDuckAuton extends OpMode {
 
                 break;
 
-            case 7:
+            case 7: // depending on previous detection raise the slide to the necessary height
                 if (this.level == VisionWrapper.DetectionLevel.LEVEL_ONE) {
                     bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
 
@@ -229,7 +229,7 @@ public class VisionRedDuckAuton extends OpMode {
 
                 break;
 
-            case 8:
+            case 8: // flip the servo and after 3 seconds put it back into collect position
                 telemetry.addData("case", "9");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
@@ -243,7 +243,7 @@ public class VisionRedDuckAuton extends OpMode {
 
                 break;
 
-            case 9:
+            case 9: // strafe to line up for parking in the warehouse
                 target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 35));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
@@ -258,7 +258,7 @@ public class VisionRedDuckAuton extends OpMode {
 
                 break;
 
-            case 10:
+            case 10:// drive forward and park in the warehouse
                 target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 90));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(1.0, 1.0);
@@ -273,7 +273,7 @@ public class VisionRedDuckAuton extends OpMode {
 
                 break;
 
-            case 11:
+            case 11: // retract linear slide
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);
@@ -293,6 +293,7 @@ public class VisionRedDuckAuton extends OpMode {
     }
 
     public void initImu() {
+        // initializes the imu with given parameters
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         parameters = new BNO055IMU.Parameters();
 

@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
 @Autonomous(name = "Blue Duck Warehouse", group = "Warehouse")
-public class VisionBlueDuckAuton extends OpMode {
+public class BlueDuckWarehouse extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 403.9;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
@@ -36,7 +36,7 @@ public class VisionBlueDuckAuton extends OpMode {
         this.bot.initBot();
         initImu();
 
-        // initialize the ai object recognition
+        // initialize the vision detection
         vision = new VisionWrapper();
         vision.init(hardwareMap);
         this.level = VisionWrapper.DetectionLevel.UNKNOWN; // immediately overwritten but safer without null
@@ -73,7 +73,7 @@ public class VisionBlueDuckAuton extends OpMode {
             telemetry.addData("Current detected level: ", this.level);
 
             telemetry.addLine("-------------------------------------");
-            telemetry.addLine("Overall detection numbers: (PRESS A TO RESET)");
+            telemetry.addLine("Overall detection numbers:");
             telemetry.addData("LEVEL 1: ", this.one);
             telemetry.addData("LEVEL 2: ", this.two);
             telemetry.addData("LEVEL 3: ", this.three);
