@@ -169,21 +169,6 @@ public class RedDuckStorage extends OpMode {
                 break;
 
             case 6:
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 40));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 40)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
-                    caseNum++;
-                }
-
-                break;
-
-            case 7:
                 if (this.level == VisionWrapper.DetectionLevel.LEVEL_ONE) {
                     bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
 
@@ -228,7 +213,35 @@ public class RedDuckStorage extends OpMode {
 
                 break;
 
+            case 7:
+                telemetry.addData("case", "7");
+                telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
+                bot.cargoFlipper.setPosition(0.3);
+
+                if (timer.seconds() > 3) {
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    caseNum++;
+                }
+
+                break;
+
             case 8:
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 40));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(0.5, 0.5);
+
+                if (target >= (int) (TICKS_PER_INCH * 40)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
+                    caseNum++;
+                }
+
+                break;
+
+            case 9:
                 telemetry.addData("case", "9");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
@@ -242,7 +255,7 @@ public class RedDuckStorage extends OpMode {
 
                 break;
 
-            case 9:
+            case 10:
                 target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 16));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
@@ -257,7 +270,7 @@ public class RedDuckStorage extends OpMode {
 
                 break;
 
-            case 10:
+            case 11:
                 target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 40));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(1.0, 1.0);
@@ -272,7 +285,7 @@ public class RedDuckStorage extends OpMode {
 
                 break;
 
-            case 11:
+            case 12:
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);
