@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name = "Red Hub No Duck", group = "Hub")
+@Autonomous(name = "Blue Hub No Duck", group = "Hub")
 
 public class RedHub extends OpMode {
     // Figure out ticks per revolution and ticks per inch
@@ -98,11 +98,11 @@ public class RedHub extends OpMode {
                 break;
 
             case 1: //  Drive forward 6 inches
-                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 29));
+                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 6));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 29)) {
+                if (target >= (int) (TICKS_PER_INCH * 6)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -114,7 +114,7 @@ public class RedHub extends OpMode {
 
             case 2: // Turn 90 degrees
                 // the amount to turn
-                int turn = 90;
+                int turn = 180;
 
                 // if the heading is at or greater than the target stop the bot
                 if (bot.adjustHeading(turn, 0.5, imu)) {
@@ -126,7 +126,22 @@ public class RedHub extends OpMode {
 
                 break;
 
-            case 3: // Extend the liner slide
+            case 3:
+                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 25));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(0.5, 0.5);
+
+                if (target >= (int) (TICKS_PER_INCH * 25)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
+                    caseNum++;
+                }
+
+                break;
+
+            case 4: // Extend the liner slide
                 if (this.level == VisionWrapper.DetectionLevel.LEVEL_ONE) {
                     bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
 
@@ -137,7 +152,7 @@ public class RedHub extends OpMode {
                         bot.stop();
                         timer.reset();
                         caseNum++;
-                }
+                    }
                 }
 
                 if (this.level == VisionWrapper.DetectionLevel.LEVEL_TWO) {
@@ -171,7 +186,35 @@ public class RedHub extends OpMode {
 
                 break;
 
-            case 4: // Flip the basket
+            case 5:
+                telemetry.addData("case", "5");
+                telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
+                bot.cargoFlipper.setPosition(0.4);
+
+                if (timer.seconds() > 3) {
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    caseNum++;
+                }
+
+                break;
+
+            case 6:
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 23));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(0.5, 0.5);
+
+                if (target >= (int) (TICKS_PER_INCH * 23)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
+                    caseNum++;
+                }
+
+                break;
+
+            case 7: // Flip the basket
                 telemetry.addData("case", "9");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
@@ -185,13 +228,42 @@ public class RedHub extends OpMode {
 
                 break;
 
-            case 5: // Retract the linear slide and stop the bot
+            case 8: // Retract the linear slide and stop the bot
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);
 
                 if (bot.linSlide.getCurrentPosition() >= 0) {
                     bot.linSlide.setPower(0.0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
+                    caseNum++;
+                }
+
+                break;
+
+            case 9:
+                // the amount to turn
+                turn = 270;
+
+                // if the heading is at or greater than the target stop the bot
+                if (bot.adjustHeading(turn, 0.5, imu)) {
+                    bot.stop();
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    caseNum++;
+                }
+
+                break;
+
+            case 10:
+                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 70));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(1.0, 1.0);
+
+                if (target >= (int) (TICKS_PER_INCH * 70)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();

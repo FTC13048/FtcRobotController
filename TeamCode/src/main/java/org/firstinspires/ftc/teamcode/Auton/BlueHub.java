@@ -141,22 +141,7 @@ public class BlueHub extends OpMode {
 
                 break;
 
-            case 4:
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 23));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 23)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
-                    caseNum++;
-                }
-
-                break;
-
-            case 5: // Extend the liner slide
+            case 4: // Extend the liner slide
                 if (this.level == VisionWrapper.DetectionLevel.LEVEL_ONE) {
                     bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
 
@@ -201,7 +186,35 @@ public class BlueHub extends OpMode {
 
                 break;
 
-            case 6: // Flip the basket
+            case 5:
+                telemetry.addData("case", "5");
+                telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
+                bot.cargoFlipper.setPosition(0.4);
+
+                if (timer.seconds() > 3) {
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    caseNum++;
+                }
+
+                break;
+
+            case 6:
+                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 23));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(0.5, 0.5);
+
+                if (target >= (int) (TICKS_PER_INCH * 23)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
+                    caseNum++;
+                }
+
+                break;
+
+            case 7: // Flip the basket
                 telemetry.addData("case", "9");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
@@ -215,7 +228,7 @@ public class BlueHub extends OpMode {
 
                 break;
 
-            case 7: // Retract the linear slide and stop the bot
+            case 8: // Retract the linear slide and stop the bot
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.linSlide.setPower(0.5);
@@ -230,7 +243,7 @@ public class BlueHub extends OpMode {
 
                 break;
 
-            case 8:
+            case 9:
                 // the amount to turn
                 turn = 270;
 
@@ -244,7 +257,7 @@ public class BlueHub extends OpMode {
 
                 break;
 
-            case 9:
+            case 10:
                 target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 70));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(1.0, 1.0);
