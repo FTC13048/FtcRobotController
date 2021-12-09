@@ -72,7 +72,39 @@ public class VisionWrapper {
         }
     }
 
+    // updates which level the camera sees the duck at
+    private DetectionLevel updateDeterminationReverse(){
+        // get the list of contours from the pipeline
+        List<MatOfPoint> contours = grip.findContoursOutput();
+
+        // if there are no contours found, duck is out of camera frame meaning level 3
+        if(contours.size() == 0){
+            return DetectionLevel.LEVEL_ONE;
+        }else{
+            // find the average center of mass on the screen and if it is greater than 1/2 the
+            //    width, it is level 2 and level 1 if less than half the width
+            double areaSum = 0;
+            double xAvg = 0;
+
+            for (int i = 0; i < contours.size(); i++) {
+                Rect boundingRect = Imgproc.boundingRect(contours.get(i));
+                double areaTotal = boundingRect.area();
+                areaSum = areaSum + areaTotal;
+                xAvg = xAvg + areaTotal * (boundingRect.x + boundingRect.width / 2d);
+            }
+            xAvg = xAvg / areaSum;
+
+            if (xAvg > CAMERA_WIDTH/2) {
+                return DetectionLevel.LEVEL_TWO;
+            } else {
+                return DetectionLevel.LEVEL_THREE;
+            }
+        }
+    }
+
     public DetectionLevel currentDetermination(){ return this.updateDetermination(); }
+
+    public DetectionLevel currentDeterminationReverse(){ return this.updateDeterminationReverse(); }
 
     // stops the camera
     public void stop(){ webcam.stopStreaming(); }
