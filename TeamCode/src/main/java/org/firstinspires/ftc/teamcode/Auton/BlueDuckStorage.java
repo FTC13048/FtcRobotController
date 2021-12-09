@@ -230,7 +230,7 @@ public class BlueDuckStorage extends OpMode {
             case 8:
                 telemetry.addData("case", "8");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
-                bot.cargoFlipper.setPosition(0.3);
+                bot.cargoFlipper.setPosition(0.4);
 
                 if (timer.seconds() > 3) {
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
