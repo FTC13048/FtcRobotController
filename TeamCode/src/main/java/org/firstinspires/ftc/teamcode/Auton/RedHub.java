@@ -137,7 +137,7 @@ public class RedHub extends OpMode {
                         bot.stop();
                         timer.reset();
                         caseNum++;
-                    }
+                }
                 }
 
                 if (this.level == VisionWrapper.DetectionLevel.LEVEL_TWO) {

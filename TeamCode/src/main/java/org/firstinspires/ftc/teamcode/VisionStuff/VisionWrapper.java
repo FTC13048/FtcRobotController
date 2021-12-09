@@ -95,9 +95,9 @@ public class VisionWrapper {
             xAvg = xAvg / areaSum;
 
             if (xAvg > CAMERA_WIDTH/2) {
-                return DetectionLevel.LEVEL_TWO;
-            } else {
                 return DetectionLevel.LEVEL_THREE;
+            } else {
+                return DetectionLevel.LEVEL_TWO;
             }
         }
     }
