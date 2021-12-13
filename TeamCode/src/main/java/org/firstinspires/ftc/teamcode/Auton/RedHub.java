@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name = "Blue Hub No Duck", group = "Hub")
+@Autonomous(name = "Red Hub No Duck", group = "Hub")
 
 public class RedHub extends OpMode {
     // Figure out ticks per revolution and ticks per inch

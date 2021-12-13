@@ -14,11 +14,11 @@ import java.util.List;
 
 public class VisionWrapper {
     private OpenCvWebcam webcam;
-    private GripPipelineNoColor grip;
+    private GripPipeline grip;
 
-    private static final int CAMERA_WIDTH = 360;
+    private static final int CAMERA_WIDTH = 320;
 
-    public VisionWrapper(){ grip = new GripPipelineNoColor(); }
+    public VisionWrapper(){ grip = new GripPipeline(); }
 
     public void init(HardwareMap hmap){ initVision(hmap); }
 
