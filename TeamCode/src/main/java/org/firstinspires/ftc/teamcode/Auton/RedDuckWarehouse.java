@@ -228,15 +228,12 @@ public class RedDuckWarehouse extends OpMode {
                 break;
 
             case 8: // drive to hub and reset encoders
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 40));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 40)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
+                if(bot.getDistanceCM() <= 12.0){
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     timer.reset();
                     caseNum++;
                 }

@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Testing;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
@@ -11,7 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.MiniPID;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
-//@Autonomous(name = "PIDTester", group = "tester")
+@Autonomous(name = "PIDTester", group = "tester")
+@Disabled
 
 public class PIDTester extends OpMode {
     // Figure out ticks per revolution and ticks per inch

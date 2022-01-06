@@ -3,13 +3,16 @@ package org.firstinspires.ftc.teamcode.VisionStuff;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.MatOfPoint;
+import org.opencv.core.Point;
 import org.opencv.core.Rect;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.imgproc.Moments;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvWebcam;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VisionWrapper {
@@ -34,7 +37,7 @@ public class VisionWrapper {
         webcam.openCameraDeviceAsync(new OpenCvCamera.AsyncCameraOpenListener() {
             @Override
             public void onOpened() {
-                webcam.startStreaming(1280, 720, OpenCvCameraRotation.UPRIGHT);
+                webcam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT);
             }
 
             @Override
@@ -45,7 +48,7 @@ public class VisionWrapper {
     // updates which level the camera sees the duck at
     private DetectionLevel updateDetermination(){
         // get the list of contours from the pipeline
-        List<MatOfPoint> contours = grip.findContoursOutput();
+        List<MatOfPoint> contours = new ArrayList<>(grip.findContoursOutput());
 
         // if there are no contours found, duck is out of camera frame meaning level 3
         if(contours.size() == 0){
@@ -53,18 +56,17 @@ public class VisionWrapper {
         }else{
             // find the average center of mass on the screen and if it is greater than 1/2 the
             //    width, it is level 2 and level 1 if less than half the width
-            double areaSum = 0;
-            double xAvg = 0;
+            double xSum = 0;
 
-            for (int i = 0; i < contours.size(); i++) {
-                Rect boundingRect = Imgproc.boundingRect(contours.get(i));
-                double areaTotal = boundingRect.area();
-                areaSum = areaSum + areaTotal;
-                xAvg = xAvg + areaTotal * (boundingRect.x + boundingRect.width / 2d);
+            for (MatOfPoint point : contours) {
+                Moments moments = Imgproc.moments(point);
+
+                xSum += moments.get_m10() / moments.get_m00();
             }
-            xAvg = xAvg / areaSum;
 
-            if (xAvg > CAMERA_WIDTH/2) {
+            xSum /= contours.size();
+
+            if (xSum > CAMERA_WIDTH/2) {
                 return DetectionLevel.LEVEL_TWO;
             } else {
                 return DetectionLevel.LEVEL_ONE;
@@ -75,7 +77,7 @@ public class VisionWrapper {
     // updates which level the camera sees the duck at
     private DetectionLevel updateDeterminationReverse(){
         // get the list of contours from the pipeline
-        List<MatOfPoint> contours = grip.findContoursOutput();
+        List<MatOfPoint> contours = new ArrayList<>(grip.findContoursOutput());
 
         // if there are no contours found, duck is out of camera frame meaning level 3
         if(contours.size() == 0){
@@ -83,18 +85,17 @@ public class VisionWrapper {
         }else{
             // find the average center of mass on the screen and if it is greater than 1/2 the
             //    width, it is level 2 and level 1 if less than half the width
-            double areaSum = 0;
-            double xAvg = 0;
+            double xSum = 0;
 
-            for (int i = 0; i < contours.size(); i++) {
-                Rect boundingRect = Imgproc.boundingRect(contours.get(i));
-                double areaTotal = boundingRect.area();
-                areaSum = areaSum + areaTotal;
-                xAvg = xAvg + areaTotal * (boundingRect.x + boundingRect.width / 2d);
+            for (MatOfPoint point : contours) {
+                Moments moments = Imgproc.moments(point);
+
+                xSum += moments.get_m10() / moments.get_m00();
             }
-            xAvg = xAvg / areaSum;
 
-            if (xAvg > CAMERA_WIDTH/2) {
+            xSum /= contours.size();
+
+            if (xSum > CAMERA_WIDTH/2) {
                 return DetectionLevel.LEVEL_THREE;
             } else {
                 return DetectionLevel.LEVEL_TWO;

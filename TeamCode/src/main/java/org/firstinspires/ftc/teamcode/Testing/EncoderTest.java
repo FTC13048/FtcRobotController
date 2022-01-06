@@ -1,19 +1,24 @@
 package org.firstinspires.ftc.teamcode.Testing;
 
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
 @TeleOp(name = "EncoderTest", group = "testing")
 
 public class EncoderTest extends OpMode {
     private Robot bot;
+    private ModernRoboticsI2cRangeSensor distSensor;
 
     @Override
     // Initialize the robot (this is what happens when the play button is pressed)
     public void init() {
         bot = new Robot(hardwareMap, telemetry, false);
         bot.initBot();
+        distSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distSensor");
         telemetry.addData("Bot", "Initialized");
     }
 
@@ -31,6 +36,8 @@ public class EncoderTest extends OpMode {
         telemetry.addData("intake left", bot.intakeLeft.getCurrentPosition());
         telemetry.addData("intake right", bot.intakeRight.getCurrentPosition());
         telemetry.addData("duck spinner", bot.duckSpinner.getCurrentPosition());
+
+        telemetry.addData("distance", distSensor.getDistance(DistanceUnit.CM));
         telemetry.update();
     }
 

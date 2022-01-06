@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Hardware;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -10,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class Robot {
     // Declare driving motors
@@ -19,6 +21,8 @@ public class Robot {
     public DcMotor intakeRight, intakeLeft, duckSpinner, linSlide;
 
     public Servo cargoFlipper;
+    private ModernRoboticsI2cRangeSensor distSensor;
+
     private HardwareMap map;
     private Telemetry telemetry;
     private boolean isAuton;
@@ -48,6 +52,7 @@ public class Robot {
         linSlide = map.get(DcMotor.class, "linSlide");
 
         cargoFlipper = map.get(Servo.class, "cargoFlipper");
+        distSensor = map.get(ModernRoboticsI2cRangeSensor.class, "distSensor");
 
         // Set motor direction according to their orientation on the bot
         //   motors on the left side will be reversed so that their directions coorespond to
@@ -67,10 +72,10 @@ public class Robot {
         linSlide.setDirection(DcMotorSimple.Direction.FORWARD);
 
         // Set all system motors to run using encoders
-        intakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        intakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        duckSpinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        intakeLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        duckSpinner.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        linSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
         linSlide.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         duckSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -83,6 +88,13 @@ public class Robot {
             FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         }
+    }
+
+    public void start(){
+        intakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        duckSpinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     // Sets the strafing power for the robot (negative number will strafe left and positive
@@ -134,6 +146,20 @@ public class Robot {
         intakeLeft.setPower(power);
     }
 
+    public boolean setLinSlidePos(int numTicks){
+        linSlide.setTargetPosition(numTicks);
+        linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        runLinSlide(0.4);
+
+        if(Math.abs(linSlide.getCurrentPosition() - numTicks) <= 5){
+            runLinSlide(0.0);
+            linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            return true;
+        }
+
+        return false;
+    }
+
     public void runDuckSpinner(double power) {
         duckSpinner.setPower(power);
     }
@@ -145,6 +171,8 @@ public class Robot {
     public int getLinSlidePos() {
         return linSlide.getCurrentPosition();
     }
+
+    public double getDistanceCM(){ return distSensor.getDistance(DistanceUnit.CM); }
 
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
     public boolean adjustHeading(int degrees, double power, BNO055IMU imu) {

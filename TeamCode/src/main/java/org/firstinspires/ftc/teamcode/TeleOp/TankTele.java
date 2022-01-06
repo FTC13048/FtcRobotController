@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
@@ -10,12 +11,17 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
 public class TankTele extends OpMode {
     private Robot bot;
+    private ElapsedTime timer;
+
+    private boolean automateSlide = false;
+    private boolean servoRaised = false;
 
     @Override
     // Initialize the robot (this is what happens when the play button is pressed)
     public void init() {
         bot = new Robot(hardwareMap, telemetry, false);
         bot.initBot();
+        timer = new ElapsedTime();
         telemetry.addData("Bot", "Initialized");
     }
 
@@ -23,7 +29,7 @@ public class TankTele extends OpMode {
     public void init_loop() { }
 
     @Override
-    public void start() { }
+    public void start() { bot.start(); }
 
     @Override
     // loop code to be continuously cycled through after init
@@ -55,9 +61,9 @@ public class TankTele extends OpMode {
         slidePower = Math.abs(slidePower) > 0.15 ? slidePower : 0.0;
 
         updateServo();
-        updateServoPos2();
+        updateSlide(slidePower);
         updateDriving(rightTrigger, leftTrigger, leftStickY, rightStickY);
-        updateSystem(intake, outtake, duckPower, slidePower);
+        updateSystem(intake, outtake, duckPower);
         //checkLevelThree();
         telemetry.update();
     }
@@ -76,7 +82,7 @@ public class TankTele extends OpMode {
         }
     }
 
-    public void updateSystem(double intake, double outtake, double duck, double slide){
+    public void updateSystem(double intake, double outtake, double duck){
         // if either the left or right triggers on gamepad two are pressed, run the
         //    intake at that power
         if(intake > 0.0){
@@ -87,79 +93,45 @@ public class TankTele extends OpMode {
 
         if(Math.abs(duck) > 0.0){ bot.runDuckSpinner(duck * 0.7); }
         else{ bot.runDuckSpinner(0.0); }
-
-        if(Math.abs(slide) > 0.0){ bot.runLinSlide(slide * 0.5); }
-        else{ bot.runLinSlide(0.0); }
-        telemetry.addData("slide", bot.getLinSlidePos());
     }
-
-    private boolean debounceArm = false;
-    private int armPos = -1;
 
     private void updateServo(){
         // if x is pressed, the arm can only switch position if the debounce variable if false
         //     if it is, then it will become true after the  position switches, allowing the
         //     player to hold down the button without it trying to switch positions
         if(gamepad2.x){
-            // Arm goes to pushing position if it is at rest
-            if(!debounceArm && armPos == -1){
-                bot.cargoFlipper.setPosition(0.9);
-                telemetry.addData(">", "0.9");
-                armPos *= -1;
-            }
+            servoRaised = true;
+            timer.reset();
+        }
 
-            // Arm goes to rest position if a is pressed an it is pushing
-            else if(!debounceArm && armPos == 1){
+        if(servoRaised){
+            bot.cargoFlipper.setPosition(0.9);
+            if(timer.seconds() >= 2){
                 bot.cargoFlipper.setPosition(0.1);
-                telemetry.addData(">", "0.1");
-                armPos *= -1;
+                servoRaised = false;
             }
-
-            debounceArm = true;
-        } else{ debounceArm = false; }
+        }
     }
 
-    private boolean debounceHalf = false;
-
-    private void updateServoPos2(){
+    private void updateSlide(double slide){
         // if x is pressed, the arm can only switch position if the debounce variable if false
         //     if it is, then it will become true after the  position switches, allowing the
         //     player to hold down the button without it trying to switch positions
         if(gamepad2.a){
+            automateSlide = true;
+        }
+
+        if(automateSlide){
             // Arm goes to pushing position if it is at rest
-            if(!debounceHalf){
+            if(bot.setLinSlidePos(-500)){
                 bot.cargoFlipper.setPosition(0.3);
-                telemetry.addData(">", "0.3");
+                automateSlide = false;
             }
-
-            debounceHalf = true;
-        } else{ debounceHalf = false; }
-    }
-
-    private boolean levelThree = false;
-    private int slideUpThree = -1;
-
-    private void checkLevelThree(){
-        if(gamepad2.a){
-            // Slide goes to height needed for level three if it is down
-            if(!levelThree && slideUpThree == -1){
-                bot.linSlide.setTargetPosition(bot.THIRD_LEVEL);
-                bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.linSlide.setPower(0.5);
-                armPos *= -1;
-            }
-
-            // slide goes back to rest if it is up
-            else if(!debounceArm && slideUpThree == 1){
-                bot.linSlide.setTargetPosition(0);
-                bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.linSlide.setPower(0.5);
-                armPos *= -1;
-            }
-
-            debounceArm = true;
-            bot.linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        } else{ debounceArm = false; }
+        }  else{
+            if(Math.abs(slide) > 0.0){ bot.runLinSlide(slide * 0.5); }
+            else{ bot.runLinSlide(0.0); }
+            telemetry.addData("slide", bot.getLinSlidePos());
+        }
     }
 
     @Override

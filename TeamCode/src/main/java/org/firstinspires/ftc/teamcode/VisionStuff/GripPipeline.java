@@ -26,27 +26,18 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class GripPipeline extends OpenCvPipeline {
 
 	//Outputs
-	private Mat cvResizeOutput = new Mat();
 	private Mat hslThresholdOutput = new Mat();
 	private Mat cvErodeOutput = new Mat();
 	private Mat cvDilateOutput = new Mat();
-	private Mat maskOutput = new Mat();
-	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
+	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<>();
 
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	public void process(Mat source0) {
-		// Step CV_resize0:
-		Mat cvResizeSrc = source0;
-		Size cvResizeDsize = new Size(0, 0);
-		double cvResizeFx = 0.25;
-		double cvResizeFy = 0.25;
-		int cvResizeInterpolation = Imgproc.INTER_LINEAR;
-		cvResize(cvResizeSrc, cvResizeDsize, cvResizeFx, cvResizeFy, cvResizeInterpolation, cvResizeOutput);
 
 		// Step HSL_Threshold0:
-		Mat hslThresholdInput = cvResizeOutput;
+		Mat hslThresholdInput = source0;
 		double[] hslThresholdHue = {12.52516272954282, 117.87878787878788};
 		double[] hslThresholdSaturation = {121.53776978417265, 255.0};
 		double[] hslThresholdLuminance = {22.93165467625899, 231.38888888888889};
@@ -70,24 +61,11 @@ public class GripPipeline extends OpenCvPipeline {
 		Scalar cvDilateBordervalue = new Scalar(-1);
 		cvDilate(cvDilateSrc, cvDilateKernel, cvDilateAnchor, cvDilateIterations, cvDilateBordertype, cvDilateBordervalue, cvDilateOutput);
 
-		// Step Mask0:
-		Mat maskInput = cvResizeOutput;
-		Mat maskMask = cvDilateOutput;
-		mask(maskInput, maskMask, maskOutput);
-
 		// Step Find_Contours0:
 		Mat findContoursInput = cvDilateOutput;
 		boolean findContoursExternalOnly = false;
 		findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
 
-	}
-
-	/**
-	 * This method is a generated getter for the output of a CV_resize.
-	 * @return Mat output from CV_resize.
-	 */
-	public Mat cvResizeOutput() {
-		return cvResizeOutput;
 	}
 
 	/**
@@ -112,14 +90,6 @@ public class GripPipeline extends OpenCvPipeline {
 	 */
 	public Mat cvDilateOutput() {
 		return cvDilateOutput;
-	}
-
-	/**
-	 * This method is a generated getter for the output of a Mask.
-	 * @return Mat output from Mask.
-	 */
-	public Mat maskOutput() {
-		return maskOutput;
 	}
 
 	/**
