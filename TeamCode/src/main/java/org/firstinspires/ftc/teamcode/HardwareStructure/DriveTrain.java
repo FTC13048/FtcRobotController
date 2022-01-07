@@ -1,14 +1,21 @@
 package org.firstinspires.ftc.teamcode.HardwareStructure;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
+import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 
 public class DriveTrain {
     private DcMotor FL, FR, BL, BR;
+    private BNO055IMU imu;
+    private BNO055IMU.Parameters parameters;
+
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
@@ -32,6 +39,8 @@ public class DriveTrain {
         setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         if(isAuton){
+            initImu();
+
             BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -128,5 +137,43 @@ public class DriveTrain {
         }
 
         return curPos;
+    }
+
+    // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
+    public boolean adjustHeading(int degrees, double power, BNO055IMU imu) {
+        // get the current heading of the bot (an angle from -180 to 180)
+        float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+        // to convert to a 0-360 scale, if the current heading is negative add
+        //    360 to it
+        currHeading = currHeading < 0 ? 360 + currHeading : currHeading;
+
+        // difference between target and current heading
+        double difference = degrees - currHeading;
+        telemetry.addData("Difference is ", difference);
+
+        // If the bot is within 30 degrees of the target, slow it down to 25% of the desired speed to prevent overshooting
+        if (Math.abs(difference) <= 30) {
+            turn(power / 6);
+        } else { // Otherwise use normal speed
+            turn(power);
+        }
+
+        // If the bot is within 1 degree of the target, stop the bot and return true
+        if (Math.abs(difference) <= 0.5) {
+            telemetry.addData("Stopping the ", "bot");
+            stop();
+            return true;
+        }
+
+        // return false otherwise
+        return false;
+    }
+
+    private void initImu(){
+        imu = hardwareMap.get(BNO055IMU.class, "imu");
+        parameters = new BNO055IMU.Parameters();
+
+        imu.initialize(parameters);
     }
 }
