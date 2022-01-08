@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class LinearSlide {
     private DcMotor linSlide;
 
-    public LinearSlide(HardwareMap hmap, Telemetry tele){
+    protected LinearSlide(HardwareMap hmap, Telemetry tele){
         linSlide = hmap.get(DcMotor.class, "linSlide");
 
         linSlide.setDirection(DcMotorSimple.Direction.FORWARD);

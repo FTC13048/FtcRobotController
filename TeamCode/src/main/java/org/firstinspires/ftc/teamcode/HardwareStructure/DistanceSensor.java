@@ -9,17 +9,20 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 public class DistanceSensor {
     ModernRoboticsI2cRangeSensor distSensor;
 
-    public DistanceSensor(HardwareMap hmap, Telemetry tele, SensorName name){
+    protected DistanceSensor(HardwareMap hmap, Telemetry tele, SensorName name){
         if(name == SensorName.BACK){
             distSensor = hmap.get(ModernRoboticsI2cRangeSensor.class, "distSensorBack");
+            tele.addData("Back Distance Sensor", "Initialized");
         }
 
         else if(name == SensorName.LEFT){
             distSensor = hmap.get(ModernRoboticsI2cRangeSensor.class, "distSensorLeft");
+            tele.addData("Left Distance Sensor", "Initialized");
         }
 
         else{
             distSensor = hmap.get(ModernRoboticsI2cRangeSensor.class, "distSensorRight");
+            tele.addData("Right Distance Sensor", "Initialized");
         }
     }
 

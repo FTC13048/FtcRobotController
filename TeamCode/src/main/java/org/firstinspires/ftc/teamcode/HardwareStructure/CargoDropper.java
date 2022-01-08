@@ -12,7 +12,7 @@ public class CargoDropper {
     private boolean servoRaised = false;
     private ElapsedTime timer;
 
-    public CargoDropper(HardwareMap hmap, Telemetry tele){
+    protected CargoDropper(HardwareMap hmap, Telemetry tele){
         cargoFlipper = hmap.get(Servo.class, "cargoFlipper");
         timer = new ElapsedTime();
 

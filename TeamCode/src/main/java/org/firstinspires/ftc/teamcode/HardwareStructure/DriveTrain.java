@@ -9,7 +9,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 
 public class DriveTrain {
     private DcMotor FL, FR, BL, BR;
@@ -19,7 +18,7 @@ public class DriveTrain {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    public DriveTrain(HardwareMap hmap, Telemetry tele, boolean isAuton){
+    protected DriveTrain(HardwareMap hmap, Telemetry tele, boolean isAuton){
         hardwareMap = hmap;
         telemetry = tele;
 
@@ -89,6 +88,36 @@ public class DriveTrain {
         FR.setPower(0.0);
         BL.setPower(0.0);
         FL.setPower(0.0);
+    }
+
+    // drives until distance sensor reads a certain distance and then returns true when there
+    public boolean driveDistanceSensor(int stopDist, double power,
+                                       DistanceSensor sensor, MovementEnum movement){
+        // if the sensor reads the stop distance return true
+        //    if it reads 7 inches within the stop distance, set the motor power to 4 times
+        //    less than the entered power
+        if(sensor.getDistInches() <= stopDist){ return true; }
+        else if(sensor.getDistInches() < (stopDist + 7)){ power /= 4; }
+
+        switch(movement){
+            case FORWARD:
+                drive(power, power);
+                break;
+
+            case BACKWARD:
+                drive(-power, -power);
+                break;
+
+            case LEFTSTRAFE:
+                strafe(-power);
+                break;
+
+            case RIGHTSTRAFE:
+                strafe(power);
+                break;
+        }
+
+        return false;
     }
 
     // sets the target position of the robot given the direction and target position

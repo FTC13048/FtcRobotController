@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class Intake {
     private DcMotor intakeLeft, intakeRight;
 
-    public Intake(HardwareMap hmap, Telemetry tele){
+    protected Intake(HardwareMap hmap, Telemetry tele){
         intakeRight = hmap.get(DcMotor.class, "intakeRight");
         intakeLeft = hmap.get(DcMotor.class, "intakeLeft");
 

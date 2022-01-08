@@ -10,7 +10,7 @@ public class DuckSpinner {
     private DcMotor duckSpinner;
     private final double DUCK_POWER = 0.7;
 
-    public DuckSpinner(HardwareMap hmap, Telemetry tele){
+    protected DuckSpinner(HardwareMap hmap, Telemetry tele){
         duckSpinner = hmap.get(DcMotor.class, "duckSpinner");
 
         duckSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
