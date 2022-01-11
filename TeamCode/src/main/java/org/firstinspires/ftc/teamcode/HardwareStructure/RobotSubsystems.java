@@ -28,19 +28,10 @@ public class RobotSubsystems {
         tele.addData("All subsystems", "Initialized");
     }
 
-    public CargoDropper getCargoFlipper(){ return cargoFlipper; }
+    // ------------------------------- INTAKE METHODS -------------------------------
+    public void runIntake(){ intake.runIntake(); }
 
-    public DriveTrain getDriveTrain(){ return driver; }
+    public void runOuttake(){ intake.runOuttake(); }
 
-    public DuckSpinner getDuckSpinner(){ return duckSpinner; }
-
-    public Intake getIntake(){ return intake; }
-
-    public LinearSlide getLinSlide(){ return linSlide; }
-
-    public DistanceSensor getDistSensorBack(){ return distSensorBack; }
-
-    public DistanceSensor getDistSensorRight(){ return distSensorRight; }
-
-    public DistanceSensor getDistSensorLeft(){ return distSensorLeft; }
+    public void setIntakePower(double power){ intake.setIntakePower(power); }
 }

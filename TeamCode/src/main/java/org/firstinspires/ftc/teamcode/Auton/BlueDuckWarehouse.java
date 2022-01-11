@@ -84,6 +84,7 @@ public class BlueDuckWarehouse extends OpMode {
 
     @Override
     public void start() {
+        bot.start();
     }
 
     @Override
@@ -242,7 +243,7 @@ public class BlueDuckWarehouse extends OpMode {
             case 9:
                 bot.drive(0.5, 0.5);
 
-                if(bot.getDistanceCM() <= 12.0){
+                if(bot.getBackDistanceCM() <= 12.0){
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

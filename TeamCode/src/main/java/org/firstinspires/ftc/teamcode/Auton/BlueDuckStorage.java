@@ -85,6 +85,7 @@ public class BlueDuckStorage extends OpMode {
 
     @Override
     public void start() {
+        bot.start();
     }
 
     @Override
@@ -240,10 +241,8 @@ public class BlueDuckStorage extends OpMode {
 
                 break;
 
-            case 9: // Drive backward 29 inches
-                bot.drive(0.5, 0.5);
-
-                if(bot.getDistanceCM() <= 12.0){
+            case 9: // Drive backward to the hub
+                if(bot.driveBackDistanceSensor(1, 0.5, MovementEnum.FORWARD)){
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

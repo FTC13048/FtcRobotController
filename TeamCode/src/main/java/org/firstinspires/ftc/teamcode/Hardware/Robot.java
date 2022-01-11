@@ -21,7 +21,9 @@ public class Robot {
     public DcMotor intakeRight, intakeLeft, duckSpinner, linSlide;
 
     public Servo cargoFlipper;
-    private ModernRoboticsI2cRangeSensor distSensor;
+    private ModernRoboticsI2cRangeSensor distSensorBack;
+    private ModernRoboticsI2cRangeSensor distSensorLeft;
+    private ModernRoboticsI2cRangeSensor distSensorRight;
 
     private HardwareMap map;
     private Telemetry telemetry;
@@ -52,8 +54,6 @@ public class Robot {
         linSlide = map.get(DcMotor.class, "linSlide");
 
         cargoFlipper = map.get(Servo.class, "cargoFlipper");
-        distSensor = map.get(ModernRoboticsI2cRangeSensor.class, "distSensor");
-
         // Set motor direction according to their orientation on the bot
         //   motors on the left side will be reversed so that their directions coorespond to
         //      the motors on the right
@@ -87,6 +87,10 @@ public class Robot {
             BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            distSensorBack = map.get(ModernRoboticsI2cRangeSensor.class, "distSensorBack");
+            distSensorLeft = map.get(ModernRoboticsI2cRangeSensor.class, "distSensorLeft");
+            distSensorRight = map.get(ModernRoboticsI2cRangeSensor.class, "distSensorRight");
         }
     }
 
@@ -172,8 +176,6 @@ public class Robot {
         return linSlide.getCurrentPosition();
     }
 
-    public double getDistanceCM(){ return distSensor.getDistance(DistanceUnit.CM); }
-
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
     public boolean adjustHeading(int degrees, double power, BNO055IMU imu) {
         // get the current heading of the bot (an angle from -180 to 180)
@@ -258,5 +260,100 @@ public class Robot {
         telemetry.addData("FL", FL.getCurrentPosition());
         telemetry.addData("BR", BR.getCurrentPosition());
         telemetry.addData("BL", BL.getCurrentPosition());
+    }
+
+    // ---------------------------- DIST SENSOR DRIVING ----------------------------
+
+    public double getBackDistanceCM(){ return distSensorBack.getDistance(DistanceUnit.CM); }
+
+    public double getRightDistanceCM(){ return distSensorRight.getDistance(DistanceUnit.CM); }
+
+    public double getLeftDistanceCM(){ return distSensorLeft.getDistance(DistanceUnit.CM); }
+
+    // drives until distance sensor reads a certain distance and then returns true when there
+    public boolean driveBackDistanceSensor(double stopDistCM, double power, MovementEnum movement){
+        // if the sensor reads the stop distance return true
+        //    if it reads 5 inches within the stop distance, set the motor power to 6 times
+        //    less than the entered power
+        if(getBackDistanceCM() <= stopDistCM){ return true; }
+        else if(getBackDistanceCM() < (stopDistCM + 10)){ power /= 6; }
+
+        switch(movement){
+            case FORWARD:
+                drive(-power, -power);
+                break;
+
+            case BACKWARD:
+                drive(power, power);
+                break;
+
+            case LEFTSTRAFE:
+                strafe(-power);
+                break;
+
+            case RIGHTSTRAFE:
+                strafe(power);
+                break;
+        }
+
+        return false;
+    }
+
+    // drives until distance sensor reads a certain distance and then returns true when there
+    public boolean driveRightDistanceSensor(int stopDistCM, double power, MovementEnum movement){
+        // if the sensor reads the stop distance return true
+        //    if it reads 5 inches within the stop distance, set the motor power to 6 times
+        //    less than the entered power
+        if(getRightDistanceCM() <= stopDistCM){ return true; }
+        else if(getRightDistanceCM() < (stopDistCM + 10)){ power /= 6; }
+
+        switch(movement){
+            case FORWARD:
+                drive(power, power);
+                break;
+
+            case BACKWARD:
+                drive(-power, -power);
+                break;
+
+            case LEFTSTRAFE:
+                strafe(-power);
+                break;
+
+            case RIGHTSTRAFE:
+                strafe(power);
+                break;
+        }
+
+        return false;
+    }
+
+    // drives until distance sensor reads a certain distance and then returns true when there
+    public boolean driveLeftDistanceSensor(int stopDistCM, double power, MovementEnum movement){
+        // if the sensor reads the stop distance return true
+        //    if it reads 5 inches within the stop distance, set the motor power to 6 times
+        //    less than the entered power
+        if(getLeftDistanceCM() <= stopDistCM){ return true; }
+        else if(getLeftDistanceCM() < (stopDistCM + 10)){ power /= 6; }
+
+        switch(movement){
+            case FORWARD:
+                drive(power, power);
+                break;
+
+            case BACKWARD:
+                drive(-power, -power);
+                break;
+
+            case LEFTSTRAFE:
+                strafe(-power);
+                break;
+
+            case RIGHTSTRAFE:
+                strafe(power);
+                break;
+        }
+
+        return false;
     }
 }

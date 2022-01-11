@@ -61,10 +61,10 @@ public class TankTele extends OpMode {
         slidePower = Math.abs(slidePower) > 0.15 ? slidePower : 0.0;
 
         updateServo();
+        resetServo();
         updateSlide(slidePower);
         updateDriving(rightTrigger, leftTrigger, leftStickY, rightStickY);
         updateSystem(intake, outtake, duckPower);
-        //checkLevelThree();
         telemetry.update();
     }
 
@@ -95,21 +95,48 @@ public class TankTele extends OpMode {
         else{ bot.runDuckSpinner(0.0); }
     }
 
+    private boolean debounceServo = false;
+    private int armPos = -1;
+
     private void updateServo(){
-        // if x is pressed, the arm can only switch position if the debounce variable if false
+        // if a is pressed, the arm can only switch position if the debounce variable if false
         //     if it is, then it will become true after the  position switches, allowing the
         //     player to hold down the button without it trying to switch positions
         if(gamepad2.x){
-            servoRaised = true;
-            timer.reset();
+            // Arm goes to pushing position if it is at rest
+            if(!debounceServo && armPos == -1){
+                bot.cargoFlipper.setPosition(0.9);
+                telemetry.addData(">", "0.9");
+                telemetry.update();
+                armPos *= -1;
+            }
+
+            // Arm goes to rest position if a is pressed an it is pushing
+            else if(!debounceServo && armPos == 1){
+                bot.cargoFlipper.setPosition(0.1);
+                telemetry.addData(">", "0.1");
+                telemetry.update();
+                armPos *= -1;
+            }
+
+            debounceServo = true;
         }
 
-        if(servoRaised){
-            bot.cargoFlipper.setPosition(0.9);
-            if(timer.seconds() >= 2){
-                bot.cargoFlipper.setPosition(0.1);
-                servoRaised = false;
-            }
+        // If a is not pressed, make sure the debounce variable is false
+        else{
+            debounceServo = false;
+        }
+    }
+
+    private boolean servoReset = false;
+    private void resetServo(){
+        if(gamepad2.y){
+            servoReset = true;
+        }
+
+        if(servoReset){
+            bot.cargoFlipper.setPosition(0.1);
+            servoReset = false;
         }
     }
 
@@ -138,5 +165,25 @@ public class TankTele extends OpMode {
     // Sets the power of all motors to 0 when stop button is pressed
     public void stop() {
         bot.drive(0.0, 0.0);
+    }
+
+    // -------------------------------- UNUSED --------------------------------
+
+    public void updateServoAutomated(){
+        // if x is pressed, the arm can only switch position if the debounce variable if false
+        //     if it is, then it will become true after the  position switches, allowing the
+        //     player to hold down the button without it trying to switch positions
+        if(gamepad2.x){
+            servoRaised = true;
+            timer.reset();
+        }
+
+        if(servoRaised){
+            bot.cargoFlipper.setPosition(0.9);
+            if(timer.seconds() >= 2){
+                bot.cargoFlipper.setPosition(0.1);
+                servoRaised = false;
+            }
+        }
     }
 }

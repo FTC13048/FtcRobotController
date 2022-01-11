@@ -24,14 +24,19 @@ public class Intake {
     }
 
     // Runs the intake motors at a given power
-    public void runIntake(double power) {
-        intakeRight.setPower(Math.abs(power));
-        intakeLeft.setPower(Math.abs(power));
+    public void runIntake() {
+        intakeRight.setPower(1.0);
+        intakeLeft.setPower(1.0);
     }
 
     // Outtakes at the given power
-    public void runOuttake(double power){
-        intakeRight.setPower(Math.abs(power) * -1);
-        intakeLeft.setPower(Math.abs(power) * -1);
+    public void runOuttake(){
+        intakeRight.setPower(-1.0);
+        intakeLeft.setPower(-1.0);
+    }
+
+    public void setIntakePower(double power){
+        intakeRight.setPower(power);
+        intakeLeft.setPower(power);
     }
 }
