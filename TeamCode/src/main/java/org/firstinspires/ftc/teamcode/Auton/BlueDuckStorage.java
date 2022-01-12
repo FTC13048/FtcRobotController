@@ -28,9 +28,11 @@ public class BlueDuckStorage extends OpMode {
     private int caseNum = 0;
     private ElapsedTime timer;
     private int one, two, three;
+    private int target;
 
     @Override
     public void init() {
+        target = 0;
         this.bot = new Robot(this.hardwareMap, this.telemetry, true);
 
         // initialize the robot and the onboard gyro
@@ -93,18 +95,13 @@ public class BlueDuckStorage extends OpMode {
         switch (caseNum) {
             case 0: // Stop openCV and set the motor modes
                 this.vision.stop();
-                bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 caseNum++;
                 break;
 
             case 1: //  Drive forward 6 inches
-                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 6));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 6)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
+                if (bot.driveBackDistanceSensor(17.0, 0.4, MovementEnum.FORWARD)) {
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();
@@ -156,7 +153,7 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 5: // Strafe right 47 inches
-                if(bot.driveLeftDistanceSensor(100, 0.5, MovementEnum.RIGHTSTRAFE)){
+                if (bot.driveLeftDistanceSensor(105.0, 0.4, MovementEnum.RIGHTSTRAFE)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -237,7 +234,7 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 9: // Drive backward to the hub
-                if(bot.driveBackDistanceSensor(12.0, 0.5, MovementEnum.BACKWARD)){
+                if (bot.driveBackDistanceSensor(7.0, 0.4, MovementEnum.BACKWARD)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -252,7 +249,7 @@ public class BlueDuckStorage extends OpMode {
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
 
-                if (timer.seconds() > 3) {
+                if (timer.seconds() > 2) {
                     bot.cargoFlipper.setPosition(0.1);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -262,11 +259,11 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 11: // Strafe right 16 inches
-                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 16));
+                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 40));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 16)) {
+                if (target >= (int) (TICKS_PER_INCH * 40)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -277,11 +274,11 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 12: // Drive forward 40 inches
-                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 40));
+                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 26));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(1.0, 1.0);
+                bot.drive(0.5, 0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 40)) {
+                if (target >= (int) (TICKS_PER_INCH * 16)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

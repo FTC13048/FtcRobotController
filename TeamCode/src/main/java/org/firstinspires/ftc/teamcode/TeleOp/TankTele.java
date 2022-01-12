@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
@@ -26,10 +25,13 @@ public class TankTele extends OpMode {
     }
 
     @Override
-    public void init_loop() { }
+    public void init_loop() {
+    }
 
     @Override
-    public void start() { bot.start(); }
+    public void start() {
+        bot.start();
+    }
 
     @Override
     // loop code to be continuously cycled through after init
@@ -68,7 +70,7 @@ public class TankTele extends OpMode {
         telemetry.update();
     }
 
-    public void updateDriving(double rTrigger, double lTrigger, double lStickY, double rStickY){
+    public void updateDriving(double rTrigger, double lTrigger, double lStickY, double rStickY) {
         // if the right trigger is pressed down strafe at that power
         if (rTrigger > 0.0) {
             bot.strafe(rTrigger);
@@ -82,29 +84,34 @@ public class TankTele extends OpMode {
         }
     }
 
-    public void updateSystem(double intake, double outtake, double duck){
+    public void updateSystem(double intake, double outtake, double duck) {
         // if either the left or right triggers on gamepad two are pressed, run the
         //    intake at that power
-        if(intake > 0.0){
+        if (intake > 0.0) {
             bot.runIntake(1.0);
-        } else if(outtake > 0.0) {
-                bot.runIntake(-1.0);
-        } else{ bot.runIntake(0.0); }
+        } else if (outtake > 0.0) {
+            bot.runIntake(-1.0);
+        } else {
+            bot.runIntake(0.0);
+        }
 
-        if(Math.abs(duck) > 0.0){ bot.runDuckSpinner(duck * 0.7); }
-        else{ bot.runDuckSpinner(0.0); }
+        if (Math.abs(duck) > 0.0) {
+            bot.runDuckSpinner(duck * 0.7);
+        } else {
+            bot.runDuckSpinner(0.0);
+        }
     }
 
     private boolean debounceServo = false;
     private int armPos = -1;
 
-    private void updateServo(){
+    private void updateServo() {
         // if a is pressed, the arm can only switch position if the debounce variable if false
         //     if it is, then it will become true after the  position switches, allowing the
         //     player to hold down the button without it trying to switch positions
-        if(gamepad2.x){
+        if (gamepad2.x) {
             // Arm goes to pushing position if it is at rest
-            if(!debounceServo && armPos == -1){
+            if (!debounceServo && armPos == -1) {
                 bot.cargoFlipper.setPosition(0.9);
                 telemetry.addData(">", "0.9");
                 telemetry.update();
@@ -112,7 +119,7 @@ public class TankTele extends OpMode {
             }
 
             // Arm goes to rest position if a is pressed an it is pushing
-            else if(!debounceServo && armPos == 1){
+            else if (!debounceServo && armPos == 1) {
                 bot.cargoFlipper.setPosition(0.1);
                 telemetry.addData(">", "0.1");
                 telemetry.update();
@@ -123,40 +130,44 @@ public class TankTele extends OpMode {
         }
 
         // If a is not pressed, make sure the debounce variable is false
-        else{
+        else {
             debounceServo = false;
         }
     }
 
     private boolean servoReset = false;
-    private void resetServo(){
-        if(gamepad2.y){
+
+    private void resetServo() {
+        if (gamepad2.y) {
             servoReset = true;
         }
 
-        if(servoReset){
+        if (servoReset) {
             bot.cargoFlipper.setPosition(0.1);
             servoReset = false;
         }
     }
 
-    private void updateSlide(double slide){
+    private void updateSlide(double slide) {
         // if x is pressed, the arm can only switch position if the debounce variable if false
         //     if it is, then it will become true after the  position switches, allowing the
         //     player to hold down the button without it trying to switch positions
-        if(gamepad2.a){
+        if (gamepad2.a) {
             automateSlide = true;
         }
 
-        if(automateSlide){
+        if (automateSlide) {
             // Arm goes to pushing position if it is at rest
-            if(bot.setLinSlidePos(-500)){
+            if (bot.setLinSlidePos(-500)) {
                 bot.cargoFlipper.setPosition(0.3);
                 automateSlide = false;
             }
-        }  else{
-            if(Math.abs(slide) > 0.0){ bot.runLinSlide(slide * 0.5); }
-            else{ bot.runLinSlide(0.0); }
+        } else {
+            if (Math.abs(slide) > 0.0) {
+                bot.runLinSlide(slide * 0.5);
+            } else {
+                bot.runLinSlide(0.0);
+            }
             telemetry.addData("slide", bot.getLinSlidePos());
         }
     }
@@ -169,18 +180,18 @@ public class TankTele extends OpMode {
 
     // -------------------------------- UNUSED --------------------------------
 
-    public void updateServoAutomated(){
+    public void updateServoAutomated() {
         // if x is pressed, the arm can only switch position if the debounce variable if false
         //     if it is, then it will become true after the  position switches, allowing the
         //     player to hold down the button without it trying to switch positions
-        if(gamepad2.x){
+        if (gamepad2.x) {
             servoRaised = true;
             timer.reset();
         }
 
-        if(servoRaised){
+        if (servoRaised) {
             bot.cargoFlipper.setPosition(0.9);
-            if(timer.seconds() >= 2){
+            if (timer.seconds() >= 2) {
                 bot.cargoFlipper.setPosition(0.1);
                 servoRaised = false;
             }

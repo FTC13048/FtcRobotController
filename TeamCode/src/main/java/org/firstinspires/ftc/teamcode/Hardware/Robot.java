@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -94,7 +95,7 @@ public class Robot {
         }
     }
 
-    public void start(){
+    public void start() {
         intakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         intakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         duckSpinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -150,12 +151,12 @@ public class Robot {
         intakeLeft.setPower(power);
     }
 
-    public boolean setLinSlidePos(int numTicks){
+    public boolean setLinSlidePos(int numTicks) {
         linSlide.setTargetPosition(numTicks);
         linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         runLinSlide(0.4);
 
-        if(Math.abs(linSlide.getCurrentPosition() - numTicks) <= 5){
+        if (Math.abs(linSlide.getCurrentPosition() - numTicks) <= 5) {
             runLinSlide(0.0);
             linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             return true;
@@ -178,6 +179,8 @@ public class Robot {
 
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
     public boolean adjustHeading(int degrees, double power, BNO055IMU imu) {
+        degrees -= 3;
+
         // get the current heading of the bot (an angle from -180 to 180)
         float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
@@ -189,9 +192,9 @@ public class Robot {
         double difference = degrees - currHeading;
         telemetry.addData("Difference is ", difference);
 
-        // If the bot is within 30 degrees of the target, slow it down to 25% of the desired speed to prevent overshooting
+        // If the bot is within a 30 degree threshold of the target, slow it down to 25% of the desired speed to prevent overshooting
         if (Math.abs(difference) <= 30) {
-            turn(power / 6);
+            turn(power / 10);
         } else { // Otherwise use normal speed
             turn(power);
         }
@@ -264,26 +267,34 @@ public class Robot {
 
     // ---------------------------- DIST SENSOR DRIVING ----------------------------
 
-    public double getBackDistanceCM(){ return distSensorBack.getDistance(DistanceUnit.CM); }
+    public double getBackDistanceCM() {
+        return Range.clip(distSensorBack.getDistance(DistanceUnit.CM), 0.0, 200.0);
+    }
 
-    public double getRightDistanceCM(){ return distSensorRight.getDistance(DistanceUnit.CM); }
+    public double getRightDistanceCM() {
+        return Range.clip(distSensorRight.getDistance(DistanceUnit.CM), 0.0, 200.0);
+    }
 
-    public double getLeftDistanceCM(){ return distSensorLeft.getDistance(DistanceUnit.CM); }
+    public double getLeftDistanceCM() {
+        return Range.clip(distSensorLeft.getDistance(DistanceUnit.CM), 0.0, 200.0);
+    }
 
     // drives until distance sensor reads a certain distance and then returns true when there
-    public boolean driveBackDistanceSensor(double stopDistCM, double power, MovementEnum movement){
+    public boolean driveBackDistanceSensor(double stopDistCM, double power, MovementEnum movement) {
         // if the sensor reads the stop distance return true
         //    if it reads 10 cm within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if(getBackDistanceCM() <= stopDistCM){
+        if (Math.abs(getBackDistanceCM() - stopDistCM) < 5) {
+            telemetry.addData("Req", "met");
+            telemetry.addData("Difference is", Math.abs(getBackDistanceCM() - stopDistCM));
             stop();
             return true;
-        }
+        } else {
+            if (Math.abs(getBackDistanceCM() - stopDistCM) <= 15) {
+                power /= 6;
+            }
 
-        else{
-            if(getBackDistanceCM() < (stopDistCM + 10)){ power /= 6; }
-
-            switch(movement){
+            switch (movement) {
                 case FORWARD:
                     drive(-power, -power);
                     break;
@@ -306,19 +317,19 @@ public class Robot {
     }
 
     // drives until distance sensor reads a certain distance and then returns true when there
-    public boolean driveRightDistanceSensor(int stopDistCM, double power, MovementEnum movement){
+    public boolean driveRightDistanceSensor(double stopDistCM, double power, MovementEnum movement) {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if(getRightDistanceCM() <= stopDistCM){
+        if (Math.abs(getRightDistanceCM() - stopDistCM) < 5) {
             stop();
             return true;
-        }
+        } else {
+            if (Math.abs(getRightDistanceCM() - stopDistCM) <= 15) {
+                power /= 6;
+            }
 
-        else{
-            if(getRightDistanceCM() < (stopDistCM + 10)){ power /= 6; }
-
-            switch(movement){
+            switch (movement) {
                 case FORWARD:
                     drive(power, power);
                     break;
@@ -341,19 +352,19 @@ public class Robot {
     }
 
     // drives until distance sensor reads a certain distance and then returns true when there
-    public boolean driveLeftDistanceSensor(int stopDistCM, double power, MovementEnum movement){
+    public boolean driveLeftDistanceSensor(double stopDistCM, double power, MovementEnum movement) {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if(getLeftDistanceCM() <= stopDistCM){
+        if (Math.abs(getLeftDistanceCM() - stopDistCM) < 5) {
             stop();
             return true;
-        }
+        } else {
+            if (Math.abs(getLeftDistanceCM() - stopDistCM) <= 15) {
+                power /= 6;
+            }
 
-        else{
-            if(getLeftDistanceCM() < (stopDistCM + 10)){ power /= 6; }
-
-            switch(movement){
+            switch (movement) {
                 case FORWARD:
                     drive(power, power);
                     break;

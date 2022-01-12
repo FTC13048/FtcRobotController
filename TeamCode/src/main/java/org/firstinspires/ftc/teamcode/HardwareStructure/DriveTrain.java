@@ -91,33 +91,39 @@ public class DriveTrain {
     }
 
     // drives until distance sensor reads a certain distance and then returns true when there
-    public boolean driveDistanceSensor(int stopDist, double power,
+    public boolean driveDistanceSensor(double stopDist, double power,
                                        DistanceSensor sensor, DirectionEnum movement){
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if(sensor.getDistInches() <= stopDist){ return true; }
-        else if(sensor.getDistInches() < (stopDist + 5)){ power /= 6; }
-
-        switch(movement){
-            case FORWARD:
-                drive(power, power);
-                break;
-
-            case BACKWARD:
-                drive(-power, -power);
-                break;
-
-            case LEFTSTRAFE:
-                strafe(-power);
-                break;
-
-            case RIGHTSTRAFE:
-                strafe(power);
-                break;
+        if(sensor.getDistCM() <= stopDist){
+            stop();
+            return true;
         }
 
-        return false;
+        else{
+            if(sensor.getDistCM() < (stopDist + 15)){ power /= 6; }
+
+            switch(movement){
+                case FORWARD:
+                    drive(power, power);
+                    break;
+
+                case BACKWARD:
+                    drive(-power, -power);
+                    break;
+
+                case LEFTSTRAFE:
+                    strafe(-power);
+                    break;
+
+                case RIGHTSTRAFE:
+                    strafe(power);
+                    break;
+            }
+
+            return false;
+        }
     }
 
     // sets the target position of the robot given the direction and target position
@@ -169,7 +175,7 @@ public class DriveTrain {
     }
 
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
-    public boolean adjustHeading(int degrees, double power, BNO055IMU imu) {
+    public boolean adjustHeading(int degrees, double power) {
         // get the current heading of the bot (an angle from -180 to 180)
         float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
