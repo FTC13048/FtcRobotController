@@ -11,14 +11,12 @@ import org.firstinspires.ftc.teamcode.Hardware.Robot;
 
 public class EncoderTest extends OpMode {
     private Robot bot;
-    private ModernRoboticsI2cRangeSensor distSensor;
 
     @Override
     // Initialize the robot (this is what happens when the play button is pressed)
     public void init() {
-        bot = new Robot(hardwareMap, telemetry, false);
+        bot = new Robot(hardwareMap, telemetry, true);
         bot.initBot();
-        distSensor = hardwareMap.get(ModernRoboticsI2cRangeSensor.class, "distSensor");
         telemetry.addData("Bot", "Initialized");
     }
 
@@ -37,7 +35,9 @@ public class EncoderTest extends OpMode {
         telemetry.addData("intake right", bot.intakeRight.getCurrentPosition());
         telemetry.addData("duck spinner", bot.duckSpinner.getCurrentPosition());
 
-        telemetry.addData("distance", distSensor.getDistance(DistanceUnit.CM));
+        telemetry.addData("distance back", bot.getBackDistanceCM());
+        telemetry.addData("distance right", bot.getRightDistanceCM());
+        telemetry.addData("distance left", bot.getLeftDistanceCM());
         telemetry.update();
     }
 

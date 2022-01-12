@@ -273,30 +273,36 @@ public class Robot {
     // drives until distance sensor reads a certain distance and then returns true when there
     public boolean driveBackDistanceSensor(double stopDistCM, double power, MovementEnum movement){
         // if the sensor reads the stop distance return true
-        //    if it reads 5 inches within the stop distance, set the motor power to 6 times
+        //    if it reads 10 cm within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if(getBackDistanceCM() <= stopDistCM){ return true; }
-        else if(getBackDistanceCM() < (stopDistCM + 10)){ power /= 6; }
-
-        switch(movement){
-            case FORWARD:
-                drive(-power, -power);
-                break;
-
-            case BACKWARD:
-                drive(power, power);
-                break;
-
-            case LEFTSTRAFE:
-                strafe(-power);
-                break;
-
-            case RIGHTSTRAFE:
-                strafe(power);
-                break;
+        if(getBackDistanceCM() <= stopDistCM){
+            stop();
+            return true;
         }
 
-        return false;
+        else{
+            if(getBackDistanceCM() < (stopDistCM + 10)){ power /= 6; }
+
+            switch(movement){
+                case FORWARD:
+                    drive(-power, -power);
+                    break;
+
+                case BACKWARD:
+                    drive(power, power);
+                    break;
+
+                case LEFTSTRAFE:
+                    strafe(-power);
+                    break;
+
+                case RIGHTSTRAFE:
+                    strafe(power);
+                    break;
+            }
+
+            return false;
+        }
     }
 
     // drives until distance sensor reads a certain distance and then returns true when there
@@ -304,28 +310,34 @@ public class Robot {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if(getRightDistanceCM() <= stopDistCM){ return true; }
-        else if(getRightDistanceCM() < (stopDistCM + 10)){ power /= 6; }
-
-        switch(movement){
-            case FORWARD:
-                drive(power, power);
-                break;
-
-            case BACKWARD:
-                drive(-power, -power);
-                break;
-
-            case LEFTSTRAFE:
-                strafe(-power);
-                break;
-
-            case RIGHTSTRAFE:
-                strafe(power);
-                break;
+        if(getRightDistanceCM() <= stopDistCM){
+            stop();
+            return true;
         }
 
-        return false;
+        else{
+            if(getRightDistanceCM() < (stopDistCM + 10)){ power /= 6; }
+
+            switch(movement){
+                case FORWARD:
+                    drive(power, power);
+                    break;
+
+                case BACKWARD:
+                    drive(-power, -power);
+                    break;
+
+                case LEFTSTRAFE:
+                    strafe(-power);
+                    break;
+
+                case RIGHTSTRAFE:
+                    strafe(power);
+                    break;
+            }
+
+            return false;
+        }
     }
 
     // drives until distance sensor reads a certain distance and then returns true when there
@@ -333,27 +345,33 @@ public class Robot {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if(getLeftDistanceCM() <= stopDistCM){ return true; }
-        else if(getLeftDistanceCM() < (stopDistCM + 10)){ power /= 6; }
-
-        switch(movement){
-            case FORWARD:
-                drive(power, power);
-                break;
-
-            case BACKWARD:
-                drive(-power, -power);
-                break;
-
-            case LEFTSTRAFE:
-                strafe(-power);
-                break;
-
-            case RIGHTSTRAFE:
-                strafe(power);
-                break;
+        if(getLeftDistanceCM() <= stopDistCM){
+            stop();
+            return true;
         }
 
-        return false;
+        else{
+            if(getLeftDistanceCM() < (stopDistCM + 10)){ power /= 6; }
+
+            switch(movement){
+                case FORWARD:
+                    drive(power, power);
+                    break;
+
+                case BACKWARD:
+                    drive(-power, -power);
+                    break;
+
+                case LEFTSTRAFE:
+                    strafe(-power);
+                    break;
+
+                case RIGHTSTRAFE:
+                    strafe(power);
+                    break;
+            }
+
+            return false;
+        }
     }
 }

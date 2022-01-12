@@ -156,15 +156,10 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 5: // Strafe right 47 inches
-                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 47));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.strafe(0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 47)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
+                if(bot.driveLeftDistanceSensor(100, 0.5, MovementEnum.RIGHTSTRAFE)){
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     caseNum++;
                 }
 
@@ -242,7 +237,7 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 9: // Drive backward to the hub
-                if(bot.driveBackDistanceSensor(1, 0.5, MovementEnum.FORWARD)){
+                if(bot.driveBackDistanceSensor(12.0, 0.5, MovementEnum.BACKWARD)){
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -312,6 +307,9 @@ public class BlueDuckStorage extends OpMode {
                 break;
         }
 
+        telemetry.addData("distance back", bot.getBackDistanceCM());
+        telemetry.addData("distance right", bot.getRightDistanceCM());
+        telemetry.addData("distance left", bot.getLeftDistanceCM());
         telemetry.update();
     }
 
