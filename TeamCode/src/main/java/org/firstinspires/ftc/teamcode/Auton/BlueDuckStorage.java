@@ -28,11 +28,9 @@ public class BlueDuckStorage extends OpMode {
     private int caseNum = 0;
     private ElapsedTime timer;
     private int one, two, three;
-    private int target;
 
     @Override
     public void init() {
-        target = 0;
         this.bot = new Robot(this.hardwareMap, this.telemetry, true);
 
         // initialize the robot and the onboard gyro
@@ -101,11 +99,11 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 1: //  Drive forward 6 inches
-                if (bot.driveBackDistanceSensor(23.0, 0.4, MovementEnum.FORWARD)) {
+                if (bot.driveBackDistanceSensor(18.0, 0.4, MovementEnum.FORWARD)) {
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();
-                    caseNum++;
+                    if(bot.delay(0.20)){ caseNum++; }
                 }
 
                 break;
@@ -125,7 +123,7 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 3: // Drive backward 32 inches
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 32));
+                int target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 32));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
@@ -153,11 +151,11 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 5: // Strafe right 47 inches
-                if (bot.driveLeftDistanceSensor(105.0, 0.4, MovementEnum.RIGHTSTRAFE)) {
+                if (bot.driveLeftDistanceSensor(96.0, 0.4, MovementEnum.RIGHTSTRAFE)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    caseNum++;
+                    if(bot.delay(0.20)){ caseNum++; }
                 }
 
                 break;
@@ -238,7 +236,6 @@ public class BlueDuckStorage extends OpMode {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    timer.reset();
                     caseNum++;
                 }
 
@@ -274,15 +271,10 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 12: // Drive forward 40 inches
-                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 26));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 16)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
+                if (bot.driveRightDistanceSensor(62.0, 0.4, MovementEnum.RIGHTSTRAFE)) {
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     caseNum++;
                 }
 

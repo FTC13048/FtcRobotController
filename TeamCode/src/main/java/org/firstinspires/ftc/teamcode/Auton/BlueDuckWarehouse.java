@@ -98,12 +98,7 @@ public class BlueDuckWarehouse extends OpMode {
                 break;
 
             case 1:
-                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 6));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 6)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
+                if (bot.driveBackDistanceSensor(23.0, 0.4, MovementEnum.FORWARD)) {
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();
@@ -127,7 +122,7 @@ public class BlueDuckWarehouse extends OpMode {
                 break;
 
             case 3:
-                target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 32));
+                int target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 32));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.5, 0.5);
 
@@ -143,7 +138,7 @@ public class BlueDuckWarehouse extends OpMode {
                 break;
 
             case 4:
-                bot.runDuckSpinner(-0.5);
+                bot.runDuckSpinner(-0.7);
 
                 if (timer.seconds() > 4) {
                     bot.runDuckSpinner(0.0);
@@ -155,15 +150,10 @@ public class BlueDuckWarehouse extends OpMode {
                 break;
 
             case 5:
-                target = bot.autonDrive(MovementEnum.RIGHTSTRAFE, (int) (TICKS_PER_INCH * 47));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.strafe(0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 47)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
+                if (bot.driveLeftDistanceSensor(105.0, 0.4, MovementEnum.RIGHTSTRAFE)) {
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     caseNum++;
                 }
 
@@ -241,9 +231,7 @@ public class BlueDuckWarehouse extends OpMode {
                 break;
 
             case 9:
-                bot.drive(0.5, 0.5);
-
-                if(bot.getBackDistanceCM() <= 12.0){
+                if (bot.driveBackDistanceSensor(12.0, 0.4, MovementEnum.BACKWARD)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

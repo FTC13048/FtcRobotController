@@ -98,22 +98,24 @@ public class RedDuckStorage extends OpMode {
                 break;
 
             case 1:
-                if (bot.driveBackDistanceSensor(23.0, 0.4, MovementEnum.FORWARD)) {
+                if (bot.driveBackDistanceSensor(17.0, 0.4, MovementEnum.FORWARD)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    caseNum++;
+                    if(bot.delay(0.20)){ caseNum++; }
                 }
 
                 break;
 
             case 2:
-                if (bot.driveLeftDistanceSensor(23.0, 0.4, MovementEnum.LEFTSTRAFE)) {
+                if (bot.driveLeftDistanceSensor(22.0, 0.4, MovementEnum.LEFTSTRAFE)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    timer.reset();
-                    caseNum++;
+                    if(bot.delay(0.20)){
+                        timer.reset();
+                        caseNum++;
+                    }
                 }
 
                 break;
@@ -131,11 +133,11 @@ public class RedDuckStorage extends OpMode {
                 break;
 
             case 4:
-                if (bot.driveBackDistanceSensor(86.0, 0.5, MovementEnum.FORWARD)) {
-                    bot.stop();
+                if (bot.driveBackDistanceSensor(103.0, 0.5, MovementEnum.FORWARD)) {
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    caseNum++;
+                    bot.stop();
+                    if(bot.delay(0.20)){ caseNum++; }
                 }
 
                 break;
@@ -204,10 +206,10 @@ public class RedDuckStorage extends OpMode {
                 break;
 
             case 8:
-                if (bot.driveBackDistanceSensor(14.0, 0.4, MovementEnum.BACKWARD)) {
-                    bot.stop();
+                if (bot.driveBackDistanceSensor(12.0, 0.4, MovementEnum.BACKWARD)) {
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
                     timer.reset();
                     caseNum++;
                 }
@@ -246,9 +248,9 @@ public class RedDuckStorage extends OpMode {
 
             case 11:
                 if (bot.driveLeftDistanceSensor(65, 0.75, MovementEnum.LEFTSTRAFE)) {
-                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
                     caseNum++;
                 }
 
@@ -269,6 +271,11 @@ public class RedDuckStorage extends OpMode {
 
                 break;
         }
+
+        telemetry.addData("back sensor", bot.getBackDistanceCM());
+        telemetry.addData("right sensor", bot.getRightDistanceCM());
+        telemetry.addData("left sensor", bot.getLeftDistanceCM());
+        telemetry.addData("case", caseNum);
 
         telemetry.update();
     }

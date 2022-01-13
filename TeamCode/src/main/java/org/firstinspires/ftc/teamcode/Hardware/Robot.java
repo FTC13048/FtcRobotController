@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -20,6 +21,7 @@ public class Robot {
 
     // Declare system motors (not driving motors)
     public DcMotor intakeRight, intakeLeft, duckSpinner, linSlide;
+    private ElapsedTime timer;
 
     public Servo cargoFlipper;
     private ModernRoboticsI2cRangeSensor distSensorBack;
@@ -42,6 +44,7 @@ public class Robot {
 
     // initializes all key systems of the bot (motors, servos, etc.)
     public void initBot() {
+        timer = new ElapsedTime();
         // Assign all motors to ports, name it this exact thing in the driver hub
         BR = map.get(DcMotor.class, "back_right");
         FR = map.get(DcMotor.class, "front_right");
@@ -258,6 +261,20 @@ public class Robot {
         return curPos;
     }
 
+    private boolean firstPass = true;
+    public boolean delay(double seconds){
+        if(firstPass){
+            timer.reset();
+            firstPass = false;
+        }
+
+        if(!firstPass){
+            if(timer.seconds() >= seconds){ return true; }
+        }
+
+        return false;
+    }
+
     public void wheelTelem() {
         telemetry.addData("FR", FR.getCurrentPosition());
         telemetry.addData("FL", FL.getCurrentPosition());
@@ -289,16 +306,17 @@ public class Robot {
             return true;
         } else {
             if (Math.abs(getBackDistanceCM() - stopDistCM) <= 15) {
-                power /= 6;
+                power = .1;
             }
 
+            power *= -1*Math.signum(getBackDistanceCM() - stopDistCM);
             switch (movement) {
                 case FORWARD:
-                    drive(-power, -power);
+                    drive(power, power);
                     break;
 
                 case BACKWARD:
-                    drive(power, power);
+                    drive(-power, -power);
                     break;
 
                 case LEFTSTRAFE:
@@ -319,7 +337,7 @@ public class Robot {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if (Math.abs(getRightDistanceCM() - stopDistCM) < 3) {
+        if (Math.abs(getRightDistanceCM() - stopDistCM) < 1) {
             stop();
             return true;
         } else {
@@ -327,6 +345,7 @@ public class Robot {
                 power /= 6;
             }
 
+            power *= Math.signum(getRightDistanceCM() - stopDistCM);
             switch (movement) {
                 case FORWARD:
                     drive(power, power);
@@ -354,7 +373,7 @@ public class Robot {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if (Math.abs(getLeftDistanceCM() - stopDistCM) < 3) {
+        if (Math.abs(getLeftDistanceCM() - stopDistCM) <= 1) {
             stop();
             return true;
         } else {
@@ -362,6 +381,7 @@ public class Robot {
                 power /= 6;
             }
 
+            power *= Math.signum(getLeftDistanceCM() - stopDistCM);
             switch (movement) {
                 case FORWARD:
                     drive(power, power);

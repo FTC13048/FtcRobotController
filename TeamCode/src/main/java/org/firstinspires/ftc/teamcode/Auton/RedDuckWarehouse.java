@@ -99,30 +99,20 @@ public class RedDuckWarehouse extends OpMode {
                 break;
 
             case 1: // drive forward 9 inches then reset encoders
-                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 9));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 9)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
+                if (bot.driveBackDistanceSensor(23.0, 0.4, MovementEnum.FORWARD)) {
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     caseNum++;
                 }
 
                 break;
 
             case 2: // strafe to duck spinner and reset encoders
-                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 22));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.strafe(0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 22)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
+                if (bot.driveLeftDistanceSensor(23.0, 0.4, MovementEnum.LEFTSTRAFE)) {
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     timer.reset();
                     caseNum++;
                 }
@@ -130,7 +120,7 @@ public class RedDuckWarehouse extends OpMode {
                 break;
 
             case 3: // spin the carousel for 4 seconds and reset encoders
-                bot.runDuckSpinner(0.5);
+                bot.runDuckSpinner(0.7);
 
                 if (timer.seconds() > 4) {
                     bot.runDuckSpinner(0.0);
@@ -142,15 +132,10 @@ public class RedDuckWarehouse extends OpMode {
                 break;
 
             case 4: // drive to line up w shipping hub and reset encoders
-                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 32));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 32)) {
-                    bot.autonDrive(MovementEnum.STOP, 0);
+                if (bot.driveBackDistanceSensor(86.0, 0.5, MovementEnum.FORWARD)) {
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     caseNum++;
                 }
 
@@ -229,9 +214,7 @@ public class RedDuckWarehouse extends OpMode {
                 break;
 
             case 8: // drive to hub and reset encoders
-                bot.drive(0.5, 0.5);
-
-                if(bot.getBackDistanceCM() <= 12.0){
+                if (bot.driveBackDistanceSensor(12.0, 0.4, MovementEnum.BACKWARD)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -256,7 +239,7 @@ public class RedDuckWarehouse extends OpMode {
                 break;
 
             case 10: // strafe to line up for parking in the warehouse
-                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 35));
+                int target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 35));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.strafe(0.5);
 
