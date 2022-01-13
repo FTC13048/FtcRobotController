@@ -101,7 +101,7 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 1: //  Drive forward 6 inches
-                if (bot.driveBackDistanceSensor(17.0, 0.4, MovementEnum.FORWARD)) {
+                if (bot.driveBackDistanceSensor(23.0, 0.4, MovementEnum.FORWARD)) {
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.stop();
@@ -141,7 +141,7 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 4: // Run the duck spinner for 4 seconds
-                bot.runDuckSpinner(-0.5);
+                bot.runDuckSpinner(-0.7);
 
                 if (timer.seconds() > 4) {
                     bot.runDuckSpinner(0.0);

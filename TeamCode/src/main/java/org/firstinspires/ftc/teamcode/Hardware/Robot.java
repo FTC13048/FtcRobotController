@@ -284,9 +284,7 @@ public class Robot {
         // if the sensor reads the stop distance return true
         //    if it reads 10 cm within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if (Math.abs(getBackDistanceCM() - stopDistCM) < 5) {
-            telemetry.addData("Req", "met");
-            telemetry.addData("Difference is", Math.abs(getBackDistanceCM() - stopDistCM));
+        if (Math.abs(getBackDistanceCM() - stopDistCM) < 3) {
             stop();
             return true;
         } else {
@@ -321,7 +319,7 @@ public class Robot {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if (Math.abs(getRightDistanceCM() - stopDistCM) < 5) {
+        if (Math.abs(getRightDistanceCM() - stopDistCM) < 3) {
             stop();
             return true;
         } else {
@@ -356,7 +354,7 @@ public class Robot {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if (Math.abs(getLeftDistanceCM() - stopDistCM) < 5) {
+        if (Math.abs(getLeftDistanceCM() - stopDistCM) < 3) {
             stop();
             return true;
         } else {

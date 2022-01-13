@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.HardwareStructure;
 
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -12,6 +13,13 @@ public class RobotSubsystems {
     private Intake intake;
     private LinearSlide linSlide;
 
+    public final int FIRST_LEVEL = -800;
+    public final int SECOND_LEVEL = -1290;
+    public final int THIRD_LEVEL = -1450;
+
+    public final double TICKS_PER_REV = 403.9;
+    public final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
+
     private final double BUFFER_AREA = 0.15;
     private Telemetry telemetry;
 
@@ -20,7 +28,7 @@ public class RobotSubsystems {
     private boolean debounceServo = false;
     private int armPos = -1;
 
-    public RobotSubsystems(HardwareMap hmap, Telemetry tele, boolean isAuton){
+    public RobotSubsystems(HardwareMap hmap, Telemetry tele, boolean isAuton) {
         telemetry = tele;
 
         driver = new DriveTrain(hmap, tele, isAuton);
@@ -29,7 +37,7 @@ public class RobotSubsystems {
         intake = new Intake(hmap, tele);
         linSlide = new LinearSlide(hmap, tele);
 
-        if(isAuton){
+        if (isAuton) {
             distSensorBack = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.BACK);
             distSensorLeft = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.LEFT);
             distSensorRight = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.RIGHT);
@@ -42,70 +50,79 @@ public class RobotSubsystems {
 
     // runs the drive train with imput from the gamepads
     public void runDriveTrainTele(double leftStickY, double rightStickY,
-                                  double rightTrigger, double leftTrigger){
-        if(rightTrigger > 0.0){ driver.strafe(rightTrigger); }
-
-        else if(leftTrigger > 0.0){ driver.strafe(-leftTrigger); }
-
-        else{ driver.drive(leftStickY, rightStickY); }
+                                  double rightTrigger, double leftTrigger) {
+        if (rightTrigger > 0.0) {
+            driver.strafe(rightTrigger);
+        } else if (leftTrigger > 0.0) {
+            driver.strafe(-leftTrigger);
+        } else {
+            driver.drive(leftStickY, rightStickY);
+        }
     }
 
     // runs the intake given the trigger power from the gamepads
-    public void runIntakeTele(double leftTrigger, double rightTrigger){
-        if(leftTrigger > BUFFER_AREA){ intake.runIntake(); }
-
-        else if(rightTrigger > BUFFER_AREA){ intake.runOuttake(); }
-
-        else{ intake.setIntakePower(0.0); }
+    public void runIntakeTele(double leftTrigger, double rightTrigger) {
+        if (leftTrigger > BUFFER_AREA) {
+            intake.runIntake();
+        } else if (rightTrigger > BUFFER_AREA) {
+            intake.runOuttake();
+        } else {
+            intake.setIntakePower(0.0);
+        }
     }
 
     // runs the duck spinner given the stick power from the gamepads
-    public void runDuckTele(double leftStickY){
-        if(Math.abs(leftStickY) > BUFFER_AREA){ duckSpinner.setDuckPower(leftStickY * 0.7); }
-
-        else{ duckSpinner.setDuckPower(0.0); }
+    public void runDuckTele(double leftStickY) {
+        if (Math.abs(leftStickY) > BUFFER_AREA) {
+            duckSpinner.setDuckPower(leftStickY * 0.7);
+        } else {
+            duckSpinner.setDuckPower(0.0);
+        }
     }
 
-    public void runSlideTele(double rightStickY, boolean gamepadA){
-        if(gamepadA){
+    public void runSlideTele(double rightStickY, boolean gamepadA) {
+        if (gamepadA) {
             automateSlide = true;
         }
 
-        if(automateSlide){
-            if(linSlide.setLinSlidePos(-500)){
+        if (automateSlide) {
+            if (linSlide.setLinSlidePos(-500)) {
                 cargoFlipper.setPos(0.3);
                 automateSlide = false;
             }
-        } else{
-            if(Math.abs(rightStickY) > 0.0){ linSlide.runLinSlide(rightStickY * 0.5); }
-            else{ linSlide.runLinSlide(0.0); }
+        } else {
+            if (Math.abs(rightStickY) > 0.0) {
+                linSlide.runLinSlide(rightStickY * 0.5);
+            } else {
+                linSlide.runLinSlide(0.0);
+            }
             telemetry.addData("Slide position", linSlide.getLinSlidePos());
         }
     }
 
     // SERVO METHODS
-    private void resetServo(boolean gamepadY){
-        if(gamepadY){
+    public void resetServo(boolean gamepadY) {
+        if (gamepadY) {
             servoReset = true;
         }
 
-        if(servoReset){
+        if (servoReset) {
             cargoFlipper.setPos(0.1);
             servoReset = false;
         }
     }
 
 
-    private void updateServo(boolean gamepadX){
-        if(gamepadX){
+    public void manualServoFlip(boolean gamepadX) {
+        if (gamepadX) {
             // Arm goes to pushing position if it is at rest
-            if(!debounceServo && armPos == -1){
+            if (!debounceServo && armPos == -1) {
                 cargoFlipper.setPos(0.9);
                 armPos *= -1;
             }
 
             // Arm goes to rest position if a is pressed an it is pushing
-            else if(!debounceServo && armPos == 1){
+            else if (!debounceServo && armPos == 1) {
                 cargoFlipper.setPos(0.1);
                 armPos *= -1;
             }
@@ -114,23 +131,23 @@ public class RobotSubsystems {
         }
 
         // If a is not pressed, make sure the debounce variable is false
-        else{
+        else {
             debounceServo = false;
         }
     }
 
     // --------------------------- OTHER COMBO/NEEDED METHODS ---------------------------
-    public int autonDrive(DirectionEnum movement, int target){
+    public int autonDrive(DirectionEnum movement, int target) {
         return driver.autonDrive(movement, target);
     }
 
-    public boolean turnAdjust(int degrees, double power){
+    public boolean turnAdjust(int degrees, double power) {
         return driver.adjustHeading(degrees, power);
     }
 
     public boolean driveToDistance(double stopDist, double power, DirectionEnum movement,
-                                   DistanceSensor.SensorName sensor){
-        switch(sensor){
+                                   DistanceSensor.SensorName sensor) {
+        switch (sensor) {
             case BACK:
                 return driver.driveDistanceSensor(stopDist, power, distSensorBack, movement);
 
@@ -142,5 +159,44 @@ public class RobotSubsystems {
         }
 
         return false;
+    }
+
+    public void setMotorMode(DcMotor.RunMode mode) {
+        driver.setMode(mode);
+    }
+
+    public void encoderReset() {
+        driver.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        driver.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
+    public void moveDirection(DirectionEnum direction, double power) {
+        switch (direction) {
+            case FORWARD:
+                driver.drive(power, power);
+                break;
+
+            case BACKWARD:
+                driver.drive(-power, -power);
+                break;
+
+            case LEFTSTRAFE:
+                driver.strafe(-power);
+
+            case RIGHTSTRAFE:
+                driver.strafe(power);
+                break;
+
+            case STOP:
+                driver.drive(0.0, 0.0);
+        }
+    }
+
+    public void setFlipperPos(double position) {
+        cargoFlipper.setPos(position);
+    }
+
+    public void setDuckPower(double power) {
+        duckSpinner.setDuckPower(power);
     }
 }

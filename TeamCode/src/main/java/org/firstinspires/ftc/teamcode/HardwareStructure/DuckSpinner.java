@@ -21,11 +21,11 @@ public class DuckSpinner {
     }
 
     public void spinDuckRed(){
-        duckSpinner.setPower(-DUCK_POWER);
+        duckSpinner.setPower(DUCK_POWER);
     }
 
     public void spinDuckBlue(){
-        duckSpinner.setPower(DUCK_POWER);
+        duckSpinner.setPower(-DUCK_POWER);
     }
 
     public void setDuckPower(double power){

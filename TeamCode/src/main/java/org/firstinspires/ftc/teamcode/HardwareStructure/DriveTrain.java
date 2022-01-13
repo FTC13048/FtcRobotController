@@ -18,7 +18,7 @@ public class DriveTrain {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
 
-    protected DriveTrain(HardwareMap hmap, Telemetry tele, boolean isAuton){
+    protected DriveTrain(HardwareMap hmap, Telemetry tele, boolean isAuton) {
         hardwareMap = hmap;
         telemetry = tele;
 
@@ -37,7 +37,7 @@ public class DriveTrain {
 
         setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        if(isAuton){
+        if (isAuton) {
             initImu();
 
             BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -92,19 +92,19 @@ public class DriveTrain {
 
     // drives until distance sensor reads a certain distance and then returns true when there
     public boolean driveDistanceSensor(double stopDist, double power,
-                                       DistanceSensor sensor, DirectionEnum movement){
+                                       DistanceSensor sensor, DirectionEnum movement) {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if(sensor.getDistCM() <= stopDist){
+        if (Math.abs(sensor.getDistCM() - stopDist) < 3) {
             stop();
             return true;
-        }
+        } else {
+            if (Math.abs(sensor.getDistCM() - stopDist) <= 15) {
+                power /= 6;
+            }
 
-        else{
-            if(sensor.getDistCM() < (stopDist + 15)){ power /= 6; }
-
-            switch(movement){
+            switch (movement) {
                 case FORWARD:
                     drive(power, power);
                     break;
@@ -205,7 +205,7 @@ public class DriveTrain {
         return false;
     }
 
-    private void initImu(){
+    private void initImu() {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         parameters = new BNO055IMU.Parameters();
 

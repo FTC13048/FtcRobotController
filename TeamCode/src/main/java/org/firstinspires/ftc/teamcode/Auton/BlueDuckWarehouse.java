@@ -92,8 +92,8 @@ public class BlueDuckWarehouse extends OpMode {
         switch (caseNum) {
             case 0:
                 this.vision.stop();
-                bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 caseNum++;
                 break;
 

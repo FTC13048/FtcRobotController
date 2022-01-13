@@ -108,7 +108,7 @@ public class RedDuckStorage extends OpMode {
                 break;
 
             case 2:
-                if (bot.driveLeftDistanceSensor(23, 0.75, MovementEnum.LEFTSTRAFE)) {
+                if (bot.driveLeftDistanceSensor(23.0, 0.4, MovementEnum.LEFTSTRAFE)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -119,7 +119,7 @@ public class RedDuckStorage extends OpMode {
                 break;
 
             case 3:
-                bot.runDuckSpinner(0.5);
+                bot.runDuckSpinner(0.7);
 
                 if (timer.seconds() > 4) {
                     bot.runDuckSpinner(0.0);
@@ -204,7 +204,7 @@ public class RedDuckStorage extends OpMode {
                 break;
 
             case 8:
-                if (bot.driveBackDistanceSensor(14, 0.75, MovementEnum.BACKWARD)) {
+                if (bot.driveBackDistanceSensor(14.0, 0.4, MovementEnum.BACKWARD)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -229,11 +229,11 @@ public class RedDuckStorage extends OpMode {
                 break;
 
             case 10:
-                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 30));
+                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 35));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 bot.drive(0.75, 0.75);
 
-                if (target >= (int) (TICKS_PER_INCH * 30)) {
+                if (target >= (int) (TICKS_PER_INCH * 35)) {
                     bot.stop();
                     bot.cargoFlipper.setPosition(0.1);
                     bot.autonDrive(MovementEnum.STOP, 0);
