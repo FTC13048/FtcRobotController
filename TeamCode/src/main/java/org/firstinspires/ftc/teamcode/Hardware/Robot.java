@@ -301,15 +301,16 @@ public class Robot {
         // if the sensor reads the stop distance return true
         //    if it reads 10 cm within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if (Math.abs(getBackDistanceCM() - stopDistCM) < 3) {
+        double distance = getBackDistanceCM();
+        if (Math.abs(distance - stopDistCM) < 3) {
             stop();
             return true;
         } else {
-            if (Math.abs(getBackDistanceCM() - stopDistCM) <= 15) {
+            if (Math.abs(distance - stopDistCM) <= 15) {
                 power = 0.1;
             }
 
-            power *= -1 * Math.signum(getBackDistanceCM() - stopDistCM);
+            power *= -1 * Math.signum(distance - stopDistCM);
             switch (movement) {
                 case FORWARD:
                     drive(-power, -power);
@@ -337,15 +338,16 @@ public class Robot {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if (Math.abs(getRightDistanceCM() - stopDistCM) < 1) {
+        double distance = getRightDistanceCM();
+        if (Math.abs(distance - stopDistCM) < 1) {
             stop();
             return true;
         } else {
-            if (Math.abs(getRightDistanceCM() - stopDistCM) <= 15) {
+            if (Math.abs(distance - stopDistCM) <= 15) {
                 power = 0.1;
             }
 
-            power *= -1 * Math.signum(getRightDistanceCM() - stopDistCM);
+            power *= -1 * Math.signum(distance - stopDistCM);
             switch (movement) {
                 case FORWARD:
                     drive(-power, -power);
@@ -373,15 +375,16 @@ public class Robot {
         // if the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
-        if (Math.abs(getLeftDistanceCM() - stopDistCM) <= 1) {
+        double distance = getLeftDistanceCM();
+        if (Math.abs(distance - stopDistCM) <= 1) {
             stop();
             return true;
         } else {
-            if (Math.abs(getLeftDistanceCM() - stopDistCM) <= 15) {
+            if (Math.abs(distance - stopDistCM) <= 15) {
                 power = 0.1;
             }
 
-            power *= -1 * Math.signum(getLeftDistanceCM() - stopDistCM);
+            power *= -1 * Math.signum(distance - stopDistCM);
             switch (movement) {
                 case FORWARD:
                     drive(-power, -power);

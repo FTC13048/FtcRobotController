@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name = "Blue Duck Storage", group = "Storage")
+@Autonomous(name = "Blue Duck Storage Sensor", group = "Storage")
 
-public class BlueDuckStorage extends OpMode {
+public class BlueDuckStorageSensor extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 403.9;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
@@ -221,7 +221,7 @@ public class BlueDuckStorage extends OpMode {
             case 8:
                 telemetry.addData("case", "8");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
-                bot.cargoFlipper.setPosition(0.4);
+                bot.cargoFlipper.setPosition(0.6);
 
                 if (timer.seconds() > 3) {
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
