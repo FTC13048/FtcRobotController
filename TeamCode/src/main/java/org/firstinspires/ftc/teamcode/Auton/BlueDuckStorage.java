@@ -100,9 +100,9 @@ public class BlueDuckStorage extends OpMode {
 
             case 1: //  Drive forward 6 inches
                 if (bot.driveBackDistanceSensor(18.0, 0.4, MovementEnum.FORWARD)) {
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     if(bot.delay(0.20)){ caseNum++; }
                 }
 
@@ -128,10 +128,10 @@ public class BlueDuckStorage extends OpMode {
                 bot.drive(0.5, 0.5);
 
                 if (target >= (int) (TICKS_PER_INCH * 32)) {
+                    bot.stop();
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     timer.reset();
                     caseNum++;
                 }
@@ -151,7 +151,7 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 5: // Strafe right 47 inches
-                if (bot.driveLeftDistanceSensor(96.0, 0.4, MovementEnum.RIGHTSTRAFE)) {
+                if (bot.driveLeftDistanceSensor(96.0, 0.4, MovementEnum.LEFTSTRAFE)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -179,9 +179,9 @@ public class BlueDuckStorage extends OpMode {
 
                     if (bot.linSlide.getCurrentPosition() <= bot.FIRST_LEVEL) {
                         bot.linSlide.setPower(0.0);
+                        bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        bot.stop();
                         timer.reset();
                         caseNum++;
                     }
@@ -192,9 +192,9 @@ public class BlueDuckStorage extends OpMode {
 
                     if (bot.linSlide.getCurrentPosition() <= bot.SECOND_LEVEL) {
                         bot.linSlide.setPower(0.0);
+                        bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        bot.stop();
                         timer.reset();
                         caseNum++;
                     }
@@ -205,9 +205,9 @@ public class BlueDuckStorage extends OpMode {
 
                     if (bot.linSlide.getCurrentPosition() <= bot.THIRD_LEVEL) {
                         bot.linSlide.setPower(0.0);
+                        bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        bot.stop();
                         timer.reset();
                         caseNum++;
                     }
@@ -232,10 +232,11 @@ public class BlueDuckStorage extends OpMode {
                 break;
 
             case 9: // Drive backward to the hub
-                if (bot.driveBackDistanceSensor(7.0, 0.4, MovementEnum.BACKWARD)) {
+                if (bot.driveBackDistanceSensor(10.0, 0.4, MovementEnum.FORWARD)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    timer.reset();
                     caseNum++;
                 }
 
@@ -261,10 +262,10 @@ public class BlueDuckStorage extends OpMode {
                 bot.drive(0.5, 0.5);
 
                 if (target >= (int) (TICKS_PER_INCH * 40)) {
+                    bot.stop();
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     caseNum++;
                 }
 
@@ -283,13 +284,13 @@ public class BlueDuckStorage extends OpMode {
             case 13: // Retract the linear slide and stop the bot
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.linSlide.setPower(0.5);
+                bot.linSlide.setPower(0.4);
 
                 if (bot.linSlide.getCurrentPosition() >= 0) {
                     bot.linSlide.setPower(0.0);
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     caseNum++;
                 }
 

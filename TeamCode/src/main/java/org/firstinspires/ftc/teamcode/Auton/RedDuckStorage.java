@@ -108,7 +108,7 @@ public class RedDuckStorage extends OpMode {
                 break;
 
             case 2:
-                if (bot.driveLeftDistanceSensor(22.0, 0.4, MovementEnum.LEFTSTRAFE)) {
+                if (bot.driveLeftDistanceSensor(23.0, 0.4, MovementEnum.LEFTSTRAFE)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -134,9 +134,9 @@ public class RedDuckStorage extends OpMode {
 
             case 4:
                 if (bot.driveBackDistanceSensor(103.0, 0.5, MovementEnum.FORWARD)) {
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     if(bot.delay(0.20)){ caseNum++; }
                 }
 
@@ -159,9 +159,9 @@ public class RedDuckStorage extends OpMode {
 
                     if (bot.linSlide.getCurrentPosition() <= bot.FIRST_LEVEL) {
                         bot.linSlide.setPower(0.0);
+                        bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        bot.stop();
                         caseNum++;
                     }
                 }
@@ -171,9 +171,9 @@ public class RedDuckStorage extends OpMode {
 
                     if (bot.linSlide.getCurrentPosition() <= bot.SECOND_LEVEL) {
                         bot.linSlide.setPower(0.0);
+                        bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        bot.stop();
                         caseNum++;
                     }
                 }
@@ -183,9 +183,9 @@ public class RedDuckStorage extends OpMode {
 
                     if (bot.linSlide.getCurrentPosition() <= bot.THIRD_LEVEL) {
                         bot.linSlide.setPower(0.0);
+                        bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        bot.stop();
                         caseNum++;
                     }
                 }
@@ -206,10 +206,10 @@ public class RedDuckStorage extends OpMode {
                 break;
 
             case 8:
-                if (bot.driveBackDistanceSensor(12.0, 0.4, MovementEnum.BACKWARD)) {
+                if (bot.driveBackDistanceSensor(12.0, 0.4, MovementEnum.FORWARD)) {
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     timer.reset();
                     caseNum++;
                 }
@@ -248,9 +248,9 @@ public class RedDuckStorage extends OpMode {
 
             case 11:
                 if (bot.driveLeftDistanceSensor(65, 0.75, MovementEnum.LEFTSTRAFE)) {
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     caseNum++;
                 }
 
@@ -263,9 +263,9 @@ public class RedDuckStorage extends OpMode {
 
                 if (bot.linSlide.getCurrentPosition() >= 0) {
                     bot.linSlide.setPower(0.0);
+                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    bot.stop();
                     caseNum++;
                 }
 

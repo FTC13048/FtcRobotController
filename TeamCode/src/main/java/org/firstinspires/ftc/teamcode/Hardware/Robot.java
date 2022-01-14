@@ -32,8 +32,8 @@ public class Robot {
     private Telemetry telemetry;
     private boolean isAuton;
 
-    public final int FIRST_LEVEL = -800;
-    public final int SECOND_LEVEL = -1290;
+    public final int FIRST_LEVEL = -892;
+    public final int SECOND_LEVEL = -963;
     public final int THIRD_LEVEL = -1450;
 
     public Robot(HardwareMap hmap, Telemetry tele, boolean auton) {
@@ -306,25 +306,25 @@ public class Robot {
             return true;
         } else {
             if (Math.abs(getBackDistanceCM() - stopDistCM) <= 15) {
-                power = .1;
+                power = 0.1;
             }
 
-            power *= -1*Math.signum(getBackDistanceCM() - stopDistCM);
+            power *= -1 * Math.signum(getBackDistanceCM() - stopDistCM);
             switch (movement) {
                 case FORWARD:
-                    drive(power, power);
-                    break;
-
-                case BACKWARD:
                     drive(-power, -power);
                     break;
 
+                case BACKWARD:
+                    drive(power, power);
+                    break;
+
                 case LEFTSTRAFE:
-                    strafe(-power);
+                    strafe(power);
                     break;
 
                 case RIGHTSTRAFE:
-                    strafe(power);
+                    strafe(-power);
                     break;
             }
 
@@ -342,25 +342,25 @@ public class Robot {
             return true;
         } else {
             if (Math.abs(getRightDistanceCM() - stopDistCM) <= 15) {
-                power /= 6;
+                power = 0.1;
             }
 
-            power *= Math.signum(getRightDistanceCM() - stopDistCM);
+            power *= -1 * Math.signum(getRightDistanceCM() - stopDistCM);
             switch (movement) {
                 case FORWARD:
-                    drive(power, power);
-                    break;
-
-                case BACKWARD:
                     drive(-power, -power);
                     break;
 
+                case BACKWARD:
+                    drive(power, power);
+                    break;
+
                 case LEFTSTRAFE:
-                    strafe(-power);
+                    strafe(power);
                     break;
 
                 case RIGHTSTRAFE:
-                    strafe(power);
+                    strafe(-power);
                     break;
             }
 
@@ -378,25 +378,25 @@ public class Robot {
             return true;
         } else {
             if (Math.abs(getLeftDistanceCM() - stopDistCM) <= 15) {
-                power /= 6;
+                power = 0.1;
             }
 
-            power *= Math.signum(getLeftDistanceCM() - stopDistCM);
+            power *= -1 * Math.signum(getLeftDistanceCM() - stopDistCM);
             switch (movement) {
                 case FORWARD:
-                    drive(power, power);
-                    break;
-
-                case BACKWARD:
                     drive(-power, -power);
                     break;
 
+                case BACKWARD:
+                    drive(power, power);
+                    break;
+
                 case LEFTSTRAFE:
-                    strafe(-power);
+                    strafe(power);
                     break;
 
                 case RIGHTSTRAFE:
-                    strafe(power);
+                    strafe(-power);
                     break;
             }
 
