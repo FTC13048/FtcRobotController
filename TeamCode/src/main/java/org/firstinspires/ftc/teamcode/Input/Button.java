@@ -1,0 +1,28 @@
+package org.firstinspires.ftc.teamcode.Input;
+
+public enum Button{
+     dpad_up,
+     dpad_down,
+     dpad_left,
+     dpad_right,
+     a,
+     b,
+     x,
+     y,
+     guide,
+     start,
+     back,
+     left_bumper,
+     right_bumper,
+     left_stick_button,
+     right_stick_button,
+     circle,
+     cross,
+     triangle,
+     square,
+     share,
+     options,
+     touchpad,
+     touchpad_finger_1,
+     touchpad_finger_2,
+}
