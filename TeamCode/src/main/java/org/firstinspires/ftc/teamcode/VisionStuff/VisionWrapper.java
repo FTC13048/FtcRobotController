@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.VisionStuff;
 
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
@@ -18,10 +20,14 @@ import java.util.List;
 public class VisionWrapper {
     private OpenCvWebcam webcam;
     private GripPipeline grip;
+    private Telemetry tele;
 
-    private static final int CAMERA_WIDTH = 320;
+    private static final int CAMERA_WIDTH = 80;
 
-    public VisionWrapper(){ grip = new GripPipeline(); }
+    public VisionWrapper(Telemetry tele){
+        grip = new GripPipeline();
+        this.tele = tele;
+    }
 
     public void init(HardwareMap hmap){ initVision(hmap); }
 
@@ -54,21 +60,28 @@ public class VisionWrapper {
         if(contours.size() == 0){
             return DetectionLevel.LEVEL_THREE;
         }else{
-            // find the average center of mass on the screen and if it is greater than 1/2 the
-            //    width, it is level 2 and level 1 if less than half the width
             double xSum = 0;
 
+            // for each contour found, find its center and add it to the total center of mass foudn
             for (MatOfPoint point : contours) {
                 Moments moments = Imgproc.moments(point);
 
                 xSum += moments.get_m10() / moments.get_m00();
             }
 
+            // divide the total center of mass by the amount of contours to find the average
+            //     center of mass on screen
             xSum /= contours.size();
+            tele.addData("xSum", xSum);
 
+            // if the average center of mass is positioned at greater than half the screen width,
+            //     the object needs to be dropped to the second level
             if (xSum > CAMERA_WIDTH/2) {
+
                 return DetectionLevel.LEVEL_TWO;
-            } else {
+            }//  If average center of mass is not greater than half the screen, then it is on
+            //      the left and should go to level one
+            else {
                 return DetectionLevel.LEVEL_ONE;
             }
         }

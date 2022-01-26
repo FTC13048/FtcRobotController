@@ -38,7 +38,7 @@ public class RedDuckWarehouse extends OpMode {
         initImu();
 
         // initialize the vision detection
-        vision = new VisionWrapper();
+        vision = new VisionWrapper(telemetry);
         vision.init(hardwareMap);
         this.level = VisionWrapper.DetectionLevel.UNKNOWN; // immediately overwritten but safer without null
         this.one = 0;

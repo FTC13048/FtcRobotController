@@ -33,8 +33,8 @@ public class Robot {
     private boolean isAuton;
 
     public final int FIRST_LEVEL = -892;
-    public final int SECOND_LEVEL = -963;
-    public final int THIRD_LEVEL = -1450;
+    public final int SECOND_LEVEL = -1063;
+    public final int THIRD_LEVEL = -1550;
 
     public Robot(HardwareMap hmap, Telemetry tele, boolean auton) {
         this.map = hmap;

@@ -26,21 +26,29 @@ import org.openftc.easyopencv.OpenCvPipeline;
 public class GripPipeline extends OpenCvPipeline {
 
 	//Outputs
+	private Mat cvResizeOutput = new Mat();
 	private Mat hslThresholdOutput = new Mat();
 	private Mat cvErodeOutput = new Mat();
 	private Mat cvDilateOutput = new Mat();
-	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<>();
+	private ArrayList<MatOfPoint> findContoursOutput = new ArrayList<MatOfPoint>();
 
 	/**
 	 * This is the primary method that runs the entire pipeline and updates the outputs.
 	 */
 	public void process(Mat source0) {
+		// Step CV_resize0:
+		Mat cvResizeSrc = source0;
+		Size cvResizeDsize = new Size(0, 0);
+		double cvResizeFx = 0.25;
+		double cvResizeFy = 0.25;
+		int cvResizeInterpolation = Imgproc.INTER_LINEAR;
+		cvResize(cvResizeSrc, cvResizeDsize, cvResizeFx, cvResizeFy, cvResizeInterpolation, cvResizeOutput);
 
 		// Step HSL_Threshold0:
-		Mat hslThresholdInput = source0;
-		double[] hslThresholdHue = {12.52516272954282, 117.87878787878788};
+		Mat hslThresholdInput = cvResizeOutput;
+		double[] hslThresholdHue = {18.99998287342771, 180};
 		double[] hslThresholdSaturation = {121.53776978417265, 255.0};
-		double[] hslThresholdLuminance = {22.93165467625899, 231.38888888888889};
+		double[] hslThresholdLuminance = {43.57014388489208, 151.969696969697};
 		hslThreshold(hslThresholdInput, hslThresholdHue, hslThresholdSaturation, hslThresholdLuminance, hslThresholdOutput);
 
 		// Step CV_erode0:
@@ -66,6 +74,14 @@ public class GripPipeline extends OpenCvPipeline {
 		boolean findContoursExternalOnly = false;
 		findContours(findContoursInput, findContoursExternalOnly, findContoursOutput);
 
+	}
+
+	/**
+	 * This method is a generated getter for the output of a CV_resize.
+	 * @return Mat output from CV_resize.
+	 */
+	public Mat cvResizeOutput() {
+		return cvResizeOutput;
 	}
 
 	/**
@@ -218,9 +234,9 @@ public class GripPipeline extends OpenCvPipeline {
 
 
 	@Override
-	public Mat processFrame(Mat input) {
-		this.process(input);
-		return this.cvDilateOutput();
+	public Mat processFrame(Mat mat) {
+		process(mat);
+		return this.cvDilateOutput;
 	}
 }
 

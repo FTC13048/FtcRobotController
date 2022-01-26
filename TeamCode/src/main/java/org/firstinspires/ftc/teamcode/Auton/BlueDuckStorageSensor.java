@@ -31,25 +31,29 @@ public class BlueDuckStorageSensor extends OpMode {
 
     @Override
     public void init() {
-        this.bot = new Robot(this.hardwareMap, this.telemetry, true);
+        try{
+            this.bot = new Robot(this.hardwareMap, this.telemetry, true);
 
-        // initialize the robot and the onboard gyro
-        this.bot.initBot();
-        initImu();
+            // initialize the robot and the onboard gyro
+            this.bot.initBot();
+            initImu();
 
-        // initialize the ai object recognition
-        vision = new VisionWrapper();
-        vision.init(hardwareMap);
-        this.level = VisionWrapper.DetectionLevel.UNKNOWN; // immediately overwritten but safer without null
-        this.one = 0;
-        this.two = 0;
-        this.three = 0;
+            // initialize the ai object recognition
+            vision = new VisionWrapper(telemetry);
+            vision.init(hardwareMap);
+            this.level = VisionWrapper.DetectionLevel.UNKNOWN; // immediately overwritten but safer without null
+            this.one = 0;
+            this.two = 0;
+            this.three = 0;
 
-        // initialize the timer
-        timer = new ElapsedTime();
+            // initialize the timer
+            timer = new ElapsedTime();
 
-        telemetry.addData("Status", "Initialized");
-        telemetry.update();
+            telemetry.addData("Status", "Initialized");
+            telemetry.update();
+        } catch(NullPointerException e){
+            telemetry.addLine(e.getStackTrace().toString());
+        }
     }
 
     @Override
@@ -78,6 +82,11 @@ public class BlueDuckStorageSensor extends OpMode {
             telemetry.addData("LEVEL 1: ", this.one);
             telemetry.addData("LEVEL 2: ", this.two);
             telemetry.addData("LEVEL 3: ", this.three);
+
+            telemetry.addLine("--------------------------------------");
+            telemetry.addData("distance back", bot.getBackDistanceCM());
+            telemetry.addData("distance right", bot.getRightDistanceCM());
+            telemetry.addData("distance left", bot.getLeftDistanceCM());
 
             telemetry.update();
         }
@@ -232,7 +241,7 @@ public class BlueDuckStorageSensor extends OpMode {
                 break;
 
             case 9: // Drive backward to the hub
-                if (bot.driveBackDistanceSensor(10.0, 0.4, MovementEnum.FORWARD)) {
+                if (bot.driveBackDistanceSensor(8.0, 0.4, MovementEnum.FORWARD)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

@@ -37,7 +37,7 @@ public class RedDuckStorageEncoder extends OpMode {
         initImu();
 
         // initialize the ai object recognition
-        vision = new VisionWrapper();
+        vision = new VisionWrapper(telemetry);
         vision.init(hardwareMap);
         this.level = VisionWrapper.DetectionLevel.UNKNOWN; // immediately overwritten but safer without null
         this.one = 0;
