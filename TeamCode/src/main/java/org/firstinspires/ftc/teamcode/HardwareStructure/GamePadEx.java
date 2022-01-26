@@ -48,8 +48,6 @@ public class GamePadEx {
 
         Function<Gamepad, Boolean> function;
 
-        ControllerButtons(Function<Gamepad, Boolean> function) {
-            this.function = function;
-        }
+        ControllerButtons(Function<Gamepad, Boolean> function) { this.function = function; }
     }
 }
