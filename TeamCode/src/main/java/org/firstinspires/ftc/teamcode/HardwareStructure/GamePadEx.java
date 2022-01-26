@@ -77,7 +77,7 @@ public class GamePadEx {
      * @param button The button to check against
      * @return If the button stopped being held down
      */
-    public boolean getControlUp(GamePadEx.ControllerButtons button) {
+    public boolean getControlRelease(GamePadEx.ControllerButtons button) {
         boolean linkedValue = button.function.apply(gamepad);
 
         if (!buttons.containsKey(button)) {
