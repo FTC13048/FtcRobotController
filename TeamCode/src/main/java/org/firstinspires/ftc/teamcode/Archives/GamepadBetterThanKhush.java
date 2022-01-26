@@ -1,19 +1,21 @@
-package org.firstinspires.ftc.teamcode.HardwareStructure.Input;
+package org.firstinspires.ftc.teamcode.Archives;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
+import org.firstinspires.ftc.teamcode.Archives.Button;
+import org.firstinspires.ftc.teamcode.HardwareStructure.GamePadEx;
+
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 
 public class GamepadBetterThanKhush {
     public Gamepad thisGamepad;
 
-    public static final double MIN_THRESHOLD = 0.15;
+    public static final double minimumThreshold = 0.15;
 
-    public HashMap<Button, Boolean> ButtonStates = new LinkedHashMap<>();
+    public HashMap<GamePadEx.ControllerButtons, Boolean> ButtonStates = new HashMap<>();
 
     /**
-     * Creates a new gamepad object with a set name
+     * Creates a new GamepadBetterThanKhush object with a set name
      *
      * @param gamepad The actual gamepad to initialize it with
      */
@@ -27,8 +29,8 @@ public class GamepadBetterThanKhush {
      * @param button The button to check against
      * @return If the button is held down
      */
-    public boolean getButton(Button button) {
-        boolean linkedValue = button.buttonFunction.apply(thisGamepad);
+    public boolean getButton(GamePadEx.ControllerButtons button) {
+        boolean linkedValue = button.function.apply(thisGamepad);
 
         ButtonStates.put(button, linkedValue);
 
@@ -41,8 +43,8 @@ public class GamepadBetterThanKhush {
      * @param button The button to check against
      * @return If the button started being held down
      */
-    public boolean getButtonDown(Button button) {
-        boolean linkedValue = button.buttonFunction.apply(thisGamepad);
+    public boolean getButtonDown(GamePadEx.ControllerButtons button) {
+        boolean linkedValue = button.function.apply(thisGamepad);
 
         if (!ButtonStates.containsKey(button)) {
             ButtonStates.put(button, linkedValue);
@@ -64,8 +66,8 @@ public class GamepadBetterThanKhush {
      * @param button The button to check against
      * @return If the button stopped being held down
      */
-    public boolean getButtonUp(Button button) {
-        boolean linkedValue = button.buttonFunction.apply(thisGamepad);
+    public boolean getButtonUp(GamePadEx.ControllerButtons button) {
+        boolean linkedValue = button.function.apply(thisGamepad);
 
         if (!ButtonStates.containsKey(button)) {
             ButtonStates.put(button, linkedValue);
