@@ -32,9 +32,9 @@ public class DuckSpinner extends Subsystems {
 
     @Override
     public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
-        if (gp2.controlPressed(GamePadEx.ControllerButtons.LTRIGGER)) {
+        if (gp2.getControlDown(GamePadEx.ControllerButtons.LTRIGGER)) {
             duckState = SpinDirection.SPINBLUE;
-        } else if (gp2.controlPressed(GamePadEx.ControllerButtons.RTRIGGER)) {
+        } else if (gp2.getControlDown(GamePadEx.ControllerButtons.RTRIGGER)) {
             duckState = SpinDirection.SPINRED;
         } else {
             duckState = SpinDirection.STOP;
