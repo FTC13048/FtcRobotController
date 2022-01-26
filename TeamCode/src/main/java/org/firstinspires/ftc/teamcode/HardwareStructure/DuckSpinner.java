@@ -6,11 +6,12 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class DuckSpinner extends Subsystems{
+public class DuckSpinner extends Subsystems {
     private DcMotor duckSpinner;
     private final double DUCK_POWER = 0.7;
+    private SpinDirection duckState;
 
-    protected DuckSpinner(HardwareMap hmap, Telemetry tele){
+    protected DuckSpinner(HardwareMap hmap, Telemetry tele) {
         super(tele);
         duckSpinner = hmap.get(DcMotor.class, "duckSpinner");
 
@@ -18,48 +19,57 @@ public class DuckSpinner extends Subsystems{
         duckSpinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         duckSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
+        duckState = SpinDirection.STOP;
+
         tele.addData("Duck Spinner", "Initialized");
     }
 
-    public void spinDuckRed(){
-        duckSpinner.setPower(DUCK_POWER);
-    }
-
-    public void spinDuckBlue(){
-        duckSpinner.setPower(-DUCK_POWER);
-    }
-
-    public void setDuckPower(double power){
-        duckSpinner.setPower(power);
-    }
 
     @Override
     public void updateState() {
-
+        duckSpinner.setPower(duckState.power);
     }
 
     @Override
     public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
+        if (gp2.controlPressed(GamePadEx.ControllerButtons.LTRIGGER)) {
+            duckState = SpinDirection.SPINBLUE;
+        } else if (gp2.controlPressed(GamePadEx.ControllerButtons.RTRIGGER)) {
+            duckState = SpinDirection.SPINRED;
+        } else {
+            duckState = SpinDirection.STOP;
+        }
+    }
 
+    public void spinRed() {
+        duckState = SpinDirection.SPINRED;
+    }
+
+    public void spinBlue() {
+        duckState = SpinDirection.SPINBLUE;
+    }
+
+    public SpinDirection getState() {
+        return duckState;
     }
 
     @Override
     public void stop() {
-
+        duckSpinner.setPower(SpinDirection.STOP.power);
     }
 
-    public enum SpinDirection{
+    public enum SpinDirection {
         SPINRED(0.7),
         SPINBLUE(-0.7),
         STOP(0.0);
 
         private double power;
 
-        private SpinDirection(double pow){
+        private SpinDirection(double pow) {
             power = pow;
         }
 
-        public double getDuckPower(){
+        public double getDuckPower() {
             return this.power;
         }
     }
