@@ -15,24 +15,83 @@ public class GamePadEx {
         buttons = new HashMap<>();
     }
 
-    public boolean controlPressed(ControllerButtons btn) {
-        boolean gamepadVal = btn.function.apply(gamepad);
+    /**
+     * Returns true while the given button is held down
+     *
+     * @param button The button to check against
+     * @return If the button is held down
+     */
+    public boolean getControl(ControllerButtons button) {
+//        boolean gamepadVal = button.function.apply(gamepad);
+//
+//        if (!buttons.containsKey(button)) {
+//            buttons.put(button, true);
+//            return true;
+//        }
+//
+//        if (gamepadVal && !buttons.get(button)) {
+//            buttons.put(button, true);
+//            return true;
+//        }
+//
+//        if (!gamepadVal && buttons.get(button)) {
+//            buttons.put(button, false);
+//        }
+//
+//        return false;
 
-        if (!buttons.containsKey(btn)) {
-            buttons.put(btn, true);
+        // Simpler version
+        boolean gamepadVal = button.function.apply(gamepad);
+
+        buttons.put(button, gamepadVal);
+
+        return gamepadVal;
+    }
+
+    /**
+     * Returns true if the given button started being held down
+     *
+     * @param button The button to check against
+     * @return If the button started being held down
+     */
+    public boolean getControlDown(GamePadEx.ControllerButtons button) {
+        boolean linkedValue = button.function.apply(gamepad);
+
+        if (!buttons.containsKey(button)) {
+            buttons.put(button, linkedValue);
+            return linkedValue;
+        }
+
+        if (!buttons.get(button) && linkedValue) {
+            buttons.put(button, linkedValue);
             return true;
+        } else {
+            buttons.put(button, linkedValue);
+            return false;
+        }
+    }
+
+    /**
+     * Returns true if the button stopped being held down
+     *
+     * @param button The button to check against
+     * @return If the button stopped being held down
+     */
+    public boolean getControlUp(GamePadEx.ControllerButtons button) {
+        boolean linkedValue = button.function.apply(gamepad);
+
+        if (!buttons.containsKey(button)) {
+            buttons.put(button, linkedValue);
+            return false;
         }
 
-        if (gamepadVal && !buttons.get(btn)) {
-            buttons.put(btn, true);
+        if (buttons.get(button) && !linkedValue) {
+            buttons.put(button, linkedValue);
             return true;
+        } else {
+            buttons.put(button, linkedValue);
+            return false;
         }
-
-        if (!gamepadVal && buttons.get(btn)) {
-            buttons.put(btn, false);
-        }
-
-        return false;
     }
 
     public enum ControllerButtons {
@@ -46,7 +105,7 @@ public class GamePadEx {
         LSTICKY((g -> g.left_stick_y > GamePadEx.MIN_THRESHOLD)),
         RSTICKY((g -> g.right_stick_y > GamePadEx.MIN_THRESHOLD));
 
-        Function<Gamepad, Boolean> function;
+        public Function<Gamepad, Boolean> function;
 
         ControllerButtons(Function<Gamepad, Boolean> function) { this.function = function; }
     }

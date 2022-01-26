@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.HardwareStructure.Input;
+package org.firstinspires.ftc.teamcode.Archives;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
@@ -24,11 +24,11 @@ public enum Button {
     DPADLEFT(g -> g.dpad_left),
     DPADRIGHT(g -> g.dpad_right),
 
-    RTRIGGER((g -> g.right_trigger > GamepadBetterThanKhush.MIN_THRESHOLD)),
-    LTRIGGER((g -> g.left_trigger > GamepadBetterThanKhush.MIN_THRESHOLD)),
+    RTRIGGER((g -> g.right_trigger > GamepadBetterThanKhush.minimumThreshold)),
+    LTRIGGER((g -> g.left_trigger > GamepadBetterThanKhush.minimumThreshold)),
 
-    LSTICKY((g -> g.left_stick_y > GamepadBetterThanKhush.MIN_THRESHOLD)),
-    RSTICKY((g -> g.right_stick_y > GamepadBetterThanKhush.MIN_THRESHOLD));
+    LSTICKY((g -> g.left_stick_y > GamepadBetterThanKhush.minimumThreshold)),
+    RSTICKY((g -> g.right_stick_y > GamepadBetterThanKhush.minimumThreshold));
 
     Function<Gamepad, Boolean> buttonFunction;
 

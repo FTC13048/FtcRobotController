@@ -1,0 +1,203 @@
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Input/GamepadBetterThanKhush.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.Input;\n\nimport com.qualcomm.robotcore.hardware.Gamepad;\n\nimport java.lang.ref.Reference;\nimport java.sql.Ref;\nimport java.util.HashMap;\nimport java.util.LinkedHashMap;\n\npublic class GamepadBetterThanKhush {\n\n    public String GamepadName;\n    public Gamepad thisGamepad;\n\n    public HashMap<Button, Boolean> ButtonStates = new LinkedHashMap<>();\n\n    /**\n     * Creates a new gamepad object with a set name\n     * @param name The name of this gamepad to initialize it with\n     * @return The new gamepad\n     */\n    public GamepadBetterThanKhush(String name) {\n        this.GamepadName = name;\n        init();\n    }\n\n    public void init(){\n        ButtonStates.put(Button.dpad_up, false);\n    }\n\n    /**\n     * Returns true if the given button is held down\n     * @param button The button to check against\n     * @return If the button is held down\n     */\n    public boolean getButton(Button button) {\n        thisGamepad.\n        return false;\n    }\n\n    /**\n     * Returns true if the given button started being held down\n     * @param button The button to check against\n     * @return If the button started being held down\n     */\n    public boolean getButtonDown(Button button) {\n\n        return false;\n    }\n\n    /**\n     * Returns true if the button stopped being held down\n     *\n     * @param button The button to check against\n     * @return If the button stopped being held down\n     */\n    public boolean getButtonUp(Button button) {\n\n        return false;\n    }\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Input/GamepadBetterThanKhush.java b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Input/GamepadBetterThanKhush.java
+--- a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Input/GamepadBetterThanKhush.java	(revision cef4bb0e7815f3b357319da566eed6501789445e)
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Input/GamepadBetterThanKhush.java	(date 1643232102053)
+@@ -2,50 +2,60 @@
+ 
+ import com.qualcomm.robotcore.hardware.Gamepad;
+ 
+-import java.lang.ref.Reference;
+-import java.sql.Ref;
+ import java.util.HashMap;
+ import java.util.LinkedHashMap;
+ 
+ public class GamepadBetterThanKhush {
+-
+-    public String GamepadName;
+     public Gamepad thisGamepad;
+ 
++    public static final double MIN_THRESHOLD = 0.15;
++
+     public HashMap<Button, Boolean> ButtonStates = new LinkedHashMap<>();
+ 
+     /**
+      * Creates a new gamepad object with a set name
+-     * @param name The name of this gamepad to initialize it with
+-     * @return The new gamepad
++     *
++     * @param gamepad The actual gamepad to initialize it with
+      */
+-    public GamepadBetterThanKhush(String name) {
+-        this.GamepadName = name;
+-        init();
+-    }
+-
+-    public void init(){
+-        ButtonStates.put(Button.dpad_up, false);
++    public GamepadBetterThanKhush(Gamepad gamepad) {
++        this.thisGamepad = gamepad;
+     }
+ 
+     /**
+      * Returns true if the given button is held down
++     *
+      * @param button The button to check against
+      * @return If the button is held down
+      */
+     public boolean getButton(Button button) {
+-        thisGamepad.
+-        return false;
++        boolean linkedValue = button.buttonFunction.apply(thisGamepad);
++
++        ButtonStates.put(button, linkedValue);
++
++        return linkedValue;
+     }
+ 
+     /**
+      * Returns true if the given button started being held down
++     *
+      * @param button The button to check against
+      * @return If the button started being held down
+      */
+     public boolean getButtonDown(Button button) {
++        boolean linkedValue = button.buttonFunction.apply(thisGamepad);
+ 
+-        return false;
++        if (!ButtonStates.containsKey(button)) {
++            ButtonStates.put(button, linkedValue);
++            return linkedValue;
++        }
++
++        if (!ButtonStates.get(button) && linkedValue) {
++            ButtonStates.put(button, linkedValue);
++            return true;
++        } else {
++            ButtonStates.put(button, linkedValue);
++            return false;
++        }
+     }
+ 
+     /**
+@@ -55,7 +65,19 @@
+      * @return If the button stopped being held down
+      */
+     public boolean getButtonUp(Button button) {
++        boolean linkedValue = button.buttonFunction.apply(thisGamepad);
+ 
+-        return false;
++        if (!ButtonStates.containsKey(button)) {
++            ButtonStates.put(button, linkedValue);
++            return false;
++        }
++
++        if (ButtonStates.get(button) && !linkedValue) {
++            ButtonStates.put(button, linkedValue);
++            return true;
++        } else {
++            ButtonStates.put(button, linkedValue);
++            return false;
++        }
+     }
+ }
+\ No newline at end of file
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/HardwareStructure/GamePadEx.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.HardwareStructure;\n\nimport android.os.Build;\n\nimport androidx.annotation.RequiresApi;\n\nimport com.qualcomm.robotcore.hardware.Gamepad;\n\nimport java.util.HashMap;\nimport java.util.function.Function;\n\npublic class GamePadEx {\n    private static final ControllerButtons[] BUTTONS = ControllerButtons.values();\n    public final Gamepad gamepad;\n    public static final double MIN_THRESHOLD = 0.15;\n    private HashMap<ControllerButtons, Boolean> buttons;\n\n    private boolean buttonPressed = false;\n\n    public GamePadEx(Gamepad pad){\n        gamepad = pad;\n        buttons = new HashMap<>();\n    }\n\n    public boolean buttonPressed(ControllerButtons btn){\n        boolean gamepadVal = btn.function.apply(gamepad);\n\n        if (!buttons.containsKey(btn)) {\n            buttons.put(btn, true);\n            return true;\n        }\n\n        if (gamepadVal && !buttons.get(btn)) {\n            buttons.put(btn, true);\n            return true;\n        }\n\n        if (!gamepadVal && buttons.get(btn)) {\n            buttons.put(btn, false);\n        }\n\n        return false;\n    }\n\n    public enum ControllerButtons{\n        //A, B, X, Y, RBUMP, LBUMP, L3, R3, SELECT, DPADUP, DPADDOWN, DPADLEFT, DPADRIGHT\n\n        A(g -> g.a), B(g -> g.b), X(g -> g.x), Y(g -> g.y), RBUMP(g -> g.right_bumper),\n        LBUMP(g -> g.left_bumper), L3(g -> g.left_stick_button), R3(g -> g.right_stick_button),\n        SELECT(g -> g.back), DPADUP(g -> g.dpad_up), DPADDOWN(g -> g.dpad_down),\n        DPADLEFT(g -> g.dpad_left), DPADRIGHT(g -> g.dpad_right),\n\n        RTRIGGER((g -> g.right_trigger > GamePadEx.MIN_THRESHOLD)),\n        LTRIGGER((g -> g.left_trigger > GamePadEx.MIN_THRESHOLD)),\n        LSTICKY((g -> g.left_stick_y > GamePadEx.MIN_THRESHOLD)),\n        RSTICKY((g -> g.right_stick_y > GamePadEx.MIN_THRESHOLD));\n\n        Function<Gamepad, Boolean> function;\n\n        ControllerButtons(Function<Gamepad, Boolean> function) {\n            this.function = function;\n        }\n    }\n}\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/HardwareStructure/GamePadEx.java b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/HardwareStructure/GamePadEx.java
+--- a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/HardwareStructure/GamePadEx.java	(revision cef4bb0e7815f3b357319da566eed6501789445e)
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/HardwareStructure/GamePadEx.java	(date 1643230428639)
+@@ -61,4 +61,4 @@
+             this.function = function;
+         }
+     }
+-}
++}
+\ No newline at end of file
+Index: TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Input/Button.java
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+>package org.firstinspires.ftc.teamcode.Input;\n\npublic enum Button{\n     dpad_up,\n     dpad_down,\n     dpad_left,\n     dpad_right,\n     a,\n     b,\n     x,\n     y,\n     guide,\n     start,\n     back,\n     left_bumper,\n     right_bumper,\n     left_stick_button,\n     right_stick_button,\n     circle,\n     cross,\n     triangle,\n     square,\n     share,\n     options,\n     touchpad,\n     touchpad_finger_1,\n     touchpad_finger_2,\n}
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Input/Button.java b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Input/Button.java
+--- a/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Input/Button.java	(revision cef4bb0e7815f3b357319da566eed6501789445e)
++++ b/TeamCode/src/main/java/org/firstinspires/ftc/teamcode/Input/Button.java	(date 1643231335453)
+@@ -1,28 +1,40 @@
+ package org.firstinspires.ftc.teamcode.Input;
+ 
+-public enum Button{
+-     dpad_up,
+-     dpad_down,
+-     dpad_left,
+-     dpad_right,
+-     a,
+-     b,
+-     x,
+-     y,
+-     guide,
+-     start,
+-     back,
+-     left_bumper,
+-     right_bumper,
+-     left_stick_button,
+-     right_stick_button,
+-     circle,
+-     cross,
+-     triangle,
+-     square,
+-     share,
+-     options,
+-     touchpad,
+-     touchpad_finger_1,
+-     touchpad_finger_2,
++import com.qualcomm.robotcore.hardware.Gamepad;
++
++import org.firstinspires.ftc.teamcode.HardwareStructure.GamePadEx;
++
++import java.util.function.Function;
++
++public enum Button {
++    // A, B, X, Y, RBUMP, LBUMP, L3, R3, SELECT, DPADUP, DPADDOWN, DPADLEFT, DPADRIGHT
++
++    A(g -> g.a),
++    B(g -> g.b),
++    X(g -> g.x),
++    Y(g -> g.y),
++
++    RBUMP(g -> g.right_bumper),
++    LBUMP(g -> g.left_bumper),
++
++    L3(g -> g.left_stick_button),
++    R3(g -> g.right_stick_button),
++    SELECT(g -> g.back),
++
++    DPADUP(g -> g.dpad_up),
++    DPADDOWN(g -> g.dpad_down),
++    DPADLEFT(g -> g.dpad_left),
++    DPADRIGHT(g -> g.dpad_right),
++
++    RTRIGGER((g -> g.right_trigger > GamepadBetterThanKhush.MIN_THRESHOLD)),
++    LTRIGGER((g -> g.left_trigger > GamepadBetterThanKhush.MIN_THRESHOLD)),
++
++    LSTICKY((g -> g.left_stick_y > GamepadBetterThanKhush.MIN_THRESHOLD)),
++    RSTICKY((g -> g.right_stick_y > GamepadBetterThanKhush.MIN_THRESHOLD));
++
++    Function<Gamepad, Boolean> buttonFunction;
++
++    Button(Function<Gamepad, Boolean> function) {
++        this.buttonFunction = function;
++    }
+ }
+\ No newline at end of file
