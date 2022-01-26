@@ -1,28 +1,21 @@
 package org.firstinspires.ftc.teamcode.HardwareStructure;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import com.qualcomm.robotcore.hardware.Gamepad;
 
 import java.util.HashMap;
 import java.util.function.Function;
 
 public class GamePadEx {
-    private static final ControllerButtons[] BUTTONS = ControllerButtons.values();
     public final Gamepad gamepad;
     public static final double MIN_THRESHOLD = 0.15;
     private HashMap<ControllerButtons, Boolean> buttons;
 
-    private boolean buttonPressed = false;
-
-    public GamePadEx(Gamepad pad){
+    public GamePadEx(Gamepad pad) {
         gamepad = pad;
         buttons = new HashMap<>();
     }
 
-    public boolean buttonPressed(ControllerButtons btn){
+    public boolean controlPressed(ControllerButtons btn) {
         boolean gamepadVal = btn.function.apply(gamepad);
 
         if (!buttons.containsKey(btn)) {
@@ -42,9 +35,7 @@ public class GamePadEx {
         return false;
     }
 
-    public enum ControllerButtons{
-        //A, B, X, Y, RBUMP, LBUMP, L3, R3, SELECT, DPADUP, DPADDOWN, DPADLEFT, DPADRIGHT
-
+    public enum ControllerButtons {
         A(g -> g.a), B(g -> g.b), X(g -> g.x), Y(g -> g.y), RBUMP(g -> g.right_bumper),
         LBUMP(g -> g.left_bumper), L3(g -> g.left_stick_button), R3(g -> g.right_stick_button),
         SELECT(g -> g.back), DPADUP(g -> g.dpad_up), DPADDOWN(g -> g.dpad_down),
