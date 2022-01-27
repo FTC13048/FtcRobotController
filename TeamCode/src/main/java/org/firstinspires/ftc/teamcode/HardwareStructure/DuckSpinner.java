@@ -11,7 +11,7 @@ public class DuckSpinner extends Subsystems {
     private final double DUCK_POWER = 0.7;
     private SpinDirection duckState;
 
-    protected DuckSpinner(HardwareMap hmap, Telemetry tele) {
+    public DuckSpinner(HardwareMap hmap, Telemetry tele) {
         super(tele);
         duckSpinner = hmap.get(DcMotor.class, "duckSpinner");
 
@@ -24,7 +24,6 @@ public class DuckSpinner extends Subsystems {
         tele.addData("Duck Spinner", "Initialized");
     }
 
-
     @Override
     public void updateState() {
         duckSpinner.setPower(duckState.power);
@@ -32,9 +31,9 @@ public class DuckSpinner extends Subsystems {
 
     @Override
     public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
-        if (gp2.controlPressed(GamePadEx.ControllerButtons.LTRIGGER)) {
+        if (gp2.gamepad.left_stick_y < -0.15) {
             duckState = SpinDirection.SPINBLUE;
-        } else if (gp2.controlPressed(GamePadEx.ControllerButtons.RTRIGGER)) {
+        } else if (gp2.gamepad.left_stick_y > 0.15) {
             duckState = SpinDirection.SPINRED;
         } else {
             duckState = SpinDirection.STOP;

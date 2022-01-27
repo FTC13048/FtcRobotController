@@ -22,24 +22,6 @@ public class GamePadEx {
      * @return If the button is held down
      */
     public boolean getControl(ControllerButtons button) {
-//        boolean gamepadVal = button.function.apply(gamepad);
-//
-//        if (!buttons.containsKey(button)) {
-//            buttons.put(button, true);
-//            return true;
-//        }
-//
-//        if (gamepadVal && !buttons.get(button)) {
-//            buttons.put(button, true);
-//            return true;
-//        }
-//
-//        if (!gamepadVal && buttons.get(button)) {
-//            buttons.put(button, false);
-//        }
-//
-//        return false;
-
         // Simpler version
         boolean gamepadVal = button.function.apply(gamepad);
 
@@ -97,7 +79,7 @@ public class GamePadEx {
     public enum ControllerButtons {
         A(g -> g.a), B(g -> g.b), X(g -> g.x), Y(g -> g.y), RBUMP(g -> g.right_bumper),
         LBUMP(g -> g.left_bumper), L3(g -> g.left_stick_button), R3(g -> g.right_stick_button),
-        SELECT(g -> g.back), DPADUP(g -> g.dpad_up), DPADDOWN(g -> g.dpad_down),
+        BACK(g -> g.back), DPADUP(g -> g.dpad_up), DPADDOWN(g -> g.dpad_down),
         DPADLEFT(g -> g.dpad_left), DPADRIGHT(g -> g.dpad_right),
 
         RTRIGGER((g -> g.right_trigger > GamePadEx.MIN_THRESHOLD)),
