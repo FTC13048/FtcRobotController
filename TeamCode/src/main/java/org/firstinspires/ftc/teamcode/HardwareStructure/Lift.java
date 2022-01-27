@@ -77,7 +77,7 @@ public class Lift extends Subsystems{
     public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
         switch(liftState){
             case INTAKE:
-                intakePower = gp2.gamepad.left_stick_y;
+                intakePower = gp2.gamepad.right_stick_y;
 
                 if(gp2.getControlDown(GamePadEx.ControllerButtons.A)){
                     liftState = LiftStates.MOVE;
