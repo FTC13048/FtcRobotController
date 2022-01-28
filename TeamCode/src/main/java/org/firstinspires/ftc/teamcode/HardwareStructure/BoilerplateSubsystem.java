@@ -19,7 +19,7 @@ public class BoilerplateSubsystem extends Subsystems {
         motor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         motor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        telemetry.addData("Boilerplate Subsystem", "Initialized");
+        telemetry.addLine("Boilerplate Subsystem: Initialized");
     }
 
     @Override

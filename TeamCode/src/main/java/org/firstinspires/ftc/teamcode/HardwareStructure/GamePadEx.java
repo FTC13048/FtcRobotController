@@ -80,7 +80,7 @@ public class GamePadEx {
         A(g -> g.a), B(g -> g.b), X(g -> g.x), Y(g -> g.y), RBUMP(g -> g.right_bumper),
         LBUMP(g -> g.left_bumper), L3(g -> g.left_stick_button), R3(g -> g.right_stick_button),
         BACK(g -> g.back), DPADUP(g -> g.dpad_up), DPADDOWN(g -> g.dpad_down),
-        DPADLEFT(g -> g.dpad_left), DPADRIGHT(g -> g.dpad_right),
+        DPADLEFT(g -> g.dpad_left), DPADRIGHT(g -> g.dpad_right), GUIDE(g -> g.guide),
 
         RTRIGGER((g -> g.right_trigger > GamePadEx.MIN_THRESHOLD)),
         LTRIGGER((g -> g.left_trigger > GamePadEx.MIN_THRESHOLD)),

@@ -21,7 +21,7 @@ public class DuckSpinner extends Subsystems {
 
         duckState = SpinDirection.STOP;
 
-        tele.addData("Duck Spinner", "Initialized");
+        tele.addLine("Duck Spinner: Initialized");
     }
 
     @Override
