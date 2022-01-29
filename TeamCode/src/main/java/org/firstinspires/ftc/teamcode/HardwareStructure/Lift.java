@@ -11,8 +11,8 @@ public class Lift extends Subsystems {
     private DcMotor liftRight, liftLeft;
     private DcMotor intake;
 
-    private LiftStates liftState;
-    private TargetHeight targetLevel;
+    private LiftState liftState;
+    private LiftLevel targetLevel;
 
     private ElapsedTime timer;
     private double intakePower;
@@ -35,9 +35,10 @@ public class Lift extends Subsystems {
 
         timer = new ElapsedTime();
 
-        liftState = LiftStates.INTAKE;
-        targetLevel = TargetHeight.TOP;
+        liftState = LiftState.INTAKE;
+        targetLevel = LiftLevel.TOP;
 
+        tele.addLine("Intake: Initialized");
         tele.addLine("Lift: Initialized");
     }
 
@@ -50,13 +51,13 @@ public class Lift extends Subsystems {
 
             case MOVE:
                 if (setLiftPos(targetLevel.numTicks)) {
-                    liftState = LiftStates.ATLEVEL;
+                    liftState = LiftState.ATLEVEL;
                 }
                 break;
 
             case MOVEINTAKE:
-                if (setLiftPos(TargetHeight.INTAKE.numTicks)) {
-                    liftState = LiftStates.INTAKE;
+                if (setLiftPos(LiftLevel.INTAKE.numTicks)) {
+                    liftState = LiftState.INTAKE;
                 }
                 break;
 
@@ -69,7 +70,7 @@ public class Lift extends Subsystems {
             case DUMP:
                 intake.setPower(-1.0);
                 if (timer.seconds() >= 3) {
-                    liftState = LiftStates.MOVEINTAKE;
+                    liftState = LiftState.MOVEINTAKE;
                 }
                 break;
 
@@ -94,7 +95,7 @@ public class Lift extends Subsystems {
                 }
 
                 if (gp2.getControlDown(GamePadEx.ControllerButtons.A)) {
-                    liftState = LiftStates.MOVE;
+                    liftState = LiftState.MOVE;
                 }
                 break;
 
@@ -107,7 +108,7 @@ public class Lift extends Subsystems {
             case ATLEVEL:
                 if (gp2.getControlDown(GamePadEx.ControllerButtons.X)) {
                     timer.reset();
-                    liftState = LiftStates.DUMP;
+                    liftState = LiftState.DUMP;
                 }
                 break;
             case DUMP:
@@ -129,30 +130,30 @@ public class Lift extends Subsystems {
                 break;
         }
 
-        if (gp2.getControlDown(GamePadEx.ControllerButtons.BACK) && liftState != LiftStates.MANUAL) {
-            liftState = LiftStates.MOVEINTAKE;
+        if (gp2.getControlDown(GamePadEx.ControllerButtons.BACK) && liftState != LiftState.MANUAL) {
+            liftState = LiftState.MOVEINTAKE;
         }
 
         if (gp2.getControlDown(GamePadEx.ControllerButtons.GUIDE)) {
-            if (liftState != LiftStates.MANUAL) {
-                liftState = LiftStates.MANUAL;
+            if (liftState != LiftState.MANUAL) {
+                liftState = LiftState.MANUAL;
             } else {
-                liftState = LiftStates.MOVEINTAKE;
+                liftState = LiftState.MOVEINTAKE;
             }
         }
 
         if (gp2.getControlDown(GamePadEx.ControllerButtons.B)) {
             switch (targetLevel) {
                 case TOP:
-                    targetLevel = TargetHeight.BOT;
+                    targetLevel = LiftLevel.BOT;
                     break;
 
                 case MID:
-                    targetLevel = TargetHeight.TOP;
+                    targetLevel = LiftLevel.TOP;
                     break;
 
                 case BOT:
-                    targetLevel = TargetHeight.MID;
+                    targetLevel = LiftLevel.MID;
                     break;
             }
         }
@@ -191,37 +192,37 @@ public class Lift extends Subsystems {
     }
 
     public void intake(double power) {
-        if (Math.abs(TargetHeight.INTAKE.numTicks - liftLeft.getCurrentPosition()) <= 5 ||
-                liftState == LiftStates.INTAKE) {
+        if (Math.abs(LiftLevel.INTAKE.numTicks - liftLeft.getCurrentPosition()) <= 5 ||
+                liftState == LiftState.INTAKE) {
 
-            liftState = LiftStates.INTAKE;
+            liftState = LiftState.INTAKE;
             intake.setPower(power);
         }
     }
 
-    public enum LiftStates {
+    public enum LiftState {
         INTAKE("Intake"), MOVE("Move to Level"), ATLEVEL("At Level"), DUMP("Dump"),
         MOVEINTAKE("Move to Intake"), MANUAL("Manual Control");
 
         private String state;
 
-        private LiftStates(String state){
+        private LiftState(String state) {
             this.state = state;
         }
 
-        public String getState(){
+        public String getState() {
             return this.state;
         }
     }
 
-    public enum TargetHeight {
+    public enum LiftLevel {
         TOP(0, "Top"), MID(0, "Middle"),
         BOT(0, "Bottom"), INTAKE(0, "Intake");
 
         private int numTicks;
         private String level;
 
-        private TargetHeight(int ticks, String level) {
+        private LiftLevel(int ticks, String level) {
             numTicks = ticks;
             this.level = level;
         }
@@ -230,7 +231,7 @@ public class Lift extends Subsystems {
             return this.numTicks;
         }
 
-        public String getLevel(){
+        public String getLevel() {
             return this.level;
         }
     }

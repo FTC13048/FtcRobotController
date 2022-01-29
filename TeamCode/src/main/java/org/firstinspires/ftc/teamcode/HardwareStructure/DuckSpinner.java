@@ -9,7 +9,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class DuckSpinner extends Subsystems {
     private DcMotor duckSpinner;
     private final double DUCK_POWER = 0.7;
-    private SpinDirection duckState;
+    private DuckState duckState;
 
     public DuckSpinner(HardwareMap hmap, Telemetry tele) {
         super(tele);
@@ -19,7 +19,7 @@ public class DuckSpinner extends Subsystems {
         duckSpinner.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         duckSpinner.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        duckState = SpinDirection.STOP;
+        duckState = DuckState.STOP;
 
         tele.addLine("Duck Spinner: Initialized");
     }
@@ -32,39 +32,39 @@ public class DuckSpinner extends Subsystems {
     @Override
     public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
         if (gp2.gamepad.left_stick_y < -0.15) {
-            duckState = SpinDirection.SPINBLUE;
+            duckState = DuckState.SPINBLUE;
         } else if (gp2.gamepad.left_stick_y > 0.15) {
-            duckState = SpinDirection.SPINRED;
+            duckState = DuckState.SPINRED;
         } else {
-            duckState = SpinDirection.STOP;
+            duckState = DuckState.STOP;
         }
     }
 
     public void spinRed() {
-        duckState = SpinDirection.SPINRED;
+        duckState = DuckState.SPINRED;
     }
 
     public void spinBlue() {
-        duckState = SpinDirection.SPINBLUE;
+        duckState = DuckState.SPINBLUE;
     }
 
-    public SpinDirection getState() {
+    public DuckState getState() {
         return duckState;
     }
 
     @Override
     public void stop() {
-        duckSpinner.setPower(SpinDirection.STOP.power);
+        duckSpinner.setPower(DuckState.STOP.power);
     }
 
-    public enum SpinDirection {
+    public enum DuckState {
         SPINRED(0.7),
         SPINBLUE(-0.7),
         STOP(0.0);
 
         private double power;
 
-        private SpinDirection(double pow) {
+        private DuckState(double pow) {
             power = pow;
         }
 
