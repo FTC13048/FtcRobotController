@@ -76,6 +76,21 @@ public class GamePadEx {
         }
     }
 
+    public double getAxis(GamePadEx.ControllerAxes axis){
+        return (double)axis.function.apply(gamepad);
+    }
+
+    public enum ControllerAxes{
+        LEFT_X(g -> g.left_stick_x),
+        LEFT_Y(g -> g.left_stick_y),
+        RIGHT_X(g -> g.right_stick_x),
+        RIGHT_Y(g -> g.right_stick_y);
+
+        public Function<Gamepad, Float> function;
+
+        ControllerAxes(Function<Gamepad, Float> function) { this.function = function; }
+    }
+
     public enum ControllerButtons {
         A(g -> g.a), B(g -> g.b), X(g -> g.x), Y(g -> g.y), RBUMP(g -> g.right_bumper),
         LBUMP(g -> g.left_bumper), L3(g -> g.left_stick_button), R3(g -> g.right_stick_button),
