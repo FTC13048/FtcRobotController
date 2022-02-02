@@ -71,14 +71,16 @@ public class DriveTrain extends Subsystems {
 
     @Override
     public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
-        TeleOPStuff(gp1, gp2); // Justification: Yes
+        DoTeleOp(gp1, gp2); // Justification: Yes
     }
 
-    public void TeleOPStuff(GamePadEx gp1, GamePadEx gp2) {
+    public void DoTeleOp(GamePadEx gp1, GamePadEx gp2) {
         if (driveState == DriveTrainState.IDLE) {
             driveState = DriveTrainState.TANK_TELEOP;
         }
 
+
+        // stuff
         if (driveState == DriveTrainState.TANK_TELEOP) {
             if(gp1.)
 
@@ -94,12 +96,12 @@ public class DriveTrain extends Subsystems {
     }
 
     public enum DriveTrainState {
-        MOVE,
-        TURN,
-        STOPPING,
-        IDLE, // Reset encoders
-        TANK_TELEOP,
-        FIELD_CENTRIC_TELEOP,
+        MOVE, // Auton, escapable
+        TURN, // Auton, escapable
+        STOPPING, // Auton, escapable
+        IDLE, // Reset encoders Auton, escapable
+        TANK_TELEOP, // TeleOP, NOT escapable
+        FIELD_CENTRIC_TELEOP, // TeleOP, NOT escapable
         NONE, // Fallback
     }
 
@@ -112,50 +114,50 @@ public class DriveTrain extends Subsystems {
         SOUTHWEST, // / (\/)
         WEST, // - (<)
         NORTHWEST, // \ (/\)
-        NONE, // Fallback
+        NONE, // Fallback or no movement
     }
 
     public void MoveMotorsWithDir(Direction dir) {
-        if (dir == Direction.NORTH) { //
-            BR.setPower(drivePower);
-            FR.setPower(drivePower);
-            BL.setPower(-drivePower);
-            FL.setPower(-drivePower);
-        } else if (dir == Direction.NORTHEAST) { //
-            BR.setPower(drivePower);
-            FR.setPower(-drivePower);
-            BL.setPower(drivePower);
-            FL.setPower(-drivePower);
-        } else if (dir == Direction.EAST) { //
-            BR.setPower(-drivePower);
-            FR.setPower(drivePower);
-            BL.setPower(drivePower);
-            FL.setPower(-drivePower);
-        } else if (dir == Direction.SOUTHEAST) { //
-            BR.setPower(-drivePower);
-            FR.setPower(-drivePower);
-            BL.setPower(-drivePower);
-            FL.setPower(-drivePower);
-        } else if (dir == Direction.SOUTH) { //
-            BR.setPower(-drivePower);
-            FR.setPower(-drivePower);
-            BL.setPower(drivePower);
-            FL.setPower(drivePower);
-        } else if (dir == Direction.SOUTHWEST) { //
-            BR.setPower(-drivePower);
-            FR.setPower(drivePower);
-            BL.setPower(-drivePower);
-            FL.setPower(drivePower);
-        } else if (dir == Direction.WEST) { //
-            BR.setPower(drivePower);
-            FR.setPower(-drivePower);
-            BL.setPower(-drivePower);
-            FL.setPower(drivePower);
-        } else if (dir == Direction.NORTHWEST) { //
+        if (dir == Direction.NORTH) {
             BR.setPower(drivePower);
             FR.setPower(drivePower);
             BL.setPower(drivePower);
             FL.setPower(drivePower);
+        } else if (dir == Direction.NORTHEAST) {
+            BR.setPower(drivePower);
+            FR.setPower(0.0);
+            BL.setPower(0.0);
+            FL.setPower(drivePower);
+        } else if (dir == Direction.EAST) {
+            BR.setPower(drivePower);
+            FR.setPower(-drivePower);
+            BL.setPower(-drivePower);
+            FL.setPower(drivePower);
+        } else if (dir == Direction.SOUTHEAST) {
+            BR.setPower(0.0);
+            FR.setPower(-drivePower);
+            BL.setPower(-drivePower);
+            FL.setPower(0.0);
+        } else if (dir == Direction.SOUTH) {
+            BR.setPower(-drivePower);
+            FR.setPower(-drivePower);
+            BL.setPower(-drivePower);
+            FL.setPower(-drivePower);
+        } else if (dir == Direction.SOUTHWEST) {
+            BR.setPower(-drivePower);
+            FR.setPower(0.0);
+            BL.setPower(0.0);
+            FL.setPower(-drivePower);
+        } else if (dir == Direction.WEST) {
+            BR.setPower(-drivePower);
+            FR.setPower(drivePower);
+            BL.setPower(drivePower);
+            FL.setPower(-drivePower);
+        } else if (dir == Direction.NORTHWEST) {
+            BR.setPower(0.0);
+            FR.setPower(drivePower);
+            BL.setPower(drivePower);
+            FL.setPower(0.0);
         }
     }
 
