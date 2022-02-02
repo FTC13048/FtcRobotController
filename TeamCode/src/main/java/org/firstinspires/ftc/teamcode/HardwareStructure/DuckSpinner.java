@@ -31,9 +31,9 @@ public class DuckSpinner extends Subsystems {
 
     @Override
     public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
-        if (gp2.gamepad.left_stick_y < -0.15) {
+        if (gp2.getAxis(GamePadEx.ControllerAxis.LEFT_Y) < -0.15) {
             duckState = DuckState.SPINBLUE;
-        } else if (gp2.gamepad.left_stick_y > 0.15) {
+        } else if (gp2.getAxis(GamePadEx.ControllerAxis.LEFT_Y) > 0.15) {
             duckState = DuckState.SPINRED;
         } else {
             duckState = DuckState.STOP;

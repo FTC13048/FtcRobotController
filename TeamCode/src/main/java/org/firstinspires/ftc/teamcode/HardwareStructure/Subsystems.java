@@ -12,7 +12,7 @@ public abstract class Subsystems {
     }
 
     public abstract void updateState();
-    public abstract void updateTeleopState(GamePadEx gp1, GamePadEx gp2);
+    public abstract void updateTeleopState(GamePadEx DrivingGP, GamePadEx OtherGP);
 
     public void initLoopTeleop() {}
     public void initLoopAuton() {}

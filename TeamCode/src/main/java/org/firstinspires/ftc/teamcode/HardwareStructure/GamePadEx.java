@@ -6,9 +6,9 @@ import java.util.HashMap;
 import java.util.function.Function;
 
 public class GamePadEx {
-    public final Gamepad gamepad;
+    private final Gamepad gamepad; // JUST USE THE WRAPPER METHODS DONT MAKE THIS PUBLIC AAAAAAAAAH
     public static final double MIN_THRESHOLD = 0.15;
-    private HashMap<ControllerButtons, Boolean> buttons;
+    private HashMap<ControllerButton, Boolean> buttons;
 
     public GamePadEx(Gamepad pad) {
         gamepad = pad;
@@ -16,12 +16,12 @@ public class GamePadEx {
     }
 
     /**
-     * Returns true while the given button is held down
+     * Returns true while the given controller button is held down
      *
      * @param button The button to check against
      * @return If the button is held down
      */
-    public boolean getControl(ControllerButtons button) {
+    public boolean getControl(ControllerButton button) {
         // Simpler version
         boolean gamepadVal = button.function.apply(gamepad);
 
@@ -31,12 +31,12 @@ public class GamePadEx {
     }
 
     /**
-     * Returns true if the given button started being held down
+     * Returns true if the given controller button started being held down
      *
      * @param button The button to check against
      * @return If the button started being held down
      */
-    public boolean getControlDown(GamePadEx.ControllerButtons button) {
+    public boolean getControlDown(ControllerButton button) {
         boolean linkedValue = button.function.apply(gamepad);
 
         if (!buttons.containsKey(button)) {
@@ -54,12 +54,12 @@ public class GamePadEx {
     }
 
     /**
-     * Returns true if the button stopped being held down
+     * Returns true if the controller button stopped being held down
      *
      * @param button The button to check against
      * @return If the button stopped being held down
      */
-    public boolean getControlRelease(GamePadEx.ControllerButtons button) {
+    public boolean getControlRelease(ControllerButton button) {
         boolean linkedValue = button.function.apply(gamepad);
 
         if (!buttons.containsKey(button)) {
@@ -76,22 +76,30 @@ public class GamePadEx {
         }
     }
 
-    public double getAxis(GamePadEx.ControllerAxes axis){
+    /**
+     * Returns the value of a desired controller axis
+     *
+     * @param axis The axis to get its value of
+     * @return The value of the axis
+     */
+    public double getAxis(ControllerAxis axis){
         return (double)axis.function.apply(gamepad);
     }
 
-    public enum ControllerAxes{
+    public enum ControllerAxis {
         LEFT_X(g -> g.left_stick_x),
         LEFT_Y(g -> g.left_stick_y),
         RIGHT_X(g -> g.right_stick_x),
-        RIGHT_Y(g -> g.right_stick_y);
+        RIGHT_Y(g -> g.right_stick_y),
+        RIGHT_TRIGGER(g -> g.right_trigger),
+        LEFT_TRIGGER(g -> g.left_trigger);
 
         public Function<Gamepad, Float> function;
 
-        ControllerAxes(Function<Gamepad, Float> function) { this.function = function; }
+        ControllerAxis(Function<Gamepad, Float> function) { this.function = function; }
     }
 
-    public enum ControllerButtons {
+    public enum ControllerButton {
         A(g -> g.a), B(g -> g.b), X(g -> g.x), Y(g -> g.y), RBUMP(g -> g.right_bumper),
         LBUMP(g -> g.left_bumper), L3(g -> g.left_stick_button), R3(g -> g.right_stick_button),
         BACK(g -> g.back), DPADUP(g -> g.dpad_up), DPADDOWN(g -> g.dpad_down),
@@ -99,11 +107,11 @@ public class GamePadEx {
 
         RTRIGGER((g -> g.right_trigger > GamePadEx.MIN_THRESHOLD)),
         LTRIGGER((g -> g.left_trigger > GamePadEx.MIN_THRESHOLD)),
-        LSTICKY((g -> g.left_stick_y > GamePadEx.MIN_THRESHOLD)),
-        RSTICKY((g -> g.right_stick_y > GamePadEx.MIN_THRESHOLD));
+        LSTICKY((g -> Math.abs(g.left_stick_y) > GamePadEx.MIN_THRESHOLD)),
+        RSTICKY((g -> Math.abs(g.right_stick_y) > GamePadEx.MIN_THRESHOLD));
 
         public Function<Gamepad, Boolean> function;
 
-        ControllerButtons(Function<Gamepad, Boolean> function) { this.function = function; }
+        ControllerButton(Function<Gamepad, Boolean> function) { this.function = function; }
     }
 }

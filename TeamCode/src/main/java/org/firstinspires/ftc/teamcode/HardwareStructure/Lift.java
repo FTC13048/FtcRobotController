@@ -86,15 +86,15 @@ public class Lift extends Subsystems {
     public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
         switch (liftState) {
             case INTAKE:
-                if (gp2.getControlDown(GamePadEx.ControllerButtons.LTRIGGER)) {
+                if (gp2.getControlDown(GamePadEx.ControllerButton.LTRIGGER)) {
                     intakePower = gp2.gamepad.left_trigger;
-                } else if (gp2.getControlDown(GamePadEx.ControllerButtons.RTRIGGER)) {
+                } else if (gp2.getControlDown(GamePadEx.ControllerButton.RTRIGGER)) {
                     intakePower = -gp2.gamepad.right_trigger;
                 } else {
                     intakePower = 0.0;
                 }
 
-                if (gp2.getControlDown(GamePadEx.ControllerButtons.A)) {
+                if (gp2.getControlDown(GamePadEx.ControllerButton.A)) {
                     liftState = LiftState.MOVE;
                 }
                 break;
@@ -106,7 +106,7 @@ public class Lift extends Subsystems {
                 break;
 
             case ATLEVEL:
-                if (gp2.getControlDown(GamePadEx.ControllerButtons.X)) {
+                if (gp2.getControlDown(GamePadEx.ControllerButton.X)) {
                     liftState = LiftState.DUMP;
                 }
                 break;
@@ -117,9 +117,9 @@ public class Lift extends Subsystems {
                 break;
 
             case MANUAL:
-                if (gp2.getControlDown(GamePadEx.ControllerButtons.LTRIGGER)) {
+                if (gp2.getControlDown(GamePadEx.ControllerButton.LTRIGGER)) {
                     intakePower = gp2.gamepad.left_trigger;
-                } else if (gp2.getControlDown(GamePadEx.ControllerButtons.RTRIGGER)) {
+                } else if (gp2.getControlDown(GamePadEx.ControllerButton.RTRIGGER)) {
                     intakePower = -gp2.gamepad.right_trigger;
                 } else {
                     intakePower = 0.0;
@@ -129,11 +129,11 @@ public class Lift extends Subsystems {
                 break;
         }
 
-        if (gp2.getControlDown(GamePadEx.ControllerButtons.BACK) && liftState != LiftState.MANUAL) {
+        if (gp2.getControlDown(GamePadEx.ControllerButton.BACK) && liftState != LiftState.MANUAL) {
             liftState = LiftState.MOVEINTAKE;
         }
 
-        if (gp2.getControlDown(GamePadEx.ControllerButtons.GUIDE)) {
+        if (gp2.getControlDown(GamePadEx.ControllerButton.GUIDE)) {
             if (liftState != LiftState.MANUAL) {
                 liftState = LiftState.MANUAL;
             } else {
@@ -141,7 +141,7 @@ public class Lift extends Subsystems {
             }
         }
 
-        if (gp2.getControlDown(GamePadEx.ControllerButtons.B)) {
+        if (gp2.getControlDown(GamePadEx.ControllerButton.B)) {
             switch (targetLevel) {
                 case TOP:
                     targetLevel = LiftLevel.BOT;

@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.Archives;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.Archives.Button;
 import org.firstinspires.ftc.teamcode.HardwareStructure.GamePadEx;
 
 import java.util.HashMap;
@@ -12,7 +11,7 @@ public class GamepadBetterThanKhush {
 
     public static final double minimumThreshold = 0.15;
 
-    public HashMap<GamePadEx.ControllerButtons, Boolean> ButtonStates = new HashMap<>();
+    public HashMap<GamePadEx.ControllerButton, Boolean> ButtonStates = new HashMap<>();
 
     /**
      * Creates a new GamepadBetterThanKhush object with a set name
@@ -29,7 +28,7 @@ public class GamepadBetterThanKhush {
      * @param button The button to check against
      * @return If the button is held down
      */
-    public boolean getButton(GamePadEx.ControllerButtons button) {
+    public boolean getButton(GamePadEx.ControllerButton button) {
         boolean linkedValue = button.function.apply(thisGamepad);
 
         ButtonStates.put(button, linkedValue);
@@ -43,7 +42,7 @@ public class GamepadBetterThanKhush {
      * @param button The button to check against
      * @return If the button started being held down
      */
-    public boolean getButtonDown(GamePadEx.ControllerButtons button) {
+    public boolean getButtonDown(GamePadEx.ControllerButton button) {
         boolean linkedValue = button.function.apply(thisGamepad);
 
         if (!ButtonStates.containsKey(button)) {
@@ -66,7 +65,7 @@ public class GamepadBetterThanKhush {
      * @param button The button to check against
      * @return If the button stopped being held down
      */
-    public boolean getButtonUp(GamePadEx.ControllerButtons button) {
+    public boolean getButtonUp(GamePadEx.ControllerButton button) {
         boolean linkedValue = button.function.apply(thisGamepad);
 
         if (!ButtonStates.containsKey(button)) {
