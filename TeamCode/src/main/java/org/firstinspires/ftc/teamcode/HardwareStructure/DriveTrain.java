@@ -10,18 +10,33 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
-public class DriveTrain {
+public class DriveTrain extends Subsystems {
     private DcMotor FL, FR, BL, BR;
     private BNO055IMU imu;
     private BNO055IMU.Parameters parameters;
 
+    //region Movment Stats
+    private DriveTrainState driveState;
+    private Direction direction;
+    private double drivePower;
+    //endregion
+
+    //region Dependent Classes
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
+    //endregion
 
-    protected DriveTrain(HardwareMap hmap, Telemetry tele, boolean isAuton) {
+    public DriveTrain(HardwareMap hmap, Telemetry tele, boolean isAuton) {
+        super(tele);
+
+        // Initialise dependency classes
         hardwareMap = hmap;
         telemetry = tele;
 
+        // Initialise states
+        driveState = DriveTrainState.IDLE;
+
+        // Initialize motor names
         FL = hardwareMap.get(DcMotor.class, "front_left");
         BL = hardwareMap.get(DcMotor.class, "back_left");
         FR = hardwareMap.get(DcMotor.class, "front_right");
@@ -49,6 +64,101 @@ public class DriveTrain {
         telemetry.addData("drive train", "initialized");
     }
 
+    @Override
+    public void updateState() {
+
+    }
+
+    @Override
+    public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
+        TeleOPStuff(gp1, gp2); // Justification: Yes
+    }
+
+    public void TeleOPStuff(GamePadEx gp1, GamePadEx gp2) {
+        if (driveState == DriveTrainState.IDLE) {
+            driveState = DriveTrainState.TANK_TELEOP;
+        }
+
+        if (driveState == DriveTrainState.TANK_TELEOP) {
+            if(gp1.)
+
+            MoveMotorsWithDir(direction);
+
+        } else if (driveState == DriveTrainState.FIELD_CENTRIC_TELEOP) {
+
+        }
+    }
+
+    public DriveTrainState getState() {
+        return driveState;
+    }
+
+    public enum DriveTrainState {
+        MOVE,
+        TURN,
+        STOPPING,
+        IDLE, // Reset encoders
+        TANK_TELEOP,
+        FIELD_CENTRIC_TELEOP,
+        NONE, // Fallback
+    }
+
+    public enum Direction {
+        NORTH, // | (/\)
+        NORTHEAST, // / (/\)
+        EAST, // - (>)
+        SOUTHEAST, // \ (\/)
+        SOUTH, // | (\/)
+        SOUTHWEST, // / (\/)
+        WEST, // - (<)
+        NORTHWEST, // \ (/\)
+        NONE, // Fallback
+    }
+
+    public void MoveMotorsWithDir(Direction dir) {
+        if (dir == Direction.NORTH) { //
+            BR.setPower(drivePower);
+            FR.setPower(drivePower);
+            BL.setPower(-drivePower);
+            FL.setPower(-drivePower);
+        } else if (dir == Direction.NORTHEAST) { //
+            BR.setPower(drivePower);
+            FR.setPower(-drivePower);
+            BL.setPower(drivePower);
+            FL.setPower(-drivePower);
+        } else if (dir == Direction.EAST) { //
+            BR.setPower(-drivePower);
+            FR.setPower(drivePower);
+            BL.setPower(drivePower);
+            FL.setPower(-drivePower);
+        } else if (dir == Direction.SOUTHEAST) { //
+            BR.setPower(-drivePower);
+            FR.setPower(-drivePower);
+            BL.setPower(-drivePower);
+            FL.setPower(-drivePower);
+        } else if (dir == Direction.SOUTH) { //
+            BR.setPower(-drivePower);
+            FR.setPower(-drivePower);
+            BL.setPower(drivePower);
+            FL.setPower(drivePower);
+        } else if (dir == Direction.SOUTHWEST) { //
+            BR.setPower(-drivePower);
+            FR.setPower(drivePower);
+            BL.setPower(-drivePower);
+            FL.setPower(drivePower);
+        } else if (dir == Direction.WEST) { //
+            BR.setPower(drivePower);
+            FR.setPower(-drivePower);
+            BL.setPower(-drivePower);
+            FL.setPower(drivePower);
+        } else if (dir == Direction.NORTHWEST) { //
+            BR.setPower(drivePower);
+            FR.setPower(drivePower);
+            BL.setPower(drivePower);
+            FL.setPower(drivePower);
+        }
+    }
+
     public void setMode(DcMotor.RunMode mode) {
         BR.setMode(mode);
         FR.setMode(mode);
@@ -56,33 +166,8 @@ public class DriveTrain {
         FL.setMode(mode);
     }
 
-    // Sets the strafing power for the robot (negative number will strafe left and positive
-    //     will strafe right)
-    public void strafe(double strafePower) {
-        BR.setPower(-strafePower);
-        FR.setPower(strafePower);
-        BL.setPower(strafePower);
-        FL.setPower(-strafePower);
-    }
-
-    // Sets all motors to drive with the given power (positive forward negative backward)
-    public void drive(double rightSide, double leftSide) {
-        BR.setPower(rightSide);
-        FR.setPower(rightSide);
-        BL.setPower(leftSide);
-        FL.setPower(leftSide);
-    }
-
-    // Turning by making right side motors go backwards and left side motors go forward
-    //    positive power will go to the left and negative will go to the left
-    public void turn(double power) {
-        BR.setPower(-power);
-        FR.setPower(-power);
-        BL.setPower(power);
-        FL.setPower(power);
-    }
-
     // Sets the motor power of all the drive motors to 0
+    @Override
     public void stop() {
         BR.setPower(0.0);
         FR.setPower(0.0);
