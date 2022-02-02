@@ -107,12 +107,11 @@ public class Lift extends Subsystems {
 
             case ATLEVEL:
                 if (gp2.getControlDown(GamePadEx.ControllerButtons.X)) {
-                    timer.reset();
                     liftState = LiftState.DUMP;
                 }
                 break;
             case DUMP:
-                if (gp2.gamepad.a) {
+                if (gp2.gamepad.x) {
                     timer.reset();
                 }
                 break;
