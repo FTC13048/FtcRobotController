@@ -87,9 +87,9 @@ public class Lift extends Subsystems {
         switch (liftState) {
             case INTAKE:
                 if (gp2.getControlDown(GamePadEx.ControllerButton.LTRIGGER)) {
-                    intakePower = gp2.gamepad.left_trigger;
+                    intakePower = gp2.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER);
                 } else if (gp2.getControlDown(GamePadEx.ControllerButton.RTRIGGER)) {
-                    intakePower = -gp2.gamepad.right_trigger;
+                    intakePower = -gp2.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER);
                 } else {
                     intakePower = 0.0;
                 }
@@ -111,21 +111,21 @@ public class Lift extends Subsystems {
                 }
                 break;
             case DUMP:
-                if (gp2.gamepad.x) {
+                if (gp2.getControl(GamePadEx.ControllerButton.X)) {
                     timer.reset();
                 }
                 break;
 
             case MANUAL:
                 if (gp2.getControlDown(GamePadEx.ControllerButton.LTRIGGER)) {
-                    intakePower = gp2.gamepad.left_trigger;
+                    intakePower = gp2.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER);
                 } else if (gp2.getControlDown(GamePadEx.ControllerButton.RTRIGGER)) {
-                    intakePower = -gp2.gamepad.right_trigger;
+                    intakePower = -gp2.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER);
                 } else {
                     intakePower = 0.0;
                 }
 
-                liftPower = gp2.gamepad.right_stick_y;
+                liftPower = gp2.getAxis(GamePadEx.ControllerAxis.RIGHT_Y);
                 break;
         }
 
