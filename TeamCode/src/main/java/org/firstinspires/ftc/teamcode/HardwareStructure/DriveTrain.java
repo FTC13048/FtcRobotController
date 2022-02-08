@@ -3,7 +3,9 @@ package org.firstinspires.ftc.teamcode.HardwareStructure;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -81,10 +83,6 @@ public class DriveTrain extends Subsystems {
 
     @Override
     public void updateTeleopState(GamePadEx DrivingGP, GamePadEx OtherGP) {
-        TeleOp(DrivingGP, OtherGP); // Justification: Yes
-    }
-
-    public void TeleOp(GamePadEx DrivingGP, GamePadEx OtherGP) {
         if (driveState == DriveTrainState.IDLE) {
             driveState = DriveTrainState.TANK_TELEOP; // CHANGE THIS, ONLY FOR TESTING
         }
@@ -151,11 +149,10 @@ public class DriveTrain extends Subsystems {
             FL.setPower(0.75 * ((axisLeftY + axisLeftX + axisRightX) / denominator));
 
             telemetry.addData("heading: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
-            //telemetry.addData("FL", leftFront.getCurrentPosition());
-            //telemetry.addData("BL", leftBack.getCurrentPosition());
-            //telemetry.addData("FR", leftFront.getCurrentPosition());
-            //telemetry.addData("BR", rightBack.getCurrentPosition());
-            telemetry.update();
+            telemetry.addData("FL", FL.getCurrentPosition());
+            telemetry.addData("BL", BL.getCurrentPosition());
+            telemetry.addData("FR", FR.getCurrentPosition());
+            telemetry.addData("BR", BR.getCurrentPosition());
 
             MoveMotorsWithDir(direction, DrivingGP);
         }
@@ -258,7 +255,7 @@ public class DriveTrain extends Subsystems {
         FL.setPower(0.0);
     }
 
-    public void initImu(){
+    public void initImu() {
         imu = hardwareMap.get(BNO055IMU.class, "imu");
         parameters = new BNO055IMU.Parameters();
 
