@@ -121,7 +121,7 @@ public class LiftOldBot extends Subsystems {
                 }
                 break;
             case DUMP:
-                if (gp2.getControl(GamePadEx.ControllerButton.X)) {
+                if (gp2.getControlDown(GamePadEx.ControllerButton.X)) {
                     timer.reset();
                 }
                 break;
