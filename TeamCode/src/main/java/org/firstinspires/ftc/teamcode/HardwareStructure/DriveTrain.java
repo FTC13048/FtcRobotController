@@ -5,19 +5,11 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.ElapsedTime;
-import com.qualcomm.robotcore.util.ReadWriteFile;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.internal.system.AppUtil;
-
-import java.io.File;
-import java.sql.Driver;
-import java.util.ArrayList;
-import java.util.List;
 
 public class DriveTrain extends Subsystems {
 
@@ -97,7 +89,7 @@ public class DriveTrain extends Subsystems {
                 direction = Direction.TANK_TELEOP_DRIVE;
             }
 
-            MoveMotorsWithDir(direction, DrivingGP);
+            moveMotorsWithDir(direction, DrivingGP);
         } else if (driveState == DriveTrainState.FIELD_CENTRIC_TELEOP) { // Actually uses cardinal directions from gyroscope
             double axisRightX = DrivingGP.getAxis(GamePadEx.ControllerAxis.RIGHT_X);
             double axisRightY = DrivingGP.getAxis(GamePadEx.ControllerAxis.RIGHT_Y);
@@ -154,7 +146,7 @@ public class DriveTrain extends Subsystems {
             telemetry.addData("FR", FR.getCurrentPosition());
             telemetry.addData("BR", BR.getCurrentPosition());
 
-            MoveMotorsWithDir(direction, DrivingGP);
+            moveMotorsWithDir(direction, DrivingGP);
         }
     }
 
@@ -185,7 +177,7 @@ public class DriveTrain extends Subsystems {
         NONE, // Fallback or no movement
     }
 
-    public void MoveMotorsWithDir(Direction dir, GamePadEx gp) {
+    public void moveMotorsWithDir(Direction dir, GamePadEx gp) {
         if (dir == Direction.NORTH) {
             BR.setPower(drivePower);
             FR.setPower(drivePower);
