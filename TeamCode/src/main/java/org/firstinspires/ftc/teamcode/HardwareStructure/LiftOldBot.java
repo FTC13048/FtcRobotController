@@ -96,9 +96,9 @@ public class LiftOldBot extends Subsystems {
     public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
         switch (liftState) {
             case INTAKE:
-                if (gp2.getControlDown(GamePadEx.ControllerButton.LTRIGGER)) {
+                if (gp2.getControl(GamePadEx.ControllerButton.LTRIGGER)) {
                     intakePower = gp2.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER);
-                } else if (gp2.getControlDown(GamePadEx.ControllerButton.RTRIGGER)) {
+                } else if (gp2.getControl(GamePadEx.ControllerButton.RTRIGGER)) {
                     intakePower = -gp2.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER);
                 } else {
                     intakePower = 0.0;
@@ -127,9 +127,9 @@ public class LiftOldBot extends Subsystems {
                 break;
 
             case MANUAL:
-                if (gp2.getControlDown(GamePadEx.ControllerButton.LTRIGGER)) {
+                if (gp2.getControl(GamePadEx.ControllerButton.LTRIGGER)) {
                     intakePower = gp2.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER);
-                } else if (gp2.getControlDown(GamePadEx.ControllerButton.RTRIGGER)) {
+                } else if (gp2.getControl(GamePadEx.ControllerButton.RTRIGGER)) {
                     intakePower = -gp2.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER);
                 } else {
                     intakePower = 0.0;
