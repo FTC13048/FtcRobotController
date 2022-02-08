@@ -13,7 +13,9 @@ public class TankTele extends OpMode {
     private ElapsedTime timer;
 
     private boolean automateSlide = false;
+    private boolean automateSlideB = false;
     private boolean servoRaised = false;
+    private double speedMultiplier;
 
     @Override
     // Initialize the robot (this is what happens when the play button is pressed)
@@ -72,15 +74,21 @@ public class TankTele extends OpMode {
 
     public void updateDriving(double rTrigger, double lTrigger, double lStickY, double rStickY) {
         // if the right trigger is pressed down strafe at that power
+        if(gamepad1.x){
+            speedMultiplier = 0.5;
+        } else if(gamepad1.a){
+            speedMultiplier = 1.0;
+        }
+
         if (rTrigger > 0.0) {
-            bot.strafe(rTrigger);
+            bot.strafe(rTrigger * speedMultiplier);
         } else if (lTrigger > 0.0) {
             // if the left trigger is pressed down, enter the negative value into the strafe
             //     function to make it strafe left
-            bot.strafe(-lTrigger);
+            bot.strafe(-lTrigger * speedMultiplier);
         } else {
             // Otherwise, set the power to whatever the Y sticks are
-            bot.drive(rStickY, lStickY);
+            bot.drive(rStickY * speedMultiplier, lStickY * speedMultiplier);
         }
     }
 
@@ -138,7 +146,7 @@ public class TankTele extends OpMode {
     private boolean servoReset = false;
 
     private void resetServo() {
-        if (gamepad2.y) {
+        if (gamepad2.right_bumper) {
             servoReset = true;
         }
 
@@ -162,7 +170,18 @@ public class TankTele extends OpMode {
                 bot.cargoFlipper.setPosition(0.3);
                 automateSlide = false;
             }
-        } else {
+        }
+
+        if(gamepad2.y){
+            automateSlideB = true;
+        }
+
+        if(automateSlideB){
+            if(bot.setLinSlidePos(-881)){
+                bot.cargoFlipper.setPosition(0.3);
+                automateSlideB = false;
+            }
+        } if(!automateSlideB && !automateSlide){
             if (Math.abs(slide) > 0.0) {
                 bot.runLinSlide(slide * 0.5);
             } else {
