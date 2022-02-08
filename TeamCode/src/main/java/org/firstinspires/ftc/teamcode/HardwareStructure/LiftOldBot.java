@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.HardwareStructure;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
@@ -10,9 +11,11 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 public class LiftOldBot extends Subsystems {
     private DcMotor linSlide;
     private DcMotor intakeLeft, intakeRight;
+    private Servo cargoFlipper;
 
     private LiftState liftState;
     private LiftLevel targetLevel;
+    private LiftLevel origState;
 
     private ElapsedTime timer;
     private double intakePower;
@@ -25,6 +28,7 @@ public class LiftOldBot extends Subsystems {
         linSlide = hmap.get(DcMotor.class, "linSlide");
         intakeLeft = hmap.get(DcMotor.class, "intakeLeft");
         intakeRight = hmap.get(DcMotor.class, "intakeRight");
+        cargoFlipper = hmap.get(Servo.class, "cargoFlipper");
 
         // Set the direction of the system motors based on their orientation on the bot
         linSlide.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -60,6 +64,7 @@ public class LiftOldBot extends Subsystems {
 
             case MOVE:
                 if (setLinSlidePos(targetLevel.numTicks)) {
+                    targetLevel = origState;
                     liftState = LiftState.ATLEVEL;
                 }
                 break;
@@ -77,11 +82,12 @@ public class LiftOldBot extends Subsystems {
                 break;
 
             case DUMP:
-                intakeLeft.setPower(-1.0);
-                intakeRight.setPower(-1.0);
-                if (timer.seconds() >= 3) {
+                cargoFlipper.setPosition(0.9);
+                if(timer.seconds() > 1.5){
+                    cargoFlipper.setPosition(0.1);
                     liftState = LiftState.MOVEINTAKE;
                 }
+
                 break;
 
             case MANUAL:
@@ -106,6 +112,8 @@ public class LiftOldBot extends Subsystems {
 
                 if (gp2.getControlDown(GamePadEx.ControllerButton.A)) {
                     liftState = LiftState.MOVE;
+                    origState = targetLevel;
+                    targetLevel = LiftLevel.BOT;
                 }
                 break;
 
@@ -117,11 +125,13 @@ public class LiftOldBot extends Subsystems {
 
             case ATLEVEL:
                 if (gp2.getControlDown(GamePadEx.ControllerButton.X)) {
+                    liftState = LiftState.MOVE;
+                } if(gp2.getControlDown(GamePadEx.ControllerButton.Y)){
                     liftState = LiftState.DUMP;
-                }
+            }
                 break;
             case DUMP:
-                if (gp2.getControlDown(GamePadEx.ControllerButton.X)) {
+                if (gp2.getControl(GamePadEx.ControllerButton.Y)) {
                     timer.reset();
                 }
                 break;
@@ -219,7 +229,7 @@ public class LiftOldBot extends Subsystems {
 
     public enum LiftLevel {
         TOP(0, "Top"), MID(0, "Middle"),
-        BOT(0, "Bottom"), INTAKE(0, "Intake");
+        BOT(-881, "Bottom"), INTAKE(0, "Intake");
 
         private int numTicks;
         private String level;
