@@ -15,7 +15,7 @@ public class LiftOldBot extends Subsystems {
 
     private LiftState liftState;
     private LiftLevel targetLevel;
-    private LiftLevel origState;
+    private LiftLevel origLevel;
 
     private ElapsedTime timer;
     private double intakePower;
@@ -64,7 +64,7 @@ public class LiftOldBot extends Subsystems {
 
             case MOVE:
                 if (setLinSlidePos(targetLevel.numTicks)) {
-                    targetLevel = origState;
+                    targetLevel = origLevel;
                     liftState = LiftState.ATLEVEL;
                 }
                 break;
@@ -112,7 +112,7 @@ public class LiftOldBot extends Subsystems {
 
                 if (gp2.getControlDown(GamePadEx.ControllerButton.A)) {
                     liftState = LiftState.MOVE;
-                    origState = targetLevel;
+                    origLevel = targetLevel;
                     targetLevel = LiftLevel.BOT;
                 }
                 break;

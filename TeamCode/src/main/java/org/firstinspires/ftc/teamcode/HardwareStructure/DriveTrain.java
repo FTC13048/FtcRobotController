@@ -1,15 +1,19 @@
 package org.firstinspires.ftc.teamcode.HardwareStructure;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
+import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 
 public class DriveTrain extends Subsystems {
 
@@ -17,7 +21,11 @@ public class DriveTrain extends Subsystems {
     private DcMotor FL, FR, BL, BR;
     private BNO055IMU imu;
     private BNO055IMU.Parameters parameters;
-    //endregion
+
+    //Distance sensors
+    public DistanceSensor distSensorRight;
+    public DistanceSensor distSensorLeft;
+    public DistanceSensor distSensorBack;
 
     //region Movement Stats
     private DriveTrainState driveState;
@@ -63,6 +71,10 @@ public class DriveTrain extends Subsystems {
             BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
+            distSensorRight = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.RIGHT);
+            distSensorLeft = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.LEFT);
+            distSensorBack = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.BACK);
         }
 
         telemetry.addData("Drive Train", "initialized");
