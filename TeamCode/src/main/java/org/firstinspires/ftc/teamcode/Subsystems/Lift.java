@@ -45,6 +45,10 @@ public class Lift extends Subsystem {
         intakeRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         linSlide.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+        intakeLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        intakeRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         timer = new ElapsedTime();
 
         liftState = LiftState.INTAKE;
@@ -60,6 +64,7 @@ public class Lift extends Subsystem {
             case INTAKE:
                 intakeLeft.setPower(intakePower);
                 intakeRight.setPower(intakePower);
+                cargoFlipper.setPosition(0.1);
                 break;
 
             case MOVE:
@@ -79,6 +84,7 @@ public class Lift extends Subsystem {
                 linSlide.setPower(0.0);
                 intakeLeft.setPower(0.0);
                 intakeRight.setPower(0.0);
+                cargoFlipper.setPosition(0.3);
                 break;
 
             case DUMP:

@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class LiftBADDDD extends Subsystem {
+public class LiftNewBotUnused extends Subsystem {
     private DcMotor liftRight, liftLeft;
     private DcMotor intake;
 
@@ -18,7 +18,7 @@ public class LiftBADDDD extends Subsystem {
     private double intakePower;
     private double liftPower = 0.5;
 
-    protected LiftBADDDD(HardwareMap hmap, Telemetry tele, boolean isAuton) {
+    protected LiftNewBotUnused(HardwareMap hmap, Telemetry tele, boolean isAuton) {
         super(hmap, tele, isAuton);
 
         liftRight = hmap.get(DcMotor.class, "liftRight");
