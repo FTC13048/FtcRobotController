@@ -45,7 +45,7 @@ public class DriveTrain extends Subsystem {
         telemetry = tele;
 
         // Initialise states
-        driveState = DriveTrainState.IDLE;
+        driveState = DriveTrainState.TANK_TELEOP;
 
         // Initialize motor names
         FL = hardwareMap.get(DcMotor.class, "front_left");
@@ -61,6 +61,7 @@ public class DriveTrain extends Subsystem {
         FL.setDirection(DcMotorSimple.Direction.REVERSE);
         FR.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         initImu();
@@ -81,15 +82,31 @@ public class DriveTrain extends Subsystem {
 
     @Override
     public void updateState() {
-
+        
     }
 
     @Override
-    public void updateTeleOpState(GamePadEx DrivingGP, GamePadEx OtherGP) {
-        if (driveState == DriveTrainState.IDLE) { // CHANGE THIS, ONLY FOR TESTING
-            driveState = DriveTrainState.TANK_TELEOP;
-            direction = Direction.TANK_TELEOP_DRIVE;
+    public void updateTeleOpState(GamePadEx GP1, GamePadEx GP2){
+        axisRightY = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_Y);
+        axisLeftY = GP2.getAxis(GamePadEx.ControllerAxis.LEFT_Y);
+
+        BR.setPower(axisRightY);
+        FR.setPower(axisRightY);
+        BL.setPower(axisLeftY);
+        FL.setPower(axisLeftY);
+
+        if(GP1.getControl(GamePadEx.ControllerButton.LTRIGGER)){
+            direction = Direction.WEST;
+        } else if(GP1.getControl(GamePadEx.ControllerButton.RTRIGGER)){
+            direction = Direction.EAST;
         }
+    }
+
+    public void updateTeleOpStateOLD(GamePadEx DrivingGP, GamePadEx OtherGP) {
+//        if (driveState == DriveTrainState.IDLE) { // CHANGE THIS, ONLY FOR TESTING
+//            driveState = DriveTrainState.TANK_TELEOP;
+//            direction = Direction.TANK_TELEOP_DRIVE;
+//        }
 
         // Set the joystick axis values
         axisRightX = DrivingGP.getAxis(GamePadEx.ControllerAxis.RIGHT_X);
@@ -104,8 +121,10 @@ public class DriveTrain extends Subsystem {
         // If in tank drive, then set the strafing directions
         if (driveState == DriveTrainState.TANK_TELEOP) {
             if (DrivingGP.getControl(GamePadEx.ControllerButton.LTRIGGER)) { // Strafe left
+                drivePower = DrivingGP.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER);
                 direction = Direction.WEST;
             } else if (DrivingGP.getControl(GamePadEx.ControllerButton.RTRIGGER)) { // Strafe right
+                drivePower = DrivingGP.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER);
                 direction = Direction.EAST;
             } else { // Not strafing
                 direction = Direction.TANK_TELEOP_DRIVE;

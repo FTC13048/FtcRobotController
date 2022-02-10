@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
 
 import java.util.ArrayList;
 
-@TeleOp(name = "TankDrive", group = "TeleOp")
+@TeleOp(name = "Tank Drive Subsystems", group = "TeleOp")
 public class SubsystemTeleOp extends OpMode {
     private ArrayList<Subsystem> subsystemsToUse;
 
@@ -39,10 +39,9 @@ public class SubsystemTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        telemetry.addData("haha lol alex go brrrrr", "");
-
         for(Subsystem subsystem : subsystemsToUse){
             subsystem.updateTeleOpState(new GamePadEx(gamepad1), new GamePadEx(gamepad2));
+            subsystem.updateState();
         }
     }
 

@@ -10,8 +10,8 @@ public class BoilerplateSubsystem extends Subsystem {
     private DcMotor motor;
     private final double motorPower = 0.5;
 
-    protected BoilerplateSubsystem(HardwareMap hardwareMap, Telemetry telemetry) {
-        super(telemetry);
+    protected BoilerplateSubsystem(HardwareMap hardwareMap, Telemetry telemetry, boolean isAuton) {
+        super(hardwareMap, telemetry, isAuton);
         motor = hardwareMap.get(DcMotor.class, "motor");
 
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
