@@ -1,13 +1,12 @@
-package org.firstinspires.ftc.teamcode.HardwareStructure;
+package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.util.Hardware;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class BoilerplateSubsystem extends Subsystems {
+public class BoilerplateSubsystem extends Subsystem {
     private DcMotor motor;
     private final double motorPower = 0.5;
 
@@ -28,7 +27,7 @@ public class BoilerplateSubsystem extends Subsystems {
     }
 
     @Override
-    public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
+    public void updateTeleOpState(GamePadEx gp1, GamePadEx gp2) {
 
     }
 

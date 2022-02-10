@@ -4,8 +4,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.teamcode.Archives.Bot;
-import org.firstinspires.ftc.teamcode.HardwareStructure.DirectionEnum;
-import org.firstinspires.ftc.teamcode.HardwareStructure.DistanceSensor;
+import org.firstinspires.ftc.teamcode.Subsystems.DirectionEnum;
+import org.firstinspires.ftc.teamcode.Subsystems.DistanceSensor;
 
 public class TankDrive {
     private Bot bot;

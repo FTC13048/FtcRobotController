@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.HardwareStructure;
+package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -8,7 +8,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class LiftOldBot extends Subsystems {
+public class Lift extends Subsystem {
     private DcMotor linSlide;
     private DcMotor intakeLeft, intakeRight;
     private Servo cargoFlipper;
@@ -21,8 +21,8 @@ public class LiftOldBot extends Subsystems {
     private double intakePower;
     private double liftPower = 0.5;
 
-    protected LiftOldBot(HardwareMap hmap, Telemetry tele) {
-        super(tele);
+    public Lift(HardwareMap hmap, Telemetry tele, boolean isAuton) {
+        super(hmap, tele, isAuton);
 
         // Assign all system motors (not drive motors) names in the hub
         linSlide = hmap.get(DcMotor.class, "linSlide");
@@ -83,7 +83,7 @@ public class LiftOldBot extends Subsystems {
 
             case DUMP:
                 cargoFlipper.setPosition(0.9);
-                if(timer.seconds() > 1.5){
+                if (timer.seconds() > 1.5) {
                     cargoFlipper.setPosition(0.1);
                     liftState = LiftState.MOVEINTAKE;
                 }
@@ -99,7 +99,7 @@ public class LiftOldBot extends Subsystems {
     }
 
     @Override
-    public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
+    public void updateTeleOpState(GamePadEx gp1, GamePadEx gp2) {
         switch (liftState) {
             case INTAKE:
                 if (gp2.getControl(GamePadEx.ControllerButton.LTRIGGER)) {
@@ -126,10 +126,12 @@ public class LiftOldBot extends Subsystems {
             case ATLEVEL:
                 if (gp2.getControlDown(GamePadEx.ControllerButton.X)) {
                     liftState = LiftState.MOVE;
-                } if(gp2.getControlDown(GamePadEx.ControllerButton.Y)){
+                }
+                if (gp2.getControlDown(GamePadEx.ControllerButton.Y)) {
                     liftState = LiftState.DUMP;
-            }
+                }
                 break;
+
             case DUMP:
                 if (gp2.getControl(GamePadEx.ControllerButton.Y)) {
                     timer.reset();
@@ -149,10 +151,12 @@ public class LiftOldBot extends Subsystems {
                 break;
         }
 
+        // Start automatically moving the intake
         if (gp2.getControlDown(GamePadEx.ControllerButton.BACK) && liftState != LiftState.MANUAL) {
             liftState = LiftState.MOVEINTAKE;
         }
 
+        // Switch between manual and automatic mode
         if (gp2.getControlDown(GamePadEx.ControllerButton.GUIDE)) {
             if (liftState != LiftState.MANUAL) {
                 liftState = LiftState.MANUAL;
@@ -161,6 +165,7 @@ public class LiftOldBot extends Subsystems {
             }
         }
 
+        // Cycle between goal positions
         if (gp2.getControlDown(GamePadEx.ControllerButton.B)) {
             switch (targetLevel) {
                 case TOP:

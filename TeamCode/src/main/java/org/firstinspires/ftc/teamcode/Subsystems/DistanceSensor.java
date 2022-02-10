@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.HardwareStructure;
+package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.HardwareMap;

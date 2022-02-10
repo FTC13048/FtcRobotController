@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.Archives;
 
 import com.qualcomm.robotcore.hardware.Gamepad;
 
-import org.firstinspires.ftc.teamcode.HardwareStructure.GamePadEx;
+import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 
 import java.util.HashMap;
 

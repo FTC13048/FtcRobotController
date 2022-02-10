@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.HardwareStructure;
+package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -6,13 +6,14 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class DuckSpinner extends Subsystems {
+public class DuckSpinner extends Subsystem {
     private DcMotor duckSpinner;
     private final double DUCK_POWER = 0.7;
     private DuckState duckState;
 
-    public DuckSpinner(HardwareMap hmap, Telemetry tele) {
-        super(tele);
+    public DuckSpinner(HardwareMap hmap, Telemetry tele, boolean isAuton) {
+        super(hmap, tele, isAuton);
+
         duckSpinner = hmap.get(DcMotor.class, "duckSpinner");
 
         duckSpinner.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -30,7 +31,7 @@ public class DuckSpinner extends Subsystems {
     }
 
     @Override
-    public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
+    public void updateTeleOpState(GamePadEx gp1, GamePadEx gp2) {
         if (gp2.getAxis(GamePadEx.ControllerAxis.LEFT_Y) < -0.15) {
             duckState = DuckState.SPINBLUE;
         } else if (gp2.getAxis(GamePadEx.ControllerAxis.LEFT_Y) > 0.15) {

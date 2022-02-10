@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.HardwareStructure;
+package org.firstinspires.ftc.teamcode.Subsystems;
 
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
-public class Lift extends Subsystems {
+public class LiftBADDDD extends Subsystem {
     private DcMotor liftRight, liftLeft;
     private DcMotor intake;
 
@@ -18,8 +18,8 @@ public class Lift extends Subsystems {
     private double intakePower;
     private double liftPower = 0.5;
 
-    protected Lift(HardwareMap hmap, Telemetry tele) {
-        super(tele);
+    protected LiftBADDDD(HardwareMap hmap, Telemetry tele, boolean isAuton) {
+        super(hmap, tele, isAuton);
 
         liftRight = hmap.get(DcMotor.class, "liftRight");
         liftLeft = hmap.get(DcMotor.class, "liftLeft");
@@ -83,7 +83,7 @@ public class Lift extends Subsystems {
     }
 
     @Override
-    public void updateTeleopState(GamePadEx gp1, GamePadEx gp2) {
+    public void updateTeleOpState(GamePadEx gp1, GamePadEx gp2) {
         switch (liftState) {
             case INTAKE:
                 if (gp2.getControlDown(GamePadEx.ControllerButton.LTRIGGER)) {
