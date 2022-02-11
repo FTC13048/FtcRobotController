@@ -182,8 +182,6 @@ public class Robot {
 
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
     public boolean adjustHeading(int degrees, double power, BNO055IMU imu) {
-        degrees -= 3;
-
         // get the current heading of the bot (an angle from -180 to 180)
         float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 

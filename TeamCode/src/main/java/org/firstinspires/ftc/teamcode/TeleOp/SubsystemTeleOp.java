@@ -13,42 +13,46 @@ import java.util.ArrayList;
 
 @TeleOp(name = "Tank Drive Subsystems", group = "TeleOp")
 public class SubsystemTeleOp extends OpMode {
-    private ArrayList<Subsystem> subsystemsToUse;
+    private DriveTrain driveTrain;
+    private Lift lift;
+    private DuckSpinner duckSpiner;
 
     @Override
     public void init() {
-        subsystemsToUse = new ArrayList<Subsystem>();
-        subsystemsToUse.add(new DriveTrain(hardwareMap, telemetry, false));
-        subsystemsToUse.add(new Lift(hardwareMap, telemetry, false));
-        subsystemsToUse.add(new DuckSpinner(hardwareMap, telemetry, false));
+        driveTrain = new DriveTrain(hardwareMap, telemetry, false);
+        lift = new Lift(hardwareMap, telemetry, false);
+        duckSpiner =  new DuckSpinner(hardwareMap, telemetry, false);
     }
 
     @Override
     public void init_loop(){
-        for(Subsystem subsystem : subsystemsToUse){
-            subsystem.initLoopTeleOp();
-        }
+        driveTrain.initLoopTeleOp();
+        lift.initLoopTeleOp();
+        duckSpiner.initLoopTeleOp();
     }
 
     @Override
     public void start() {
-        for(Subsystem subsystem : subsystemsToUse){
-            subsystem.startTeleOp();
-        }
+        driveTrain.startTeleOp();
+        lift.startTeleOp();
+        duckSpiner.startTeleOp();
     }
 
     @Override
     public void loop() {
-        for(Subsystem subsystem : subsystemsToUse){
-            subsystem.updateTeleOpState(new GamePadEx(gamepad1), new GamePadEx(gamepad2));
-            subsystem.updateState();
-        }
+        driveTrain.updateTeleOpState(new GamePadEx(gamepad1), new GamePadEx(gamepad2));
+
+        lift.updateTeleOpState(new GamePadEx(gamepad1), new GamePadEx(gamepad2));
+        lift.updateState();
+
+        duckSpiner.updateTeleOpState(new GamePadEx(gamepad1), new GamePadEx(gamepad2));
+        duckSpiner.updateState();
     }
 
     @Override
     public void stop(){
-        for(Subsystem subsystem : subsystemsToUse){
-            subsystem.stop();
-        }
+        driveTrain.stop();
+        lift.stop();
+        duckSpiner.stop();
     }
 }
