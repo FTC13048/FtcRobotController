@@ -189,6 +189,7 @@ public class Lift extends Subsystem {
             }
         }
 
+        telemetry.addData("Lift Pos", linSlide.getCurrentPosition());
         telemetry.addData("Current State", liftState.state);
         telemetry.addData("Current Target Level", targetLevel.level);
     }
