@@ -129,17 +129,25 @@ public class DriveTrain extends Subsystem {
         }
 
         axisRightY = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_Y);
-        axisLeftY = GP2.getAxis(GamePadEx.ControllerAxis.LEFT_Y);
+        axisLeftY = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_Y);
+        double leftTrig = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER);
+        double rightTrig = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER);
 
-        BR.setPower(axisRightY);
-        FR.setPower(axisRightY);
-        BL.setPower(axisLeftY);
-        FL.setPower(axisLeftY);
-
-        if(GP1.getControl(GamePadEx.ControllerButton.LTRIGGER)){
-            direction = Direction.WEST;
+        if(GP1.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER) > 0.15){
+            BR.setPower(leftTrig);
+            FR.setPower(-leftTrig);
+            BL.setPower(-leftTrig);
+            FL.setPower(leftTrig);
         } else if(GP1.getControl(GamePadEx.ControllerButton.RTRIGGER)){
-            direction = Direction.EAST;
+            BR.setPower(-rightTrig);
+            FR.setPower(rightTrig);
+            BL.setPower(rightTrig);
+            FL.setPower(-rightTrig);
+        } else{
+            BR.setPower(axisRightY);
+            FR.setPower(axisRightY);
+            BL.setPower(axisLeftY);
+            FL.setPower(axisLeftY);
         }
     }
 
