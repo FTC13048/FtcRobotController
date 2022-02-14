@@ -91,8 +91,8 @@ public class GamePadEx {
         LEFT_Y(g -> g.left_stick_y),
         RIGHT_X(g -> g.right_stick_x),
         RIGHT_Y(g -> g.right_stick_y),
-        RIGHT_TRIGGER(g -> g.right_trigger),
-        LEFT_TRIGGER(g -> g.left_trigger);
+        RTRIGGER(g -> g.right_trigger),
+        LTRIGGER(g -> g.left_trigger);
 
         public Function<Gamepad, Float> function;
 

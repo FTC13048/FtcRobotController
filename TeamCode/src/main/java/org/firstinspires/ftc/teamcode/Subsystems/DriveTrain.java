@@ -26,7 +26,6 @@ public class DriveTrain extends Subsystem {
     //region Movement Stats
     private DriveTrainState driveState;
     private Direction direction;
-    private double drivePower;
     private double axisRightX;
     private double axisRightY;
     private double axisLeftX;
@@ -44,10 +43,10 @@ public class DriveTrain extends Subsystem {
     private Telemetry telemetry;
     //endregion
 
-    public DriveTrain(HardwareMap hmap, Telemetry tele, boolean isAuton) { // REMOVE THE ISAUTON BOOLEAN
+    public DriveTrain(HardwareMap hmap, Telemetry tele, boolean isAuton) {
         super(hmap, tele, isAuton);
 
-        // Initialise dependency classes
+        // Initialise dependency classes and variables
         hardwareMap = hmap;
         telemetry = tele;
         powerMultiplier = 1.0;
@@ -89,13 +88,13 @@ public class DriveTrain extends Subsystem {
         telemetry.addData("Drive Train", "initialized");
     }
 
+    // Auton
     @Override
     public void updateState() {
-        switch(driveState){
+        switch (driveState) {
             case MOVE:
-                drivePower = 0.5;
-                moveMotorsWithDirection(direction);
-                if(Math.abs(BR.getCurrentPosition()) > target){
+                moveMotorsWithDirection(direction, 0.5);
+                if (Math.abs(BR.getCurrentPosition()) > target) {
                     runtime.reset();
                     driveState = DriveTrainState.STOPPING;
                 }
@@ -105,7 +104,7 @@ public class DriveTrain extends Subsystem {
                 if (FL.getMode().equals(DcMotor.RunMode.STOP_AND_RESET_ENCODER)) {
                     FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 }
-                if(adjustHeading(angle, 0.5) & runtime.milliseconds()>1500){
+                if (adjustHeading(angle, 0.5) & runtime.milliseconds() > 1500) {
                     driveState = DriveTrainState.STOPPING;
                 }
                 break;
@@ -113,7 +112,7 @@ public class DriveTrain extends Subsystem {
             case STOPPING:
                 stop();
                 setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                if(runtime.milliseconds() > 500){
+                if (runtime.milliseconds() > 500) {
                     driveState = DriveTrainState.IDLE;
                 }
                 break;
@@ -124,71 +123,72 @@ public class DriveTrain extends Subsystem {
         }
     }
 
-    @Override
-    public void updateTeleOpState(GamePadEx GP1, GamePadEx GP2){
+    // TeleOp
+    public void updateTeleOpStateOldKhush(GamePadEx GP1, GamePadEx GP2) {
         if (FL.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
             setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
+        // Set the joystick axis values
+        axisRightX = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_X) * powerMultiplier;
         axisRightY = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_Y) * powerMultiplier;
+        axisLeftX = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_X) * powerMultiplier;
         axisLeftY = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_Y) * powerMultiplier;
-        double leftTrig = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER) * powerMultiplier;
-        double rightTrig = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER) * powerMultiplier;
+        double leftTrig = GP1.getAxis(GamePadEx.ControllerAxis.LTRIGGER) * powerMultiplier;
+        double rightTrig = GP1.getAxis(GamePadEx.ControllerAxis.RTRIGGER) * powerMultiplier;
 
-        if(GP1.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER) > 0.15){
+        if (GP1.getControl(GamePadEx.ControllerButton.LTRIGGER)) {
             BR.setPower(leftTrig);
             FR.setPower(-leftTrig);
             BL.setPower(-leftTrig);
             FL.setPower(leftTrig);
-        } else if(GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER) > 0.15){
+        } else if (GP1.getControl(GamePadEx.ControllerButton.RTRIGGER)) {
             BR.setPower(-rightTrig);
             FR.setPower(rightTrig);
             BL.setPower(rightTrig);
             FL.setPower(-rightTrig);
-        } else{
+        } else {
             BR.setPower(axisRightY);
             FR.setPower(axisRightY);
             BL.setPower(axisLeftY);
             FL.setPower(axisLeftY);
         }
 
-        if(GP1.getControl(GamePadEx.ControllerButton.A)){ powerMultiplier = 1.0; }
-        if(GP1.getControl(GamePadEx.ControllerButton.X)){ powerMultiplier = 0.5; }
+        toggleSpeeds(GP1);
     }
 
-    public void updateTeleOpStateOLD(GamePadEx DrivingGP, GamePadEx OtherGP) {
-//        if (driveState == DriveTrainState.IDLE) { // CHANGE THIS, ONLY FOR TESTING
-//            driveState = DriveTrainState.TANK_TELEOP;
-//            direction = Direction.TANK_TELEOP_DRIVE;
-//        }
+    // TeleOp
+    @Override
+    public void updateTeleOpState(GamePadEx GP1, GamePadEx GP2) {
+        if (FL.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
+            setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        }
 
         // Set the joystick axis values
-        axisRightX = DrivingGP.getAxis(GamePadEx.ControllerAxis.RIGHT_X);
-        axisRightY = DrivingGP.getAxis(GamePadEx.ControllerAxis.RIGHT_Y);
-        axisLeftX = DrivingGP.getAxis(GamePadEx.ControllerAxis.LEFT_X);
-        axisLeftY = DrivingGP.getAxis(GamePadEx.ControllerAxis.LEFT_Y);
+        axisRightX = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_X) * powerMultiplier;
+        axisRightY = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_Y) * powerMultiplier;
+        axisLeftX = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_X) * powerMultiplier;
+        axisLeftY = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_Y) * powerMultiplier;
+        double leftTrig = GP1.getAxis(GamePadEx.ControllerAxis.LTRIGGER) * powerMultiplier;
+        double rightTrig = GP1.getAxis(GamePadEx.ControllerAxis.RTRIGGER) * powerMultiplier;
         telemetry.addData("Right X", axisRightX);
         telemetry.addData("Right Y", axisRightY);
         telemetry.addData("Left X", axisLeftX);
         telemetry.addData("Left Y", axisLeftY);
 
-        // If in tank drive, then set the strafing directions
-        if (driveState == DriveTrainState.TANK_TELEOP) {
-            if (DrivingGP.getControl(GamePadEx.ControllerButton.LTRIGGER)) { // Strafe left
-                drivePower = DrivingGP.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER);
-                direction = Direction.WEST;
-            } else if (DrivingGP.getControl(GamePadEx.ControllerButton.RTRIGGER)) { // Strafe right
-                drivePower = DrivingGP.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER);
-                direction = Direction.EAST;
-            } else { // Not strafing
-                direction = Direction.TANK_TELEOP_DRIVE;
-            }
-        }
-
         // Perform actions based on the current state
         switch (driveState) {
             case TANK_TELEOP:
-                moveMotorsWithDirection(direction);
+                if (GP1.getControl(GamePadEx.ControllerButton.LTRIGGER)) // Strafe left
+                    moveMotorsWithDirection(Direction.WEST, leftTrig);
+                else if (GP1.getControl(GamePadEx.ControllerButton.RTRIGGER)) // Strafe right
+                    moveMotorsWithDirection(Direction.EAST, rightTrig);
+                else { // Not strafing
+                    BR.setPower(axisRightY);
+                    FR.setPower(axisRightY);
+                    BL.setPower(axisLeftY);
+                    FL.setPower(axisLeftY);
+                }
 
             case FIELD_CENTRIC_TELEOP:
                 double orientation = Math.toRadians(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
@@ -202,12 +202,13 @@ public class DriveTrain extends Subsystem {
                 axisLeftX = axisLeftY * sin + axisLeftX * cos;
                 axisLeftY = temp;
 
+                // This denominator scales the values outside of range [1,-1]
                 double denominator = Math.max(Math.abs(axisLeftY) + Math.abs(axisLeftX) + Math.abs(axisRightX), 1);
-                // this denominator scales the values outside of range [1,-1]
-                BR.setPower(0.75 * ((axisLeftY + axisLeftX - axisRightX) / denominator));
-                FR.setPower(0.75 * ((axisLeftY - axisLeftX - axisRightX) / denominator));
-                BL.setPower(0.75 * ((axisLeftY - axisLeftX + axisRightX) / denominator));
-                FL.setPower(0.75 * ((axisLeftY + axisLeftX + axisRightX) / denominator));
+
+                BR.setPower(((axisLeftY + axisLeftX - axisRightX) / denominator) * 0.75);
+                FR.setPower(((axisLeftY - axisLeftX - axisRightX) / denominator) * 0.75);
+                BL.setPower(((axisLeftY - axisLeftX + axisRightX) / denominator) * 0.75);
+                FL.setPower(((axisLeftY + axisLeftX + axisRightX) / denominator) * 0.75);
 
                 telemetry.addData("heading: ", imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
                 telemetry.addData("FL", FL.getCurrentPosition());
@@ -215,10 +216,20 @@ public class DriveTrain extends Subsystem {
                 telemetry.addData("FR", FR.getCurrentPosition());
                 telemetry.addData("BR", BR.getCurrentPosition());
         }
+
+        toggleSpeeds(GP1);
     }
 
-    public void moveMotorsWithDirection(Direction dir){
-        switch (dir){
+    public void toggleSpeeds(GamePadEx GP1) {
+        if (GP1.getControl(GamePadEx.ControllerButton.A)) {
+            powerMultiplier = 1.0;
+        } else if (GP1.getControl(GamePadEx.ControllerButton.X)) {
+            powerMultiplier = 0.5;
+        }
+    }
+
+    public void moveMotorsWithDirection(Direction dir, double drivePower) {
+        switch (dir) {
             case NORTH:
                 BR.setPower(drivePower);
                 FR.setPower(drivePower);
