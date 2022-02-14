@@ -5,11 +5,13 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.util.Range;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class DriveTrain extends Subsystem {
 
@@ -88,7 +90,7 @@ public class DriveTrain extends Subsystem {
         telemetry.addData("Drive Train", "initialized");
     }
 
-    // Auton
+    //region Auton Stuff
     @Override
     public void updateState() {
         switch (driveState) {
@@ -123,41 +125,72 @@ public class DriveTrain extends Subsystem {
         }
     }
 
-    // TeleOp
-    public void updateTeleOpStateOldKhush(GamePadEx GP1, GamePadEx GP2) {
-        if (FL.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
-            setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        }
-
-        // Set the joystick axis values
-        axisRightX = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_X) * powerMultiplier;
-        axisRightY = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_Y) * powerMultiplier;
-        axisLeftX = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_X) * powerMultiplier;
-        axisLeftY = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_Y) * powerMultiplier;
-        double leftTrig = GP1.getAxis(GamePadEx.ControllerAxis.LTRIGGER) * powerMultiplier;
-        double rightTrig = GP1.getAxis(GamePadEx.ControllerAxis.RTRIGGER) * powerMultiplier;
-
-        if (GP1.getControl(GamePadEx.ControllerButton.LTRIGGER)) {
-            BR.setPower(leftTrig);
-            FR.setPower(-leftTrig);
-            BL.setPower(-leftTrig);
-            FL.setPower(leftTrig);
-        } else if (GP1.getControl(GamePadEx.ControllerButton.RTRIGGER)) {
-            BR.setPower(-rightTrig);
-            FR.setPower(rightTrig);
-            BL.setPower(rightTrig);
-            FL.setPower(-rightTrig);
+    // Drives until distance sensor reads a certain distance and then returns true when there
+    private boolean driveWithDistanceSensor(Direction direction, DistanceSensor distanceSensor, double distanceToStop, double power) {
+        // If the sensor reads the stop distance return true
+        //    if it reads 5 inches within the stop distance, set the motor power to 6 times
+        //    less than the entered power
+        double distance = getSensorDistance(distanceSensor);
+        if (Math.abs(distance - distanceToStop) < 1) {
+            stop();
+            return true;
         } else {
-            BR.setPower(axisRightY);
-            FR.setPower(axisRightY);
-            BL.setPower(axisLeftY);
-            FL.setPower(axisLeftY);
-        }
+            if (Math.abs(distance - distanceToStop) <= 15) {
+                power = 0.1;
+            }
 
-        toggleSpeeds(GP1);
+            power *= -1 * Math.signum(distance - distanceToStop);
+
+            moveMotorsWithDirection(direction, power);
+
+            return false;
+        }
     }
 
-    // TeleOp
+    // Returns the distance a given distance sensor detects
+    private double getSensorDistance(DistanceSensor sensorToUse) {
+        return Range.clip(sensorToUse.getDistCM(), 0.0, 200.0);
+    }
+
+    // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
+    private boolean adjustHeading(int degrees, double power) {
+        // get the current heading of the bot (an angle from -180 to 180)
+        float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+        // to convert to a 0-360 scale, if the current heading is negative add
+        //    360 to it
+        currHeading = currHeading < 0 ? 360 + currHeading : currHeading;
+
+        // difference between target and current heading
+        double difference = degrees - currHeading;
+        telemetry.addData("Difference is ", difference);
+
+        // If the bot is within a 30 degree threshold of the target, slow it down to 25% of the desired speed to prevent overshooting
+        if (Math.abs(difference) <= 30) {
+            FR.setPower(power / 10);
+            BR.setPower(power / 10);
+            FL.setPower(power / 10);
+            BL.setPower(power / 10);
+        } else { // Otherwise use normal speed
+            FR.setPower(power / 10);
+            BR.setPower(power / 10);
+            FL.setPower(power / 10);
+            BL.setPower(power / 10);
+        }
+
+        // If the bot is within 1 degree of the target, stop the bot and return true
+        if (Math.abs(difference) <= 0.5) {
+            telemetry.addLine("Stopping the bot");
+            stop();
+            return true;
+        }
+
+        // return false otherwise
+        return false;
+    }
+    //endregion
+
+    //region TeleOp Stuff
     @Override
     public void updateTeleOpState(GamePadEx GP1, GamePadEx GP2) {
         if (FL.getMode() != DcMotor.RunMode.RUN_USING_ENCODER) {
@@ -179,18 +212,21 @@ public class DriveTrain extends Subsystem {
         // Perform actions based on the current state
         switch (driveState) {
             case TANK_TELEOP:
-                if (GP1.getControl(GamePadEx.ControllerButton.LTRIGGER)) // Strafe left
+                telemetry.addLine("TANK_TELEOP");
+                if (GP1.getControl(GamePadEx.ControllerButton.LTRIGGER)) { // Strafe left
                     moveMotorsWithDirection(Direction.WEST, leftTrig);
-                else if (GP1.getControl(GamePadEx.ControllerButton.RTRIGGER)) // Strafe right
+                } else if (GP1.getControl(GamePadEx.ControllerButton.RTRIGGER)) {// Strafe right
                     moveMotorsWithDirection(Direction.EAST, rightTrig);
-                else { // Not strafing
+                } else { // Not strafing
                     BR.setPower(axisRightY);
                     FR.setPower(axisRightY);
                     BL.setPower(axisLeftY);
                     FL.setPower(axisLeftY);
                 }
+                break;
 
             case FIELD_CENTRIC_TELEOP:
+                telemetry.addLine("FIELD_CENTRIC_TELEOP");
                 double orientation = Math.toRadians(imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle);
                 double sin = Math.sin(orientation);
                 double cos = Math.cos(orientation);
@@ -215,6 +251,7 @@ public class DriveTrain extends Subsystem {
                 telemetry.addData("BL", BL.getCurrentPosition());
                 telemetry.addData("FR", FR.getCurrentPosition());
                 telemetry.addData("BR", BR.getCurrentPosition());
+                break;
         }
 
         toggleSpeeds(GP1);
@@ -227,7 +264,9 @@ public class DriveTrain extends Subsystem {
             powerMultiplier = 0.5;
         }
     }
+    //endregion
 
+    //region General Stuff
     public void moveMotorsWithDirection(Direction dir, double drivePower) {
         switch (dir) {
             case NORTH:
@@ -315,6 +354,7 @@ public class DriveTrain extends Subsystem {
         BL.setMode(mode);
         FL.setMode(mode);
     }
+    //endregion
 
     // Sets the motor power of all the drive motors to 0
     @Override
@@ -330,42 +370,5 @@ public class DriveTrain extends Subsystem {
         parameters = new BNO055IMU.Parameters();
 
         imu.initialize(parameters);
-    }
-
-    // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
-    public boolean adjustHeading(int degrees, double power) {
-        // get the current heading of the bot (an angle from -180 to 180)
-        float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        // to convert to a 0-360 scale, if the current heading is negative add
-        //    360 to it
-        currHeading = currHeading < 0 ? 360 + currHeading : currHeading;
-
-        // difference between target and current heading
-        double difference = degrees - currHeading;
-        telemetry.addData("Difference is ", difference);
-
-        // If the bot is within a 30 degree threshold of the target, slow it down to 25% of the desired speed to prevent overshooting
-        if (Math.abs(difference) <= 30) {
-            FR.setPower(power / 10);
-            BR.setPower(power / 10);
-            FL.setPower(power / 10);
-            BL.setPower(power / 10);
-        } else { // Otherwise use normal speed
-            FR.setPower(power / 10);
-            BR.setPower(power / 10);
-            FL.setPower(power / 10);
-            BL.setPower(power / 10);
-        }
-
-        // If the bot is within 1 degree of the target, stop the bot and return true
-        if (Math.abs(difference) <= 0.5) {
-            telemetry.addLine("Stopping the bot");
-            stop();
-            return true;
-        }
-
-        // return false otherwise
-        return false;
     }
 }
