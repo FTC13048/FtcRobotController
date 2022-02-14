@@ -31,6 +31,7 @@ public class DriveTrain extends Subsystem {
     private double axisRightY;
     private double axisLeftX;
     private double axisLeftY;
+    private double powerMultiplier;
     //endregion
 
     // auton variables
@@ -49,6 +50,7 @@ public class DriveTrain extends Subsystem {
         // Initialise dependency classes
         hardwareMap = hmap;
         telemetry = tele;
+        powerMultiplier = 1.0;
 
         // Initialise states
         driveState = DriveTrainState.TANK_TELEOP;
@@ -128,17 +130,17 @@ public class DriveTrain extends Subsystem {
             setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         }
 
-        axisRightY = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_Y);
-        axisLeftY = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_Y);
-        double leftTrig = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER);
-        double rightTrig = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER);
+        axisRightY = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_Y) * powerMultiplier;
+        axisLeftY = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_Y) * powerMultiplier;
+        double leftTrig = GP1.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER) * powerMultiplier;
+        double rightTrig = GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER) * powerMultiplier;
 
         if(GP1.getAxis(GamePadEx.ControllerAxis.LEFT_TRIGGER) > 0.15){
             BR.setPower(leftTrig);
             FR.setPower(-leftTrig);
             BL.setPower(-leftTrig);
             FL.setPower(leftTrig);
-        } else if(GP1.getControl(GamePadEx.ControllerButton.RTRIGGER)){
+        } else if(GP1.getAxis(GamePadEx.ControllerAxis.RIGHT_TRIGGER) > 0.15){
             BR.setPower(-rightTrig);
             FR.setPower(rightTrig);
             BL.setPower(rightTrig);
@@ -149,6 +151,9 @@ public class DriveTrain extends Subsystem {
             BL.setPower(axisLeftY);
             FL.setPower(axisLeftY);
         }
+
+        if(GP1.getControl(GamePadEx.ControllerButton.A)){ powerMultiplier = 1.0; }
+        if(GP1.getControl(GamePadEx.ControllerButton.X)){ powerMultiplier = 0.5; }
     }
 
     public void updateTeleOpStateOLD(GamePadEx DrivingGP, GamePadEx OtherGP) {
