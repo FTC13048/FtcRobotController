@@ -122,18 +122,21 @@ public class DriveTrain extends Subsystem {
             case IDLE:
                 runtime.reset();
                 break;
+
+            case WAIT:
+                break;
         }
     }
 
     // Drives until distance sensor reads a certain distance and then returns true when there
-    private boolean driveWithDistanceSensor(Direction direction, DistanceSensor distanceSensor, double distanceToStop, double power) {
+    public void driveWithDistanceSensor(Direction direction, DistanceSensor distanceSensor, double distanceToStop, double power) {
         // If the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
         double distance = getSensorDistance(distanceSensor);
         if (Math.abs(distance - distanceToStop) < 1) {
             stop();
-            return true;
+            driveState = DriveTrainState.IDLE;
         } else {
             if (Math.abs(distance - distanceToStop) <= 15) {
                 power = 0.1;
@@ -142,8 +145,6 @@ public class DriveTrain extends Subsystem {
             power *= -1 * Math.signum(distance - distanceToStop);
 
             moveMotorsWithDirection(direction, power);
-
-            return false;
         }
     }
 
@@ -153,7 +154,7 @@ public class DriveTrain extends Subsystem {
     }
 
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
-    private boolean adjustHeading(int degrees, double power) {
+    public boolean adjustHeading(int degrees, double power) {
         // get the current heading of the bot (an angle from -180 to 180)
         float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
@@ -182,10 +183,10 @@ public class DriveTrain extends Subsystem {
         if (Math.abs(difference) <= 0.5) {
             telemetry.addLine("Stopping the bot");
             stop();
+            driveState = DriveTrainState.IDLE;
             return true;
         }
 
-        // return false otherwise
         return false;
     }
     //endregion
@@ -332,6 +333,7 @@ public class DriveTrain extends Subsystem {
         IDLE, // Reset encoders. Auton, escapable
         TANK_TELEOP, // TeleOP, NOT escapable
         FIELD_CENTRIC_TELEOP, // TeleOP, NOT escapable
+        WAIT,
         NONE, // Does nothing. Fallback
     }
 
@@ -346,6 +348,10 @@ public class DriveTrain extends Subsystem {
         NORTHWEST, // \ (/\)
         TANK_TELEOP_DRIVE,
         NONE, // Does nothing. Fallback or no movement
+    }
+
+    public void waitNext(){
+        driveState = DriveTrainState.WAIT;
     }
 
     public void setMotorMode(DcMotor.RunMode mode) {
@@ -370,5 +376,9 @@ public class DriveTrain extends Subsystem {
         parameters = new BNO055IMU.Parameters();
 
         imu.initialize(parameters);
+    }
+
+    public DriveTrainState getState(){
+        return driveState;
     }
 }
