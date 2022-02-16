@@ -61,7 +61,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DRIVEDUCK;
                 } else{
-                    robot.driveTrain.driveWithDistanceSensor(DriveTrain.Direction.NORTH, robot.driveTrain.distSensorBack, 17.0, 0.5);
+                    robot.driveTrain.driveDistanceSensor(DriveTrain.Direction.NORTH, robot.driveTrain.distSensorBack, 17.0, 0.5);
                 }
                 break;
 
@@ -71,7 +71,7 @@ public class RedDuck extends OpMode {
                     timer.reset();
                     state = AutonState.DUCK;
                 } else{
-                    robot.driveTrain.driveWithDistanceSensor(DriveTrain.Direction.WEST, robot.driveTrain.distSensorLeft, 23.0, 0.5);
+                    robot.driveTrain.driveDistanceSensor(DriveTrain.Direction.WEST, robot.driveTrain.distSensorLeft, 23.0, 0.5);
                 }
                 break;
 
@@ -89,7 +89,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNHUB;
                 } else{
-                    robot.driveTrain.driveWithDistanceSensor(DriveTrain.Direction.NORTH, robot.driveTrain.distSensorBack, 103.0, 0.5);
+                    robot.driveTrain.driveDistanceSensor(DriveTrain.Direction.NORTH, robot.driveTrain.distSensorBack, 103.0, 0.5);
                     robot.lift.liftState = Lift.LiftState.MOVE;
                 }
                 break;
@@ -108,7 +108,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DUMP;
                 } else{
-                    robot.driveTrain.driveWithDistanceSensor(DriveTrain.Direction.SOUTH, robot.driveTrain.distSensorBack, 8.0, 0.5);
+                    robot.driveTrain.driveDistanceSensor(DriveTrain.Direction.SOUTH, robot.driveTrain.distSensorBack, 8.0, 0.5);
                 }
                 break;
 
@@ -127,8 +127,9 @@ public class RedDuck extends OpMode {
             case STRAFESTORAGE:
                 if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
                     robot.driveTrain.waitNext();
+                    state = AutonState.DONE;
                 } else{
-                    robot.driveTrain.driveWithDistanceSensor(DriveTrain.Direction.WEST, robot.driveTrain.distSensorLeft, 65.0, 0.5);
+                    robot.driveTrain.driveDistanceSensor(DriveTrain.Direction.WEST, robot.driveTrain.distSensorLeft, 65.0, 0.5);
                 }
                 break;
 

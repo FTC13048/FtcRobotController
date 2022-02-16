@@ -129,7 +129,7 @@ public class DriveTrain extends Subsystem {
     }
 
     // Drives until distance sensor reads a certain distance and then returns true when there
-    public void driveWithDistanceSensor(Direction direction, DistanceSensor distanceSensor, double distanceToStop, double power) {
+    public void driveDistanceSensor(Direction direction, DistanceSensor distanceSensor, double distanceToStop, double power) {
         // If the sensor reads the stop distance return true
         //    if it reads 5 inches within the stop distance, set the motor power to 6 times
         //    less than the entered power
