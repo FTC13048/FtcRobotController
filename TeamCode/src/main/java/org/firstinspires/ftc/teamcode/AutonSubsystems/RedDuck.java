@@ -113,6 +113,11 @@ public class RedDuck extends OpMode {
                 break;
 
             case DUMP:
+                if(robot.lift.liftState == Lift.LiftState.MOVEINTAKE){
+                    state = AutonState.DRIVESTORAGE;
+                } else{
+                    robot.lift.liftState = Lift.LiftState.DUMP;
+                }
                 break;
 
             case DRIVESTORAGE:
@@ -136,6 +141,10 @@ public class RedDuck extends OpMode {
             case DONE:
                 break;
         }
+
+        robot.updateState();
+
+        telemetry.addData("State", state);
     }
 
     @Override
