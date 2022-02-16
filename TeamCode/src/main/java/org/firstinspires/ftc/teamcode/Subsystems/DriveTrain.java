@@ -153,6 +153,17 @@ public class DriveTrain extends Subsystem {
         return Range.clip(sensorToUse.getDistCM(), 0.0, 200.0);
     }
 
+    public void setTargetAndMove(int ticks, Direction d){
+        target = ticks;
+        direction = d;
+        FR.setTargetPosition(target);
+        BR.setTargetPosition(target);
+        FL.setTargetPosition(target);
+        BL.setTargetPosition(target);
+        setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveState = DriveTrainState.MOVE;
+    }
+
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
     public boolean adjustHeading(int degrees, double power) {
         // get the current heading of the bot (an angle from -180 to 180)

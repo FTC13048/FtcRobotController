@@ -10,6 +10,9 @@ public class RobotSubsystems {
     public Lift lift;
     public final GamePadEx gp1, gp2;
 
+    public static final double TICKS_PER_REV = 403.9;
+    public static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
+
     private final HardwareMap hmap;
     private final Telemetry tele;
     private boolean isAuton;

@@ -13,8 +13,8 @@ public class Lift extends Subsystem {
     private DcMotor intakeLeft, intakeRight;
     private Servo cargoFlipper;
 
-    private LiftState liftState;
-    private LiftLevel targetLevel;
+    public LiftState liftState;
+    public LiftLevel targetLevel;
     private LiftLevel origLevel;
 
     private ElapsedTime timer;
@@ -69,7 +69,7 @@ public class Lift extends Subsystem {
 
             case MOVE:
                 if (setLinSlidePos(targetLevel.numTicks)) {
-                    targetLevel = origLevel;
+                    if(origLevel != null){ targetLevel = origLevel; }
                     liftState = LiftState.ATLEVEL;
                 }
                 break;
