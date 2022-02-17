@@ -163,13 +163,13 @@ public class DriveTrain extends Subsystem {
 
                 // If the bot is within a 30 degree threshold of the target, slow it down to 25% of the desired speed to prevent overshooting
                 if (Math.abs(difference) <= 30) {
-                    FR.setPower(0.1);
-                    BR.setPower(0.1);
-                    FL.setPower(0.1);
-                    BL.setPower(0.1);
+                    FR.setPower(-motorPower / 10);
+                    BR.setPower(-motorPower/ 10);
+                    FL.setPower(motorPower/ 10);
+                    BL.setPower(motorPower / 10);
                 } else { // Otherwise use normal speed
-                    FR.setPower(motorPower);
-                    BR.setPower(motorPower);
+                    FR.setPower(-motorPower);
+                    BR.setPower(-motorPower);
                     FL.setPower(motorPower);
                     BL.setPower(motorPower);
                 }

@@ -86,7 +86,7 @@ public class Lift extends Subsystem {
 
                 if (Math.abs(linSlide.getCurrentPosition() - LiftLevel.INTAKE.numTicks) <= 5) {
                     linSlide.setPower(0.0);
-                    liftState = LiftState.ATLEVEL;
+                    liftState = LiftState.INTAKE;
                 }
                 break;
 
