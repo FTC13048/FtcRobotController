@@ -129,9 +129,9 @@ public class Lift extends Subsystem {
                 }
 
                 if (gp2.getControlDown(GamePadEx.ControllerButton.A)) {
-                    liftState = LiftState.MOVE;
                     origLevel = targetLevel;
                     targetLevel = LiftLevel.BOT;
+                    liftState = LiftState.MOVE;
                 }
                 break;
 
@@ -143,6 +143,7 @@ public class Lift extends Subsystem {
 
             case ATLEVEL:
                 if (gp2.getControlDown(GamePadEx.ControllerButton.X)) {
+                    targetLevel = origLevel;
                     liftState = LiftState.MOVE;
                 }
                 if (gp2.getControlDown(GamePadEx.ControllerButton.Y)) {
