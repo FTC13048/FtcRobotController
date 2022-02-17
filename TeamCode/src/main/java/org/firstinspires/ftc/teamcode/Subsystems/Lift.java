@@ -62,9 +62,9 @@ public class Lift extends Subsystem {
     public void updateState() {
         switch (liftState) {
             case INTAKE:
+                cargoFlipper.setPosition(0.1);
                 intakeLeft.setPower(intakePower);
                 intakeRight.setPower(intakePower);
-                cargoFlipper.setPosition(0.1);
                 break;
 
             case MOVE:
@@ -79,6 +79,7 @@ public class Lift extends Subsystem {
                 break;
 
             case MOVEINTAKE:
+                cargoFlipper.setPosition(0.1);
                 linSlide.setTargetPosition(LiftLevel.INTAKE.numTicks);
                 linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
                 linSlide.setPower(0.4);
