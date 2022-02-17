@@ -13,8 +13,8 @@ public class Lift extends Subsystem {
     private DcMotor intakeLeft, intakeRight;
     private Servo cargoFlipper;
 
-    public LiftState liftState;
-    public LiftLevel targetLevel;
+    private LiftState liftState;
+    private LiftLevel targetLevel;
     private LiftLevel origLevel;
 
     private ElapsedTime timer;
@@ -68,23 +68,32 @@ public class Lift extends Subsystem {
                 break;
 
             case MOVE:
-                if (setLinSlidePos(targetLevel.numTicks)) {
-                    if(origLevel != null){ targetLevel = origLevel; }
+                linSlide.setTargetPosition(targetLevel.numTicks);
+                linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linSlide.setPower(0.4);
+
+                if (Math.abs(linSlide.getCurrentPosition() - targetLevel.numTicks) <= 5) {
+                    linSlide.setPower(0.0);
                     liftState = LiftState.ATLEVEL;
                 }
                 break;
 
             case MOVEINTAKE:
-                if (setLinSlidePos(LiftLevel.INTAKE.numTicks)) {
-                    liftState = LiftState.INTAKE;
+                linSlide.setTargetPosition(LiftLevel.INTAKE.numTicks);
+                linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                linSlide.setPower(0.4);
+
+                if (Math.abs(linSlide.getCurrentPosition() - LiftLevel.INTAKE.numTicks) <= 5) {
+                    linSlide.setPower(0.0);
+                    liftState = LiftState.ATLEVEL;
                 }
                 break;
 
             case ATLEVEL:
-                linSlide.setPower(0.0);
-                intakeLeft.setPower(0.0);
-                intakeRight.setPower(0.0);
+                linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                stop();
                 cargoFlipper.setPosition(0.3);
+                timer.reset();
                 break;
 
             case DUMP:
@@ -102,6 +111,8 @@ public class Lift extends Subsystem {
                 intakeRight.setPower(intakePower);
                 break;
         }
+
+        telemetry.addData("Lift state", liftState);
     }
 
     @Override
@@ -154,6 +165,9 @@ public class Lift extends Subsystem {
                     intakePower = 0.0;
                 }
 
+                if(gp2.getControl(GamePadEx.ControllerButton.X)){ cargoFlipper.setPosition(0.9); }
+                else if(gp2.getControl(GamePadEx.ControllerButton.A)){ cargoFlipper.setPosition(0.1); }
+
                 liftPower = gp2.getAxis(GamePadEx.ControllerAxis.RIGHT_Y);
                 break;
         }
@@ -201,19 +215,12 @@ public class Lift extends Subsystem {
         intakeRight.setPower(0.0);
     }
 
-    public boolean setLinSlidePos(int numTicks) {
-        linSlide.setTargetPosition(numTicks);
-        linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        linSlide.setPower(0.4);
-
-        if (Math.abs(linSlide.getCurrentPosition() - numTicks) <= 5) {
-            linSlide.setPower(0.0);
-            linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-            return true;
-        }
-
-        return false;
+    public void setTargetLevel(LiftLevel level) {
+        this.targetLevel = level;
+        liftState = LiftState.MOVE;
     }
+
+    public void dump(){ liftState = LiftState.DUMP; }
 
     public void intake(double power) {
         if (Math.abs(LiftLevel.INTAKE.numTicks - linSlide.getCurrentPosition()) <= 5 ||
@@ -224,6 +231,8 @@ public class Lift extends Subsystem {
             intakeRight.setPower(power);
         }
     }
+
+    public LiftState getState(){ return liftState; }
 
     public enum LiftState {
         INTAKE("Intake"), MOVE("Move to Level"), ATLEVEL("At Level"), DUMP("Dump"),

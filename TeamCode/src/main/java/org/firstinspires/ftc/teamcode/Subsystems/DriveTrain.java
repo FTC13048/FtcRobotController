@@ -11,7 +11,6 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class DriveTrain extends Subsystem {
 
@@ -204,8 +203,7 @@ public class DriveTrain extends Subsystem {
     }
 
     // Drives until distance sensor reads a certain distance and then returns true when there
-    public void driveDistanceSensor(Direction direction, DistanceSensor distanceSensor, double distanceToStop, double power) {
-        this.direction = direction;
+    public void driveDistanceSensor(DistanceSensor distanceSensor, double distanceToStop, double power) {
         this.sensorInUse = distanceSensor;
         this.stopDist = distanceToStop;
         this.motorPower = power;

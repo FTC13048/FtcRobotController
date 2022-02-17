@@ -12,7 +12,10 @@ import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 @Autonomous(name="red duck", group="subsystems")
 public class RedDuck extends OpMode {
     private RobotSubsystems robot;
+
     private RobotSubsystems.DetectedLevel level;
+    private Lift.LiftLevel liftLevel;
+
     private AutonState state;
     private ElapsedTime timer;
 
@@ -43,13 +46,13 @@ public class RedDuck extends OpMode {
         robot.driveTrain.startAuton();
         switch(level){
             case TOP:
-                robot.lift.targetLevel = Lift.LiftLevel.TOP;
+                liftLevel = Lift.LiftLevel.TOP;
                 break;
             case MIDDLE:
-                robot.lift.targetLevel = Lift.LiftLevel.MID;
+                liftLevel = Lift.LiftLevel.MID;
                 break;
             case BOTTOM:
-                robot.lift.targetLevel = Lift.LiftLevel.BOT;
+                liftLevel = Lift.LiftLevel.BOT;
                 break;
         }
     }
@@ -62,7 +65,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DRIVEDUCK;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(DriveTrain.Direction.NORTH, robot.driveTrain.distSensorBack, 17.0, 0.5);
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 17.0, 0.5);
                 }
                 break;
 
@@ -72,7 +75,7 @@ public class RedDuck extends OpMode {
                     timer.reset();
                     state = AutonState.DUCK;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(DriveTrain.Direction.WEST, robot.driveTrain.distSensorLeft, 23.0, 0.5);
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorLeft, 23.0, 0.5);
                 }
                 break;
 
@@ -90,8 +93,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNHUB;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(DriveTrain.Direction.NORTH, robot.driveTrain.distSensorBack, 103.0, 0.5);
-                    robot.lift.liftState = Lift.LiftState.MOVE;
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 103.0, 0.5);
                 }
                 break;
 
@@ -109,15 +111,16 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DUMP;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(DriveTrain.Direction.SOUTH, robot.driveTrain.distSensorBack, 8.0, 0.5);
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 8.0, 0.5);
+                    robot.lift.setTargetLevel(liftLevel);
                 }
                 break;
 
             case DUMP:
-                if(robot.lift.liftState == Lift.LiftState.MOVEINTAKE){
+                if(robot.lift.getState() == Lift.LiftState.MOVEINTAKE){
                     state = AutonState.DRIVESTORAGE;
                 } else{
-                    robot.lift.liftState = Lift.LiftState.DUMP;
+                    robot.lift.dump();
                 }
                 break;
 
@@ -135,7 +138,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DONE;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(DriveTrain.Direction.WEST, robot.driveTrain.distSensorLeft, 65.0, 0.5);
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorLeft, 65.0, 0.5);
                 }
                 break;
 
