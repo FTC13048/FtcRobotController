@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 
-@Autonomous(name="blue duck", group="subsystems")
+@Autonomous(name="red duck", group="subsystems")
 public class RedDuck extends OpMode {
     private RobotSubsystems robot;
     private RobotSubsystems.DetectedLevel level;
@@ -40,6 +40,7 @@ public class RedDuck extends OpMode {
 
     @Override
     public void start() {
+        robot.driveTrain.startAuton();
         switch(level){
             case TOP:
                 robot.lift.targetLevel = Lift.LiftLevel.TOP;

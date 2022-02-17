@@ -14,12 +14,15 @@ import java.util.ArrayList;
 
 @TeleOp(name = "Tank Drive Subsystems", group = "TeleOp")
 public class SubsystemTeleOp extends OpMode {
-    private RobotSubsystems robot;
+    private DuckSpinner duckSpinner;
+    private Lift lift;
+    private DriveTrain driveTrain;
 
     @Override
     public void init() {
-        robot = new RobotSubsystems(new GamePadEx(gamepad1), new GamePadEx(gamepad2), hardwareMap, telemetry, false);
-        robot.init();
+        lift = new Lift(hardwareMap, telemetry, false);
+        duckSpinner = new DuckSpinner(hardwareMap, telemetry, false);
+        driveTrain = new DriveTrain(hardwareMap, telemetry, false);
     }
 
     @Override
@@ -34,12 +37,19 @@ public class SubsystemTeleOp extends OpMode {
 
     @Override
     public void loop() {
-        robot.updateTeleOpState();
-        robot.updateState();
+        driveTrain.updateTeleOpState(new GamePadEx(gamepad1), new GamePadEx(gamepad2));
+
+        lift.updateTeleOpState(new GamePadEx(gamepad1), new GamePadEx(gamepad2));
+        lift.updateState();
+
+        duckSpinner.updateTeleOpState(new GamePadEx(gamepad1), new GamePadEx(gamepad2));
+        duckSpinner.updateState();
     }
 
     @Override
     public void stop(){
-        robot.stop();
+        driveTrain.stop();
+        duckSpinner.stop();
+        lift.stop();
     }
 }

@@ -33,6 +33,10 @@ public class DriveTrain extends Subsystem {
     private double axisLeftX;
     private double axisLeftY;
     private double powerMultiplier;
+
+    private double motorPower;
+    private DistanceSensor sensorInUse;
+    private double stopDist;
     //endregion
 
     // auton variables
@@ -71,12 +75,13 @@ public class DriveTrain extends Subsystem {
         FR.setDirection(DcMotorSimple.Direction.FORWARD);
 
         setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         initImu();
         runtime = new ElapsedTime();
 
         if (isAuton) { // Set the motors to brake for ONLY auton
+            driveState = DriveTrainState.MOVESENSOR;
+
             BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -90,24 +95,91 @@ public class DriveTrain extends Subsystem {
         telemetry.addData("Drive Train", "initialized");
     }
 
+    @Override
+    public void startAuton() {
+        setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     //region Auton Stuff
     @Override
     public void updateState() {
         switch (driveState) {
-            case MOVE:
-                moveMotorsWithDirection(direction, 0.5);
+            case MOVEENCODER:
+                moveMotorsWithDirection(this.direction, 0.5);
                 if (Math.abs(BR.getCurrentPosition()) > target) {
                     runtime.reset();
                     driveState = DriveTrainState.STOPPING;
                 }
                 break;
 
-            case TURN:
-                if (FL.getMode().equals(DcMotor.RunMode.STOP_AND_RESET_ENCODER)) {
-                    FL.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+            case MOVESENSOR:
+                // If the sensor reads the stop distance return true
+                //    if it reads 5 inches within the stop distance, set the motor power to 6 times
+                //    less than the entered power
+                double distance = getSensorDistance(sensorInUse);
+                if (Math.abs(distance - stopDist) < 1) {
+                    stop();
+                    driveState = DriveTrainState.IDLE;
+                } else {
+                    if (Math.abs(distance - stopDist) <= 15) {
+                        this.motorPower = 0.1;
+                    }
+
+                    this.motorPower *= Math.signum(distance - stopDist);
+
+                    if(sensorInUse == distSensorBack){
+                        FL.setPower(motorPower);
+                        BL.setPower(motorPower);
+                        FR.setPower(motorPower);
+                        BR.setPower(motorPower);
+                    } else if(sensorInUse == distSensorLeft){
+                        FL.setPower(motorPower);
+                        BL.setPower(-motorPower);
+                        FR.setPower(-motorPower);
+                        BR.setPower(motorPower);
+                    } else{
+                        FL.setPower(-motorPower);
+                        BL.setPower(motorPower);
+                        FR.setPower(motorPower);
+                        BR.setPower(-motorPower);
+                    }
                 }
-                if (adjustHeading(angle, 0.5) & runtime.milliseconds() > 1500) {
-                    driveState = DriveTrainState.STOPPING;
+
+                telemetry.addData("distance", distance);
+                telemetry.addData("stop dist", stopDist);
+                telemetry.addData("motor power", this.FL.getPower() + " " + FR.getPower() + " " + BL.getPower() + " " + BR.getPower() + " ");
+                break;
+
+            case TURN:
+                // get the current heading of the bot (an angle from -180 to 180)
+                float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
+
+                // to convert to a 0-360 scale, if the current heading is negative add
+                //    360 to it
+                currHeading = currHeading < 0 ? 360 + currHeading : currHeading;
+
+                // difference between target and current heading
+                double difference = angle - currHeading;
+                telemetry.addData("Difference is ", difference);
+
+                // If the bot is within a 30 degree threshold of the target, slow it down to 25% of the desired speed to prevent overshooting
+                if (Math.abs(difference) <= 30) {
+                    FR.setPower(0.1);
+                    BR.setPower(0.1);
+                    FL.setPower(0.1);
+                    BL.setPower(0.1);
+                } else { // Otherwise use normal speed
+                    FR.setPower(motorPower);
+                    BR.setPower(motorPower);
+                    FL.setPower(motorPower);
+                    BL.setPower(motorPower);
+                }
+
+                // If the bot is within 1 degree of the target, stop the bot and return true
+                if (Math.abs(difference) <= 0.5) {
+                    telemetry.addLine("Stopping the bot");
+                    stop();
+                    driveState = DriveTrainState.IDLE;
                 }
                 break;
 
@@ -126,26 +198,18 @@ public class DriveTrain extends Subsystem {
             case WAIT:
                 break;
         }
+
+        telemetry.addData("drive state", driveState);
+        telemetry.addData("motor mode", FL.getMode() + " " + FR.getMode() + " " + BL.getMode() + " " + BR.getMode() + " ");
     }
 
     // Drives until distance sensor reads a certain distance and then returns true when there
     public void driveDistanceSensor(Direction direction, DistanceSensor distanceSensor, double distanceToStop, double power) {
-        // If the sensor reads the stop distance return true
-        //    if it reads 5 inches within the stop distance, set the motor power to 6 times
-        //    less than the entered power
-        double distance = getSensorDistance(distanceSensor);
-        if (Math.abs(distance - distanceToStop) < 1) {
-            stop();
-            driveState = DriveTrainState.IDLE;
-        } else {
-            if (Math.abs(distance - distanceToStop) <= 15) {
-                power = 0.1;
-            }
-
-            power *= -1 * Math.signum(distance - distanceToStop);
-
-            moveMotorsWithDirection(direction, power);
-        }
+        this.direction = direction;
+        this.sensorInUse = distanceSensor;
+        this.stopDist = distanceToStop;
+        this.motorPower = power;
+        this.driveState = DriveTrainState.MOVESENSOR;
     }
 
     // Returns the distance a given distance sensor detects
@@ -161,44 +225,14 @@ public class DriveTrain extends Subsystem {
         FL.setTargetPosition(target);
         BL.setTargetPosition(target);
         setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveState = DriveTrainState.MOVE;
+        driveState = DriveTrainState.MOVEENCODER;
     }
 
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
-    public boolean adjustHeading(int degrees, double power) {
-        // get the current heading of the bot (an angle from -180 to 180)
-        float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
-
-        // to convert to a 0-360 scale, if the current heading is negative add
-        //    360 to it
-        currHeading = currHeading < 0 ? 360 + currHeading : currHeading;
-
-        // difference between target and current heading
-        double difference = degrees - currHeading;
-        telemetry.addData("Difference is ", difference);
-
-        // If the bot is within a 30 degree threshold of the target, slow it down to 25% of the desired speed to prevent overshooting
-        if (Math.abs(difference) <= 30) {
-            FR.setPower(power / 10);
-            BR.setPower(power / 10);
-            FL.setPower(power / 10);
-            BL.setPower(power / 10);
-        } else { // Otherwise use normal speed
-            FR.setPower(power / 10);
-            BR.setPower(power / 10);
-            FL.setPower(power / 10);
-            BL.setPower(power / 10);
-        }
-
-        // If the bot is within 1 degree of the target, stop the bot and return true
-        if (Math.abs(difference) <= 0.5) {
-            telemetry.addLine("Stopping the bot");
-            stop();
-            driveState = DriveTrainState.IDLE;
-            return true;
-        }
-
-        return false;
+    public void adjustHeading(int degrees, double power) {
+        this.angle = degrees;
+        this.motorPower = power;
+        driveState = DriveTrainState.TURN;
     }
     //endregion
 
@@ -226,9 +260,15 @@ public class DriveTrain extends Subsystem {
             case TANK_TELEOP:
                 telemetry.addLine("TANK_TELEOP");
                 if (GP1.getControl(GamePadEx.ControllerButton.LTRIGGER)) { // Strafe left
-                    moveMotorsWithDirection(Direction.WEST, leftTrig);
+                    BR.setPower(leftTrig);
+                    FR.setPower(-leftTrig);
+                    BL.setPower(-leftTrig);
+                    FL.setPower(leftTrig);
                 } else if (GP1.getControl(GamePadEx.ControllerButton.RTRIGGER)) {// Strafe right
-                    moveMotorsWithDirection(Direction.EAST, rightTrig);
+                    BR.setPower(-rightTrig);
+                    FR.setPower(rightTrig);
+                    BL.setPower(rightTrig);
+                    FL.setPower(-rightTrig);
                 } else { // Not strafing
                     BR.setPower(axisRightY);
                     FR.setPower(axisRightY);
@@ -338,7 +378,8 @@ public class DriveTrain extends Subsystem {
     }
 
     public enum DriveTrainState {
-        MOVE, // Auton, escapable
+        MOVEENCODER, // Auton, escapable
+        MOVESENSOR,
         TURN, // Auton, escapable
         STOPPING, // Auton, escapable
         IDLE, // Reset encoders. Auton, escapable
