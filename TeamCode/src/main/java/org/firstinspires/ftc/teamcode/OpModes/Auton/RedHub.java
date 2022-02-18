@@ -6,15 +6,14 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
-import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 
 /**
- * A boilerplate auton OpMode that can be used to make new auton OpModes that use subsystems
+ * The red hub OpMode
  *
  */
-//@Autonomous(name = "Subsystem Boilerplate Auton", group = "Subsystems") Uncomment this to make this OpMode useable
-public class BoilerplateAutonOpMode extends OpMode {
+@Autonomous(name = "Subsystem Boilerplate Auton", group = "Subsystems")
+public class RedHub extends OpMode {
     private RobotSubsystems robot;
 
     private AutonState state;
@@ -48,34 +47,34 @@ public class BoilerplateAutonOpMode extends OpMode {
     public void loop() {
         switch (state) {
             case STATE1:
-                if (robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE) { // Switch to the next action if the bot is done moving
+                if (robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE) {
                     robot.driveTrain.waitNext();
-                    timer.reset(); // ALWAYS reset the timer before switching to a state that relies on a timer
                     state = AutonState.STATE2;
                 } else {
-                    // Perform STATE1 actions here
+
                 }
                 break;
 
             case STATE2:
-                if (timer.seconds() >= 4) { // Switch to the next action when the timer is past 4 secondss
+                if (robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE) {
                     robot.driveTrain.waitNext();
+                    timer.reset();
                     state = AutonState.STATE3;
                 } else {
-                    // Perform STATE2 actions here
+
                 }
                 break;
 
             case STATE3:
-                if (false) { // Replace 'false' with the condition to end STATE3
+                if (timer.seconds() >= 4) {
                     robot.driveTrain.waitNext();
                     state = AutonState.DONE;
                 } else {
-                    // Perform STATE3 actions here
+
                 }
                 break;
 
-            case DONE: // End state. It stops the bot
+            case DONE:
                 robot.stop();
                 break;
         }
