@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.TeleOp;
+package org.firstinspires.ftc.teamcode.OpModes.TeleOp;
 
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -7,10 +7,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.DuckSpinner;
 import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
-import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
-import org.firstinspires.ftc.teamcode.Subsystems.Subsystem;
-
-import java.util.ArrayList;
 
 @TeleOp(name = "Tank Drive Subsystems", group = "TeleOp")
 public class SubsystemTeleOp extends OpMode {
