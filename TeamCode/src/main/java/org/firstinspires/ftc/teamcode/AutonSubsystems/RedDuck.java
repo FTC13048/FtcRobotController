@@ -94,7 +94,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNHUB;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 90.0, 0.4);
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 85.0, 0.4);
                     robot.lift.setTargetLevel(liftLevel);
                 }
                 break;
@@ -119,6 +119,7 @@ public class RedDuck extends OpMode {
 
             case DUMP:
                 if(robot.lift.getState() == Lift.LiftState.MOVEINTAKE){
+                    robot.driveTrain.waitNext();
                     state = AutonState.DRIVESTORAGE;
                 } else{
                     robot.lift.dump();
@@ -130,7 +131,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.STRAFESTORAGE;
                 } else{
-                    robot.driveTrain.setTargetAndMove((int)(RobotSubsystems.TICKS_PER_INCH * 35), 0.5);
+                    robot.driveTrain.setTargetAndMove((int)(-RobotSubsystems.TICKS_PER_INCH * 35), -0.4);
                 }
                 break;
 

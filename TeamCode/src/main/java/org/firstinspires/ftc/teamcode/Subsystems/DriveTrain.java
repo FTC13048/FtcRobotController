@@ -106,7 +106,7 @@ public class DriveTrain extends Subsystem {
             case MOVEENCODER:
                 if (Math.abs(BR.getCurrentPosition()) > target) {
                     runtime.reset();
-                    driveState = DriveTrainState.STOPPING;
+                    driveState = DriveTrainState.IDLE;
                 }
 
                 FL.setPower(motorPower);
@@ -220,6 +220,7 @@ public class DriveTrain extends Subsystem {
     }
 
     public void setTargetAndMove(int ticks, double power){
+        setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.target = ticks;
         this.motorPower = power;
         FR.setTargetPosition(target);
