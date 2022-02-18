@@ -81,6 +81,7 @@ public class BlueDuck extends OpMode {
             case DRIVEDUCK:
                 if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
                     robot.driveTrain.waitNext();
+                    timer.reset();
                     state = AutonState.DUCK;
                 } else{
                     robot.driveTrain.setTargetAndMove((int)(-RobotSubsystems.TICKS_PER_INCH * 32), -0.5);
@@ -139,7 +140,7 @@ public class BlueDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.STRAFESTORAGE;
                 } else{
-                    robot.driveTrain.setTargetAndMove((int)(-RobotSubsystems.TICKS_PER_INCH * 35), -0.5);
+                    robot.driveTrain.setTargetAndMove((int)(-RobotSubsystems.TICKS_PER_INCH * 40), -0.5);
                 }
                 break;
 
@@ -153,6 +154,7 @@ public class BlueDuck extends OpMode {
                 break;
 
             case DONE:
+                robot.stop();
                 break;
         }
     }
