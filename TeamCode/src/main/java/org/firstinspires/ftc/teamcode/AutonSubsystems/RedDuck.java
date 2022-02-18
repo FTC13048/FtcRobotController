@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 
-@Autonomous(name="red duck", group="subsystems")
+@Autonomous(name="Red Duck Subsystems", group="Subsystems")
 public class RedDuck extends OpMode {
     private RobotSubsystems robot;
 

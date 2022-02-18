@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.AutonSubsystems;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 
+@Autonomous(name="Blue Duck Subsystems", group="Subsystems")
 public class BlueDuck extends OpMode {
     private RobotSubsystems robot;
 
