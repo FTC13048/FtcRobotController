@@ -104,11 +104,15 @@ public class DriveTrain extends Subsystem {
     public void updateState() {
         switch (driveState) {
             case MOVEENCODER:
-                moveMotorsWithDirection(this.direction, 0.5);
                 if (Math.abs(BR.getCurrentPosition()) > target) {
                     runtime.reset();
                     driveState = DriveTrainState.STOPPING;
                 }
+
+                FL.setPower(motorPower);
+                BL.setPower(motorPower);
+                FR.setPower(motorPower);
+                BR.setPower(motorPower);
                 break;
 
             case MOVESENSOR:
@@ -198,7 +202,7 @@ public class DriveTrain extends Subsystem {
                 break;
         }
 
-        telemetry.addData("drive state", driveState);
+        telemetry.addData("Drive train state", driveState);
         telemetry.addData("motor mode", FL.getMode() + " " + FR.getMode() + " " + BL.getMode() + " " + BR.getMode() + " ");
     }
 
@@ -215,9 +219,9 @@ public class DriveTrain extends Subsystem {
         return Range.clip(sensorToUse.getDistCM(), 0.0, 200.0);
     }
 
-    public void setTargetAndMove(int ticks, Direction d){
-        target = ticks;
-        direction = d;
+    public void setTargetAndMove(int ticks, double power){
+        this.target = ticks;
+        this.motorPower = power;
         FR.setTargetPosition(target);
         BR.setTargetPosition(target);
         FL.setTargetPosition(target);

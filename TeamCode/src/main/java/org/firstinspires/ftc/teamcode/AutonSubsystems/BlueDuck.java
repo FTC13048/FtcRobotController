@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.AutonSubsystems;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -9,8 +8,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 
-@Autonomous(name="red duck", group="subsystems")
-public class RedDuck extends OpMode {
+public class BlueDuck extends OpMode {
     private RobotSubsystems robot;
 
     private RobotSubsystems.DetectedLevel level;
@@ -20,8 +18,8 @@ public class RedDuck extends OpMode {
     private ElapsedTime timer;
 
     public enum AutonState{
-        PULLOUT, DRIVEDUCK, DUCK,
-        BACKTOHUB, TURNHUB,
+        PULLOUT, TURNDUCK, DRIVEDUCK, DUCK,
+        STRAFEHUB, TURNHUB,
         DRIVEHUB,
         DUMP, DRIVESTORAGE, STRAFESTORAGE,
         DONE
@@ -63,19 +61,27 @@ public class RedDuck extends OpMode {
             case PULLOUT:
                 if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
                     robot.driveTrain.waitNext();
+                    state = AutonState.TURNDUCK;
+                } else{
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 18.0, 0.5);
+                }
+                break;
+
+            case TURNDUCK:
+                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                    robot.driveTrain.waitNext();
                     state = AutonState.DRIVEDUCK;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 17.0, 0.5);
+                    robot.driveTrain.adjustHeading(90, 0.4);
                 }
                 break;
 
             case DRIVEDUCK:
                 if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
                     robot.driveTrain.waitNext();
-                    timer.reset();
                     state = AutonState.DUCK;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorLeft, 23.0, 0.4);
+                    robot.driveTrain.setTargetAndMove((int) (RobotSubsystems.TICKS_PER_INCH * 32), 0.5);
                 }
                 break;
 
@@ -83,18 +89,18 @@ public class RedDuck extends OpMode {
                 if(timer.seconds() >= 4){
                     robot.duckSpinner.stop();
                     robot.driveTrain.waitNext();
-                    state = AutonState.BACKTOHUB;
+                    state = AutonState.STRAFEHUB;
                 } else{
-                    robot.duckSpinner.spinRed();
+                    robot.duckSpinner.spinBlue();
                 }
                 break;
 
-            case BACKTOHUB:
+            case STRAFEHUB:
                 if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNHUB;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 90.0, 0.4);
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorLeft, 96.0, 0.4);
                     robot.lift.setTargetLevel(liftLevel);
                 }
                 break;
@@ -104,7 +110,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DRIVEHUB;
                 } else{
-                    robot.driveTrain.adjustHeading(90, 0.4);
+                    robot.driveTrain.adjustHeading(270, 0.4);
                 }
                 break;
 
@@ -139,22 +145,12 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DONE;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorLeft, 65.0, 0.4);
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorRight, 65.0, 0.4);
                 }
                 break;
 
             case DONE:
                 break;
         }
-
-        robot.updateState();
-
-        telemetry.addData("Auton state", state);
-        telemetry.update();
-    }
-
-    @Override
-    public void stop() {
-        robot.stop();
     }
 }

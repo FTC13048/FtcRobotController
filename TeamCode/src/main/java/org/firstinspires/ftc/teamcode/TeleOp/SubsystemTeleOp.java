@@ -44,6 +44,8 @@ public class SubsystemTeleOp extends OpMode {
 
         duckSpinner.updateTeleOpState(new GamePadEx(gamepad1), new GamePadEx(gamepad2));
         duckSpinner.updateState();
+
+        telemetry.update();
     }
 
     @Override
