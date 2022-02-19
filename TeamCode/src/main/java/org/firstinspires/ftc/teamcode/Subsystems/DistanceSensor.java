@@ -7,7 +7,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 public class DistanceSensor {
-    ModernRoboticsI2cRangeSensor distSensor;
+    private ModernRoboticsI2cRangeSensor distSensor;
 
     protected DistanceSensor(HardwareMap hmap, Telemetry tele, SensorName name){
         if(name == SensorName.BACK){
@@ -30,7 +30,7 @@ public class DistanceSensor {
 
     public double getDistCM(){ return distSensor.getDistance(DistanceUnit.CM); }
 
-    public static enum SensorName{
-        BACK, LEFT, RIGHT;
+    public enum SensorName{
+        BACK, LEFT, RIGHT
     }
 }
