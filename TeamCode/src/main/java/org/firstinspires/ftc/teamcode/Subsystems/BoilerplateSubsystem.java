@@ -6,6 +6,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
+/**
+ * A boilerplate subsystem that you can use to quickly and easily create new subsystems
+ *
+ */
 public class BoilerplateSubsystem extends Subsystem {
     private DcMotor motor;
     private final double motorPower = 0.5;

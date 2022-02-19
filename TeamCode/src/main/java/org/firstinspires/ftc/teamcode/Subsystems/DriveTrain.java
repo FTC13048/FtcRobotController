@@ -12,17 +12,23 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 
+/**
+ * The drive train subsystem. It controls the movement and driving of the bot
+ *
+ */
 public class DriveTrain extends Subsystem {
 
     //region Physical Components
     private DcMotor FL, FR, BL, BR;
     private BNO055IMU imu;
     private BNO055IMU.Parameters parameters;
+    //endregion
 
-    //Distance sensors
+    //region Distance sensors
     public DistanceSensor distSensorRight;
     public DistanceSensor distSensorLeft;
     public DistanceSensor distSensorBack;
+    //endregion
 
     //region Movement Stats
     private DriveTrainState driveState;
@@ -38,10 +44,11 @@ public class DriveTrain extends Subsystem {
     private double stopDist;
     //endregion
 
-    // auton variables
+    //region Auton variables
     private ElapsedTime runtime;
     private int target;
     private int angle;
+    //endregion
 
     //region Dependent Classes
     private HardwareMap hardwareMap;
@@ -79,7 +86,7 @@ public class DriveTrain extends Subsystem {
         runtime = new ElapsedTime();
 
         if (isAuton) { // Set the motors to brake for ONLY auton
-            driveState = DriveTrainState.MOVESENSOR;
+            driveState = DriveTrainState.SENSORDRIVE;
 
             BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
             BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -103,7 +110,7 @@ public class DriveTrain extends Subsystem {
     @Override
     public void updateState() {
         switch (driveState) {
-            case MOVEENCODER:
+            case ENCODERDRIVE:
                 if (Math.abs(BR.getCurrentPosition()) > target) {
                     runtime.reset();
                     driveState = DriveTrainState.IDLE;
@@ -115,7 +122,7 @@ public class DriveTrain extends Subsystem {
                 BR.setPower(motorPower);
                 break;
 
-            case MOVESENSOR:
+            case SENSORDRIVE:
                 // If the sensor reads the stop distance return true
                 //    if it reads 5 inches within the stop distance, set the motor power to 6 times
                 //    less than the entered power
@@ -130,17 +137,17 @@ public class DriveTrain extends Subsystem {
 
                     this.motorPower *= Math.signum(distance - stopDist);
 
-                    if(sensorInUse == distSensorBack){
+                    if (sensorInUse == distSensorBack) {
                         FL.setPower(motorPower);
                         BL.setPower(motorPower);
                         FR.setPower(motorPower);
                         BR.setPower(motorPower);
-                    } else if(sensorInUse == distSensorLeft){
+                    } else if (sensorInUse == distSensorLeft) {
                         FL.setPower(motorPower);
                         BL.setPower(-motorPower);
                         FR.setPower(-motorPower);
                         BR.setPower(motorPower);
-                    } else{
+                    } else {
                         FL.setPower(-motorPower);
                         BL.setPower(motorPower);
                         FR.setPower(motorPower);
@@ -153,7 +160,7 @@ public class DriveTrain extends Subsystem {
                 telemetry.addData("motor power", this.FL.getPower() + " " + FR.getPower() + " " + BL.getPower() + " " + BR.getPower() + " ");
                 break;
 
-            case TURN:
+            case ROTATE:
                 // get the current heading of the bot (an angle from -180 to 180)
                 float currHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.DEGREES).firstAngle;
 
@@ -168,8 +175,8 @@ public class DriveTrain extends Subsystem {
                 // If the bot is within a 30 degree threshold of the target, slow it down to 25% of the desired speed to prevent overshooting
                 if (Math.abs(difference) <= 30) {
                     FR.setPower(-motorPower / 10);
-                    BR.setPower(-motorPower/ 10);
-                    FL.setPower(motorPower/ 10);
+                    BR.setPower(-motorPower / 10);
+                    FL.setPower(motorPower / 10);
                     BL.setPower(motorPower / 10);
                 } else { // Otherwise use normal speed
                     FR.setPower(-motorPower);
@@ -198,7 +205,7 @@ public class DriveTrain extends Subsystem {
                 runtime.reset();
                 break;
 
-            case WAIT:
+            case NONE:
                 break;
         }
 
@@ -206,12 +213,18 @@ public class DriveTrain extends Subsystem {
         telemetry.addData("motor mode", FL.getMode() + " " + FR.getMode() + " " + BL.getMode() + " " + BR.getMode() + " ");
     }
 
-    // Drives until distance sensor reads a certain distance and then returns true when there
+    /**
+     * Drives until distance sensor reads a certain distance and then returns true when there
+     *
+     * @param distanceSensor The distance sensor to use
+     * @param distanceToStop The distance needed to stop driving
+     * @param power          The power used in driving
+     */
     public void driveDistanceSensor(DistanceSensor distanceSensor, double distanceToStop, double power) {
         this.sensorInUse = distanceSensor;
         this.stopDist = distanceToStop;
         this.motorPower = power;
-        this.driveState = DriveTrainState.MOVESENSOR;
+        this.driveState = DriveTrainState.SENSORDRIVE;
     }
 
     // Returns the distance a given distance sensor detects
@@ -219,7 +232,7 @@ public class DriveTrain extends Subsystem {
         return Range.clip(sensorToUse.getDistCM(), 0.0, 200.0);
     }
 
-    public void setTargetAndMove(int ticks, double power){
+    public void setTargetAndMove(int ticks, double power) {
         setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.target = ticks;
         this.motorPower = power;
@@ -228,14 +241,14 @@ public class DriveTrain extends Subsystem {
         FL.setTargetPosition(target);
         BL.setTargetPosition(target);
         setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
-        driveState = DriveTrainState.MOVEENCODER;
+        driveState = DriveTrainState.ENCODERDRIVE;
     }
 
     // Adjusts the heading of the bot using gyroscope, degree amount to turn and motor power
     public void adjustHeading(int degrees, double power) {
         this.angle = degrees;
         this.motorPower = power;
-        driveState = DriveTrainState.TURN;
+        driveState = DriveTrainState.ROTATE;
     }
     //endregion
 
@@ -312,6 +325,11 @@ public class DriveTrain extends Subsystem {
         toggleSpeeds(GP1);
     }
 
+    /**
+     * Toggle between fast and slow speeds using the gamepad buttons A and X
+     *
+     * @param GP1 The gamepad to use
+     */
     public void toggleSpeeds(GamePadEx GP1) {
         if (GP1.getControl(GamePadEx.ControllerButton.A)) {
             powerMultiplier = 1.0;
@@ -322,93 +340,77 @@ public class DriveTrain extends Subsystem {
     //endregion
 
     //region General Stuff
+    /**
+     * Move the motors in a given direction with a given power
+     *
+     * @param dir The direction to drive in
+     * @param drivePower The power to drive with
+     */
     public void moveMotorsWithDirection(Direction dir, double drivePower) {
-        switch (dir) {
-            case NORTH:
-                BR.setPower(drivePower);
-                FR.setPower(drivePower);
-                BL.setPower(drivePower);
-                FL.setPower(drivePower);
-
-            case NORTHEAST:
-                BR.setPower(drivePower);
-                FR.setPower(0.0);
-                BL.setPower(0.0);
-                FL.setPower(drivePower);
-
-            case EAST:
-                BR.setPower(drivePower);
-                FR.setPower(-drivePower);
-                BL.setPower(-drivePower);
-                FL.setPower(drivePower);
-
-            case SOUTHEAST:
-                BR.setPower(0.0);
-                FR.setPower(-drivePower);
-                BL.setPower(-drivePower);
-                FL.setPower(0.0);
-
-            case SOUTH:
-                BR.setPower(-drivePower);
-                FR.setPower(-drivePower);
-                BL.setPower(-drivePower);
-                FL.setPower(-drivePower);
-
-            case SOUTHWEST:
-                BR.setPower(-drivePower);
-                FR.setPower(0.0);
-                BL.setPower(0.0);
-                FL.setPower(-drivePower);
-
-            case WEST:
-                BR.setPower(-drivePower);
-                FR.setPower(drivePower);
-                BL.setPower(drivePower);
-                FL.setPower(-drivePower);
-
-            case NORTHWEST:
-                BR.setPower(0.0);
-                FR.setPower(drivePower);
-                BL.setPower(drivePower);
-                FL.setPower(0.0);
-
-            case TANK_TELEOP_DRIVE:
-                BR.setPower(axisLeftY);
-                FR.setPower(axisLeftY);
-                BL.setPower(axisRightY);
-                FL.setPower(axisRightY);
-        }
+        BR.setPower(drivePower * dir.BR);
+        FR.setPower(drivePower * dir.FR);
+        BL.setPower(drivePower * dir.BL);
+        FL.setPower(drivePower * dir.FL);
     }
 
+    /**
+     * ENCODERDRIVE Auton, escapable;
+     * SENSORDRIVE - Auton, escapable;
+     * ROTATE - Auton, escapable;
+     * STOPPING - Auton, escapable;
+     * IDLE - Auton, escapable;
+     * TANK_TELEOP - Reset motor encoders. Auton, escapable;
+     * FIELD_CENTRIC_TELEOP - TeleOP, NOT escapable;
+     * WAIT - TeleOP, NOT escapable;
+     * NONE - Does nothing. Fallback;
+     */
     public enum DriveTrainState {
-        MOVEENCODER, // Auton, escapable
-        MOVESENSOR,
-        TURN, // Auton, escapable
+        ENCODERDRIVE, // Auton, escapable
+        SENSORDRIVE, // Auton, escapable
+        ROTATE, // Auton, escapable
         STOPPING, // Auton, escapable
         IDLE, // Reset encoders. Auton, escapable
         TANK_TELEOP, // TeleOP, NOT escapable
         FIELD_CENTRIC_TELEOP, // TeleOP, NOT escapable
-        WAIT,
         NONE, // Does nothing. Fallback
     }
 
     public enum Direction {
-        NORTH, // | (/\)
-        NORTHEAST, // / (/\)
-        EAST, // - (>)
-        SOUTHEAST, // \ (\/)
-        SOUTH, // | (\/)
-        SOUTHWEST, // / (\/)
-        WEST, // - (<)
-        NORTHWEST, // \ (/\)
-        TANK_TELEOP_DRIVE,
-        NONE, // Does nothing. Fallback or no movement
+        NORTH(1, 1, 1, 1), // | (/\)
+        NORTHEAST(1, 0, 0, 1), // / (/\)
+        EAST(1, -1, -1, 1), // - (>)
+        SOUTHEAST(0, -1, -1, 0), // \ (\/)
+        SOUTH(-1, -1, -1, -1), // | (\/)
+        SOUTHWEST(-1, 0, 0, -1), // / (\/)
+        WEST(-1, 1, 1, -1), // - (<)
+        NORTHWEST(0, 1, 1, 0), // \ (/\)
+        TANK_TELEOP_DRIVE(1, 1, 1, 1),
+        NONE(0, 0, 0, 0); // Does nothing. Fallback or no movement
+
+        public double BR;
+        public double FR;
+        public double BL;
+        public double FL;
+
+        Direction(double BR, double FR, double BL, double FL) {
+            this.BR = BR;
+            this.FR = FR;
+            this.BL = BL;
+            this.FL = FL;
+        }
     }
 
-    public void waitNext(){
-        driveState = DriveTrainState.WAIT;
+    /**
+     * Sets the state to idle.
+     * The idle state is used transitioning between cases in a state machine
+     */
+    public void waitNext() {
+        driveState = DriveTrainState.NONE;
     }
 
+    /**
+     * Sets every motor to the given mode
+     */
     public void setMotorMode(DcMotor.RunMode mode) {
         BR.setMode(mode);
         FR.setMode(mode);
@@ -417,7 +419,9 @@ public class DriveTrain extends Subsystem {
     }
     //endregion
 
-    // Sets the motor power of all the drive motors to 0
+    /**
+     * Sets the motor power of all the drive motors to 0
+     */
     @Override
     public void stop() {
         BR.setPower(0.0);
@@ -433,7 +437,10 @@ public class DriveTrain extends Subsystem {
         imu.initialize(parameters);
     }
 
-    public DriveTrainState getState(){
+    /**
+     * Get the current state of the bot
+     */
+    public DriveTrainState getState() {
         return driveState;
     }
 }

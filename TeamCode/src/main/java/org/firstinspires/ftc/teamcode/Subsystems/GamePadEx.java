@@ -5,8 +5,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import java.util.HashMap;
 import java.util.function.Function;
 
+/**
+ * An extension to the gamepad class that adds wrapper functions to make getting inputs and axes easier and quicker
+ *
+ */
 public class GamePadEx {
-    private final Gamepad gamepad; // JUST USE THE WRAPPER METHODS DONT MAKE THIS PUBLIC AAAAAAAAAH
+    private final Gamepad gamepad;
     public static final double MIN_THRESHOLD = 0.15;
     private HashMap<ControllerButton, Boolean> buttons;
 
