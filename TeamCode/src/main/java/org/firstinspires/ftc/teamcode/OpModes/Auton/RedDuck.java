@@ -147,7 +147,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DUMP;
                 } else{
-                    robot.driveTrain.setTargetAndMove((int)(RobotSubsystems.TICKS_PER_INCH * 30), 0.5);
+                    robot.driveTrain.setTargetAndMove((int)(RobotSubsystems.TICKS_PER_INCH * 30), -0.5);
                 }
                 break;
 
