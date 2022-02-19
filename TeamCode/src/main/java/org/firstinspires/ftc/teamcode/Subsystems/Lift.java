@@ -130,7 +130,7 @@ public class Lift extends Subsystem {
 
                 if (gp2.getControlDown(GamePadEx.ControllerButton.A)) {
                     origLevel = targetLevel;
-                    targetLevel = LiftLevel.BOT;
+                    targetLevel = LiftLevel.PIPES;
                     liftState = LiftState.MOVE;
                 }
                 break;
@@ -253,7 +253,7 @@ public class Lift extends Subsystem {
 
     public enum LiftLevel {
         TOP(-1435, "Top"), MID(-800, "Middle"),
-        BOT(-881, "Bottom"), INTAKE(0, "Intake");
+        BOT(-881, "Bottom"), INTAKE(0, "Intake"), PIPES(-500, "Pipes");
 
         private int numTicks;
         private String level;

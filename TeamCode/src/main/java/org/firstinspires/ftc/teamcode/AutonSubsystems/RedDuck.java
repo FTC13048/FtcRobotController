@@ -8,16 +8,19 @@ import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
+import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
 @Autonomous(name="Red Duck Subsystems", group="Subsystems")
 public class RedDuck extends OpMode {
     private RobotSubsystems robot;
+    private VisionWrapper vision;
 
     private RobotSubsystems.DetectedLevel level;
     private Lift.LiftLevel liftLevel;
 
     private AutonState state;
     private ElapsedTime timer;
+    private int one, two, three;
 
     public enum AutonState{
         PULLOUT, DRIVEDUCK, DUCK,
@@ -32,13 +35,44 @@ public class RedDuck extends OpMode {
         robot = new RobotSubsystems(new GamePadEx(gamepad1), new GamePadEx(gamepad2), hardwareMap, telemetry, true);
         robot.init();
 
+        vision = new VisionWrapper(telemetry);
+        this.level = RobotSubsystems.DetectedLevel.TOP; // immediately overwritten but safer without null
+        this.one = 0;
+        this.two = 0;
+        this.three = 0;
+
         timer = new ElapsedTime();
         state = AutonState.PULLOUT;
     }
 
     @Override
     public void init_loop() {
-        level = RobotSubsystems.DetectedLevel.TOP;
+        // Get current detection every loop
+        this.level = this.vision.currentDetermination();
+        if (this.level != null) {
+            // Add to value if detected
+            switch (this.level) {
+                case BOTTOM:
+                    this.one++;
+                    break;
+                case MIDDLE:
+                    this.two++;
+                    break;
+                case TOP:
+                    this.three++;
+                    break;
+            }
+
+            telemetry.addData("Current detected level: ", this.level);
+
+            telemetry.addLine("-------------------------------------");
+            telemetry.addLine("Overall detection numbers: (PRESS A TO RESET)");
+            telemetry.addData("LEVEL 1: ", this.one);
+            telemetry.addData("LEVEL 2: ", this.two);
+            telemetry.addData("LEVEL 3: ", this.three);
+
+            telemetry.update();
+        }
     }
 
     @Override
@@ -113,7 +147,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DUMP;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 12.0, 0.4);
+                    robot.driveTrain.setTargetAndMove((int)(RobotSubsystems.TICKS_PER_INCH * 30), 0.5);
                 }
                 break;
 

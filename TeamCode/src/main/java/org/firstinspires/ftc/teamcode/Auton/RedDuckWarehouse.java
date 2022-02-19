@@ -55,7 +55,7 @@ public class RedDuckWarehouse extends OpMode {
     @Override
     public void init_loop() {
         // Get current detection every loop
-        this.level = this.vision.currentDetermination();
+        this.level = this.vision.currentDeterminationOld();
 
         if (this.level != null) {
             // Add to value if detected

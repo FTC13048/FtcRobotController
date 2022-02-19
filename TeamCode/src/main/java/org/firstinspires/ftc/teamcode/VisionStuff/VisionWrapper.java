@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.Point;
 import org.opencv.core.Rect;
@@ -52,13 +53,13 @@ public class VisionWrapper {
     }
 
     // updates which level the camera sees the duck at
-    private DetectionLevel updateDetermination(){
+    private RobotSubsystems.DetectedLevel updateDetermination(){
         // get the list of contours from the pipeline
         List<MatOfPoint> contours = new ArrayList<>(grip.findContoursOutput());
 
         // if there are no contours found, duck is out of camera frame meaning level 3
         if(contours.size() == 0){
-            return DetectionLevel.LEVEL_THREE;
+            return RobotSubsystems.DetectedLevel.TOP;
         }else{
             double xSum = 0;
 
@@ -78,23 +79,23 @@ public class VisionWrapper {
             //     the object needs to be dropped to the second level
             if (xSum > CAMERA_WIDTH/2) {
 
-                return DetectionLevel.LEVEL_TWO;
+                return RobotSubsystems.DetectedLevel.MIDDLE;
             }//  If average center of mass is not greater than half the screen, then it is on
             //      the left and should go to level one
             else {
-                return DetectionLevel.LEVEL_ONE;
+                return RobotSubsystems.DetectedLevel.BOTTOM;
             }
         }
     }
 
     // updates which level the camera sees the duck at
-    private DetectionLevel updateDeterminationReverse(){
+    private RobotSubsystems.DetectedLevel updateDeterminationReverse(){
         // get the list of contours from the pipeline
         List<MatOfPoint> contours = new ArrayList<>(grip.findContoursOutput());
 
         // if there are no contours found, duck is out of camera frame meaning level 3
         if(contours.size() == 0){
-            return DetectionLevel.LEVEL_ONE;
+            return RobotSubsystems.DetectedLevel.BOTTOM;
         }else{
             // find the average center of mass on the screen and if it is greater than 1/2 the
             //    width, it is level 2 and level 1 if less than half the width
@@ -109,16 +110,20 @@ public class VisionWrapper {
             xSum /= contours.size();
 
             if (xSum > CAMERA_WIDTH/2) {
-                return DetectionLevel.LEVEL_THREE;
+                return RobotSubsystems.DetectedLevel.TOP;
             } else {
-                return DetectionLevel.LEVEL_TWO;
+                return RobotSubsystems.DetectedLevel.MIDDLE;
             }
         }
     }
 
-    public DetectionLevel currentDetermination(){ return this.updateDetermination(); }
+    public DetectionLevel currentDeterminationOld(){ return null; }
 
-    public DetectionLevel currentDeterminationReverse(){ return this.updateDeterminationReverse(); }
+    public DetectionLevel currentDeterminationReverseOld(){ return null; }
+
+    public RobotSubsystems.DetectedLevel currentDetermination(){ return this.updateDetermination(); }
+
+    public RobotSubsystems.DetectedLevel currentDeterminationReverse(){ return this.updateDeterminationReverse(); }
 
     // stops the camera
     public void stop(){ webcam.stopStreaming(); }
