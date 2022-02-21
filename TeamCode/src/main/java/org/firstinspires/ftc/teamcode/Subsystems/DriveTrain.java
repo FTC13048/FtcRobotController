@@ -140,7 +140,7 @@ public class DriveTrain extends Subsystem {
 
                     this.motorPower *= Math.signum(distance - stopDist);
 
-                    if (sensorInUse == distSensorBack) {
+                    if (sensorInUse == distSensorBack || sensorInUse == analogDistance) {
                         FL.setPower(motorPower);
                         BL.setPower(motorPower);
                         FR.setPower(motorPower);
