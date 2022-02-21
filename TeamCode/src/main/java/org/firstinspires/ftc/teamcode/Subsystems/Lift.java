@@ -20,6 +20,7 @@ public class Lift extends Subsystem {
     private ElapsedTime timer;
     private double intakePower;
     private double liftPower = 0.5;
+    private double cargoPos;
 
     public Lift(HardwareMap hmap, Telemetry tele, boolean isAuton) {
         super(hmap, tele, isAuton);
@@ -93,7 +94,7 @@ public class Lift extends Subsystem {
             case ATLEVEL:
                 linSlide.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 stop();
-                cargoFlipper.setPosition(0.3);
+                cargoFlipper.setPosition(cargoPos);
                 timer.reset();
                 break;
 
@@ -130,6 +131,7 @@ public class Lift extends Subsystem {
 
                 if (gp2.getControlDown(GamePadEx.ControllerButton.A)) {
                     origLevel = targetLevel;
+                    cargoPos = 0.3;
                     targetLevel = LiftLevel.PIPES;
                     liftState = LiftState.MOVE;
                 }
@@ -217,7 +219,8 @@ public class Lift extends Subsystem {
         intakeRight.setPower(0.0);
     }
 
-    public void setTargetLevel(LiftLevel level) {
+    public void setTargetLevel(LiftLevel level, double cargoPos) {
+        this.cargoPos = cargoPos;
         this.targetLevel = level;
         liftState = LiftState.MOVE;
     }

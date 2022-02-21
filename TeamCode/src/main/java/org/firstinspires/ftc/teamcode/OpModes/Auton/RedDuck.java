@@ -129,7 +129,7 @@ public class RedDuck extends OpMode {
                     state = AutonState.TURNHUB;
                 } else{
                     robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 85.0, 0.4);
-                    robot.lift.setTargetLevel(liftLevel);
+                    robot.lift.setTargetLevel(liftLevel, 0.6);
                 }
                 break;
 

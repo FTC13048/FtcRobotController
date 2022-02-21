@@ -137,7 +137,7 @@ public class BlueDuck extends OpMode {
                     state = AutonState.TURNHUB;
                 } else{
                     robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorLeft, 96.0, 0.4);
-                    robot.lift.setTargetLevel(liftLevel);
+                    robot.lift.setTargetLevel(liftLevel, 0.6);
                 }
                 break;
 
