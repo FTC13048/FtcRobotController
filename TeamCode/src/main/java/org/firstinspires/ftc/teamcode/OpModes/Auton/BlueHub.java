@@ -13,8 +13,8 @@ import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
  * Auton that goes to the red hub (does not do ducks)
  *
  */
-@Autonomous(name = "Red Hub Subsystems", group = "Subsystems")
-public class RedHub extends OpMode {
+@Autonomous(name = "Blue Hub Subsystems", group = "Subsystems")
+public class BlueHub extends OpMode {
     private RobotSubsystems robot;
     private VisionWrapper vision; // vision object for detection
 
@@ -113,7 +113,7 @@ public class RedHub extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.LIFT;
                 } else{
-                    robot.driveTrain.setTargetAndStrafe((int)(-RobotSubsystems.TICKS_PER_INCH * 25), 0.4);
+                    robot.driveTrain.setTargetAndStrafe((int)(RobotSubsystems.TICKS_PER_INCH * 25), 0.4);
                 }
                 break;
 
