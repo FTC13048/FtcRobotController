@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name="Red Duck Subsystems", group="Subsystems")
+@Autonomous(name="Red Duck ANALOG TEST", group="Subsystems")
 public class RedDuck extends OpMode {
     private RobotSubsystems robot;
     private VisionWrapper vision;
@@ -148,7 +148,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DUMP;
                 } else{
-                    robot.driveTrain.setTargetAndMove((int)(RobotSubsystems.TICKS_PER_INCH * 30), -0.5);
+                    robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 30), 0.5);
                 }
                 break;
 
@@ -166,7 +166,7 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.STRAFESTORAGE;
                 } else{
-                    robot.driveTrain.setTargetAndMove((int)(-RobotSubsystems.TICKS_PER_INCH * 40), -0.5);
+                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 40), 0.5);
                 }
                 break;
 

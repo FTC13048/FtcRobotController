@@ -11,6 +11,7 @@ import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
+import org.firstinspires.ftc.teamcode.Subsystems.Sensors.DistanceSensor;
 
 /**
  * The drive train subsystem. It controls the movement and driving of the bot
@@ -28,6 +29,7 @@ public class DriveTrain extends Subsystem {
     public DistanceSensor distSensorRight;
     public DistanceSensor distSensorLeft;
     public DistanceSensor distSensorBack;
+    public DistanceSensor analogDistance;
     //endregion
 
     //region Movement Stats
@@ -96,6 +98,7 @@ public class DriveTrain extends Subsystem {
             distSensorRight = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.RIGHT);
             distSensorLeft = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.LEFT);
             distSensorBack = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.BACK);
+            analogDistance = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.ANALOG);
         }
 
         telemetry.addData("Drive Train", "initialized");
@@ -111,7 +114,7 @@ public class DriveTrain extends Subsystem {
     public void updateState() {
         switch (driveState) {
             case ENCODERDRIVE:
-                if (Math.abs(BR.getCurrentPosition()) > target) {
+                if (Math.abs(BR.getCurrentPosition()) > Math.abs(target)) {
                     runtime.reset();
                     driveState = DriveTrainState.IDLE;
                 }
@@ -232,14 +235,25 @@ public class DriveTrain extends Subsystem {
         return Range.clip(sensorToUse.getDistCM(), 0.0, 200.0);
     }
 
-    public void setTargetAndMove(int ticks, double power) {
+    public void setTargetAndDrive(int ticks, double drivePower) {
         setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.target = ticks;
-        this.motorPower = power;
+        this.motorPower = Math.abs(drivePower);
         FR.setTargetPosition(target);
         BR.setTargetPosition(target);
         FL.setTargetPosition(target);
         BL.setTargetPosition(target);
+        setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
+        driveState = DriveTrainState.ENCODERDRIVE;
+    }
+
+    public void setTargetAndStrafe(int ticks, double strafePower){
+        this.target = ticks;
+        this.motorPower = Math.abs(strafePower);
+        BR.setTargetPosition(target);
+        FR.setTargetPosition(-target);
+        BL.setTargetPosition(-target);
+        FL.setTargetPosition(target);
         setMotorMode(DcMotor.RunMode.RUN_TO_POSITION);
         driveState = DriveTrainState.ENCODERDRIVE;
     }

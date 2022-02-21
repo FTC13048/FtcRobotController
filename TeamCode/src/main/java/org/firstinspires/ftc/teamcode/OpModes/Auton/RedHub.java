@@ -27,8 +27,8 @@ public class RedHub extends OpMode {
     private int one, two, three;
 
     public enum AutonState {
-        STATE1, STATE2, STATE3,
-        DONE
+        PULLOUT, TURN, STRAFEHUB, LIFT, DRIVEHUB, DUMP,
+        TURNWAREHOUSE, DRIVEWAREHOUSE
     }
 
     @Override
@@ -42,7 +42,6 @@ public class RedHub extends OpMode {
         this.three = 0;
 
         timer = new ElapsedTime();
-        state = AutonState.STATE1;
     }
 
     @Override
@@ -94,36 +93,36 @@ public class RedHub extends OpMode {
     @Override
     public void loop() {
         switch (state) {
-            case STATE1:
-                if (robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE) { // Switch to the next action if the bot is done moving
+            case PULLOUT:
+                this.vision.stop();
+                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
                     robot.driveTrain.waitNext();
-                    timer.reset(); // ALWAYS reset the timer before switching to a state that relies on a timer
-                    state = AutonState.STATE2;
-                } else {
-                    // Perform STATE1 actions here
+                    state = AutonState.TURN;
+                } else{
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 17.0, 0.5);
                 }
                 break;
 
-            case STATE2:
-                if (timer.seconds() >= 4) { // Switch to the next action when the timer is past 4 secondss
+            case TURN:
+                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
                     robot.driveTrain.waitNext();
-                    state = AutonState.STATE3;
-                } else {
-                    // Perform STATE2 actions here
+                    state = AutonState.STRAFEHUB;
+                } else{
+                    robot.driveTrain.adjustHeading(180, 0.4);
                 }
                 break;
 
-            case STATE3:
-                if (false) { // Replace 'false' with the condition to end STATE3
-                    robot.driveTrain.waitNext();
-                    state = AutonState.DONE;
-                } else {
-                    // Perform STATE3 actions here
-                }
+            case STRAFEHUB:
                 break;
-
-            case DONE: // End state. It stops the bot
-                robot.stop();
+            case LIFT:
+                break;
+            case DRIVEHUB:
+                break;
+            case DUMP:
+                break;
+            case TURNWAREHOUSE:
+                break;
+            case DRIVEWAREHOUSE:
                 break;
         }
 
