@@ -94,6 +94,7 @@ public class BlueDuck extends OpMode {
     public void loop() {
         switch(state){
             case PULLOUT:
+                this.vision.stop();
                 if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNDUCK;
