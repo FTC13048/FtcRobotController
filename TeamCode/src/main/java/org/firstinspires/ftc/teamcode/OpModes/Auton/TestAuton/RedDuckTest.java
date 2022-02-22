@@ -148,7 +148,7 @@ public class RedDuckTest extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DUMP;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.analogDistance, 12.0, 0.4);
+                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.analogDistance, 17.0, 0.4);
                 }
                 break;
 
