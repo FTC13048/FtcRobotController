@@ -132,7 +132,7 @@ public class RedDuck extends OpMode {
                 if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNHUB;
-                    robot.driveTrain.adjustHeading(90, 0.4);
+                    robot.driveTrain.adjustHeading(90, 0.3);
                 } else{
 
                 }

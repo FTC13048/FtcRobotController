@@ -100,7 +100,7 @@ public class BlueDuck extends OpMode {
                 if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNDUCK;
-                    robot.driveTrain.adjustHeading(90, 0.4);
+                    robot.driveTrain.adjustHeading(90, 0.3);
                 } else{
 
                 }
@@ -142,7 +142,7 @@ public class BlueDuck extends OpMode {
                 if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNHUB;
-                    robot.driveTrain.adjustHeading(270, 0.4);
+                    robot.driveTrain.adjustHeading(270, 0.3);
                 } else{
 
                 }

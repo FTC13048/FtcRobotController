@@ -99,7 +99,7 @@ public class RedHub extends OpMode {
                 if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.TURN;
-                    robot.driveTrain.adjustHeading(180, 0.4);
+                    robot.driveTrain.adjustHeading(180, 0.3);
                 } else{
 
                 }
@@ -148,7 +148,7 @@ public class RedHub extends OpMode {
                 if(robot.lift.getState() == Lift.LiftState.MOVEINTAKE){
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNWAREHOUSE;
-                    robot.driveTrain.adjustHeading(270, 0.4);
+                    robot.driveTrain.adjustHeading(270, 0.3);
                 } else{
                     robot.lift.dump();
                 }
