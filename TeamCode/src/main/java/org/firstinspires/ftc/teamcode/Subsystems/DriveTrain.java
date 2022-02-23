@@ -97,7 +97,7 @@ public class DriveTrain extends Subsystem {
 
             distSensorRight = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.RIGHT);
             distSensorLeft = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.LEFT);
-            distSensorBack = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.BACK);
+            //distSensorBack = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.BACK);
             analogDistance = new DistanceSensor(hmap, tele, DistanceSensor.SensorName.ANALOG);
         }
 
@@ -114,7 +114,7 @@ public class DriveTrain extends Subsystem {
     public void updateState() {
         switch (driveState) {
             case ENCODERDRIVE:
-                if (Math.abs(BR.getCurrentPosition()) > Math.abs(target)) {
+                if (Math.abs(Math.abs(BR.getCurrentPosition()) - Math.abs(target)) <= 5) {
                     runtime.reset();
                     driveState = DriveTrainState.IDLE;
                 }
@@ -123,6 +123,8 @@ public class DriveTrain extends Subsystem {
                 BL.setPower(motorPower);
                 FR.setPower(motorPower);
                 BR.setPower(motorPower);
+                telemetry.addData("powers", FL.getPower() + " " + BL.getPower() + " " + FR.getPower() + " " + BR.getPower() + " ");
+                telemetry.addData("BR pos", BR.getCurrentPosition());
                 break;
 
             case SENSORDRIVE:
@@ -175,8 +177,16 @@ public class DriveTrain extends Subsystem {
                 double difference = angle - currHeading;
                 telemetry.addData("Difference is ", difference);
 
+                // If the bot is within 1 degree of the target, stop the bot and return true
+                if (Math.abs(difference) <= 0.5) {
+                    telemetry.addLine("Stopping the bot");
+                    stop();
+                    driveState = DriveTrainState.IDLE;
+                }
+
+
                 // If the bot is within a 30 degree threshold of the target, slow it down to 25% of the desired speed to prevent overshooting
-                if (Math.abs(difference) <= 30) {
+                else if (Math.abs(difference) <= 30) {
                     FR.setPower(-motorPower / 10);
                     BR.setPower(-motorPower / 10);
                     FL.setPower(motorPower / 10);
@@ -188,12 +198,6 @@ public class DriveTrain extends Subsystem {
                     BL.setPower(motorPower);
                 }
 
-                // If the bot is within 1 degree of the target, stop the bot and return true
-                if (Math.abs(difference) <= 0.5) {
-                    telemetry.addLine("Stopping the bot");
-                    stop();
-                    driveState = DriveTrainState.IDLE;
-                }
                 break;
 
             case STOPPING:
@@ -205,6 +209,7 @@ public class DriveTrain extends Subsystem {
                 break;
 
             case IDLE:
+                setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 runtime.reset();
                 break;
 
@@ -230,15 +235,18 @@ public class DriveTrain extends Subsystem {
         this.driveState = DriveTrainState.SENSORDRIVE;
     }
 
+    public boolean readyForNext(){
+        return (driveState == DriveTrainState.IDLE && FR.getCurrentPosition() == 0 && FL.getCurrentPosition() == 0 && BR.getCurrentPosition() == 0 && BL.getCurrentPosition() == 0);
+    }
+
     // Returns the distance a given distance sensor detects
     private double getSensorDistance(DistanceSensor sensorToUse) {
         return Range.clip(sensorToUse.getDistCM(), 0.0, 200.0);
     }
 
     public void setTargetAndDrive(int ticks, double drivePower) {
-        setMotorMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.target = ticks;
-        this.motorPower = Math.abs(drivePower);
+        this.motorPower = drivePower;
         FR.setTargetPosition(target);
         BR.setTargetPosition(target);
         FL.setTargetPosition(target);
@@ -419,6 +427,8 @@ public class DriveTrain extends Subsystem {
      * The idle state is used transitioning between cases in a state machine
      */
     public void waitNext() {
+        stop();
+        setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveState = DriveTrainState.NONE;
     }
 

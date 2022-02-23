@@ -10,7 +10,7 @@ public class LVMaxSonar {
 
     private double currentVoltage;
     private final double MICRO_VOLTS_PER_INCH = 6.4;
-    private final double VOLTS_PER_CM = 0.00251969;
+    private final double VOLTS_PER_CM = 0.00252;
 
     public LVMaxSonar(HardwareMap map, Telemetry tele){
         distSensor = map.get(AnalogInput.class, "analogSensorBack");
@@ -21,6 +21,6 @@ public class LVMaxSonar {
     public double getDistance(){
         currentVoltage = distSensor.getVoltage();
 
-        return currentVoltage/VOLTS_PER_CM;
+        return (currentVoltage/VOLTS_PER_CM) * 2;
     }
 }

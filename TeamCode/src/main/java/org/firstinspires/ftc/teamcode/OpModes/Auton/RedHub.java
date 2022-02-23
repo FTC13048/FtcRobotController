@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
@@ -35,16 +36,19 @@ public class RedHub extends OpMode {
         robot.init();
 
         vision = new VisionWrapper(telemetry);
+        this.level = RobotSubsystems.DetectedLevel.TOP; // immediately overwritten but safer without null
         this.one = 0;
         this.two = 0;
         this.three = 0;
+
+        state = AutonState.PULLOUT;
     }
 
     @Override
-    public void init_loop() { // init loop is always detection
+    public void init_loop() {
         // Get current detection every loop
         this.level = this.vision.currentDetermination();
-        if (this.level != null) { // add one the level variable of whatever is detected each loop
+        if (this.level != null) {
             // Add to value if detected
             switch (this.level) {
                 case BOTTOM:
@@ -71,7 +75,7 @@ public class RedHub extends OpMode {
     }
 
     @Override
-    public void start() { // set the lift level to whatever is detected in init loop
+    public void start() {
         robot.driveTrain.startAuton();
         switch(level){
             case TOP:
@@ -84,36 +88,40 @@ public class RedHub extends OpMode {
                 liftLevel = Lift.LiftLevel.BOT;
                 break;
         }
+
+        robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 6), 0.1);
     }
 
     @Override
     public void loop() {
         switch (state) {
             case PULLOUT:
-                this.vision.stop();
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.TURN;
+                    robot.driveTrain.adjustHeading(180, 0.4);
                 } else{
-                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 6), 0.1);
+
                 }
                 break;
 
             case TURN:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.STRAFEHUB;
+                    robot.driveTrain.setTargetAndStrafe((int)(-RobotSubsystems.TICKS_PER_INCH * 25), 0.3);
                 } else{
-                    robot.driveTrain.adjustHeading(180, 0.4);
+
                 }
                 break;
 
             case STRAFEHUB:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.LIFT;
+                    robot.lift.setTargetLevel(liftLevel, 0.6);
                 } else{
-                    robot.driveTrain.setTargetAndStrafe((int)(-RobotSubsystems.TICKS_PER_INCH * 25), 0.4);
+
                 }
                 break;
 
@@ -121,17 +129,18 @@ public class RedHub extends OpMode {
                 if(robot.lift.getState() == Lift.LiftState.ATLEVEL){
                     robot.driveTrain.waitNext();
                     state = AutonState.DRIVEHUB;
+                    robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 20), 0.3);
                 } else{
-                    robot.lift.setTargetLevel(liftLevel, 0.6);
+
                 }
                 break;
 
             case DRIVEHUB:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.DUMP;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 12.0, 0.4);
+
                 }
                 break;
 
@@ -139,26 +148,28 @@ public class RedHub extends OpMode {
                 if(robot.lift.getState() == Lift.LiftState.MOVEINTAKE){
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNWAREHOUSE;
+                    robot.driveTrain.adjustHeading(270, 0.4);
                 } else{
                     robot.lift.dump();
                 }
                 break;
 
             case TURNWAREHOUSE:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.DRIVEWAREHOUSE;
+                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 70), 1.0);
                 } else{
-                    robot.driveTrain.adjustHeading(270, 0.4);
+
                 }
                 break;
 
             case DRIVEWAREHOUSE:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.DONE;
                 } else{
-                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 70), 1.0);
+
                 }
                 break;
 

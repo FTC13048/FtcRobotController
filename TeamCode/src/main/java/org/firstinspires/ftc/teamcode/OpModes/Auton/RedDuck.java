@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name="Red Duck ANALOG TEST", group="Subsystems")
+@Autonomous(name="Red Duck Subsystems", group="Subsystems")
 public class RedDuck extends OpMode {
     private RobotSubsystems robot;
     private VisionWrapper vision;
@@ -89,28 +89,30 @@ public class RedDuck extends OpMode {
                 liftLevel = Lift.LiftLevel.BOT;
                 break;
         }
+
+        robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 6), 0.1);
     }
 
     @Override
     public void loop() {
         switch(state){
             case PULLOUT:
-                this.vision.stop();
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.DRIVEDUCK;
+                    robot.driveTrain.setTargetAndStrafe((int)(RobotSubsystems.TICKS_PER_INCH * 19), 0.3);
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 17.0, 0.5);
+
                 }
                 break;
 
             case DRIVEDUCK:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     timer.reset();
                     state = AutonState.DUCK;
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorLeft, 23.0, 0.4);
+
                 }
                 break;
 
@@ -119,36 +121,39 @@ public class RedDuck extends OpMode {
                     robot.duckSpinner.stop();
                     robot.driveTrain.waitNext();
                     state = AutonState.BACKTOHUB;
+                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 45), 0.3);
+                    robot.lift.setTargetLevel(liftLevel, 0.6);
                 } else{
                     robot.duckSpinner.spinRed();
                 }
                 break;
 
             case BACKTOHUB:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.TURNHUB;
+                    robot.driveTrain.adjustHeading(90, 0.4);
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorBack, 85.0, 0.4);
-                    robot.lift.setTargetLevel(liftLevel, 0.6);
+
                 }
                 break;
 
             case TURNHUB:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.DRIVEHUB;
+                    robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 33), 0.3);
                 } else{
-                    robot.driveTrain.adjustHeading(90, 0.4);
+
                 }
                 break;
 
             case DRIVEHUB:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.DUMP;
                 } else{
-                    robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 30), 0.5);
+
                 }
                 break;
 
@@ -156,26 +161,29 @@ public class RedDuck extends OpMode {
                 if(robot.lift.getState() == Lift.LiftState.MOVEINTAKE){
                     robot.driveTrain.waitNext();
                     state = AutonState.DRIVESTORAGE;
+                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 40), 0.3);
                 } else{
                     robot.lift.dump();
                 }
                 break;
 
             case DRIVESTORAGE:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.STRAFESTORAGE;
+                    robot.driveTrain.setTargetAndStrafe((int)(RobotSubsystems.TICKS_PER_INCH * 15), 0.3);
                 } else{
-                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 40), 0.5);
+
                 }
                 break;
 
             case STRAFESTORAGE:
-                if(robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE){
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitNext();
                     state = AutonState.DONE;
+
                 } else{
-                    robot.driveTrain.driveDistanceSensor(robot.driveTrain.distSensorLeft, 65.0, 0.4);
+
                 }
                 break;
 
