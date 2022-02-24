@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
@@ -98,7 +97,7 @@ public class BlueDuck extends OpMode {
         switch(state){
             case PULLOUT:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.TURNDUCK;
                     robot.driveTrain.adjustHeading(90, 0.3);
                 } else{
@@ -108,7 +107,7 @@ public class BlueDuck extends OpMode {
 
             case TURNDUCK:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEDUCK;
                     robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 34), 0.3);
                 } else{
@@ -118,7 +117,7 @@ public class BlueDuck extends OpMode {
 
             case DRIVEDUCK:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     timer.reset();
                     state = AutonState.DUCK;
                 } else{
@@ -129,7 +128,7 @@ public class BlueDuck extends OpMode {
             case DUCK:
                 if(timer.seconds() >= 4){
                     robot.duckSpinner.stop();
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.STRAFEHUB;
                     robot.driveTrain.setTargetAndStrafe((int)(-RobotSubsystems.TICKS_PER_INCH * 50), 0.3);
                     robot.lift.setTargetLevel(liftLevel, 0.6);
@@ -140,7 +139,7 @@ public class BlueDuck extends OpMode {
 
             case STRAFEHUB:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.TURNHUB;
                     robot.driveTrain.adjustHeading(270, 0.3);
                 } else{
@@ -150,7 +149,7 @@ public class BlueDuck extends OpMode {
 
             case TURNHUB:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEHUB;
                     robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 32), 0.3);
                 } else{
@@ -160,7 +159,7 @@ public class BlueDuck extends OpMode {
 
             case DRIVEHUB:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DUMP;
                 } else{
 
@@ -169,7 +168,7 @@ public class BlueDuck extends OpMode {
 
             case DUMP:
                 if(robot.lift.getState() == Lift.LiftState.MOVEINTAKE){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DRIVESTORAGE;
                     robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 40), 0.3);
                 } else{
@@ -179,7 +178,7 @@ public class BlueDuck extends OpMode {
 
             case DRIVESTORAGE:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.STRAFESTORAGE;
                     robot.driveTrain.setTargetAndStrafe((int)(-RobotSubsystems.TICKS_PER_INCH * 15), 0.3);
                 } else{
@@ -189,7 +188,7 @@ public class BlueDuck extends OpMode {
 
             case STRAFESTORAGE:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DONE;
                 } else{
 

@@ -426,7 +426,7 @@ public class DriveTrain extends Subsystem {
      * Sets the state to idle.
      * The idle state is used transitioning between cases in a state machine
      */
-    public void waitNext() {
+    public void waitForNext() {
         stop();
         setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
         driveState = DriveTrainState.NONE;

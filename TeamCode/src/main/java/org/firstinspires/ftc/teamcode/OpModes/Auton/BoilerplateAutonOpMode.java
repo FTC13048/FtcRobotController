@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auton;
 
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -96,7 +95,7 @@ public class BoilerplateAutonOpMode extends OpMode {
         switch (state) {
             case STATE1:
                 if (robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE) { // Switch to the next action if the bot is done moving
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     timer.reset(); // ALWAYS reset the timer before switching to a state that relies on a timer
                     state = AutonState.STATE2;
                 } else {
@@ -106,7 +105,7 @@ public class BoilerplateAutonOpMode extends OpMode {
 
             case STATE2:
                 if (timer.seconds() >= 4) { // Switch to the next action when the timer is past 4 secondss
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.STATE3;
                 } else {
                     // Perform STATE2 actions here
@@ -115,7 +114,7 @@ public class BoilerplateAutonOpMode extends OpMode {
 
             case STATE3:
                 if (false) { // Replace 'false' with the condition to end STATE3
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DONE;
                 } else {
                     // Perform STATE3 actions here

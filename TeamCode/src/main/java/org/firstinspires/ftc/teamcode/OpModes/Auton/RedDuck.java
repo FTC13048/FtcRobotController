@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
@@ -98,7 +97,7 @@ public class RedDuck extends OpMode {
         switch(state){
             case PULLOUT:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEDUCK;
                     robot.driveTrain.setTargetAndStrafe((int)(RobotSubsystems.TICKS_PER_INCH * 19), 0.3);
                 }
@@ -106,7 +105,7 @@ public class RedDuck extends OpMode {
 
             case DRIVEDUCK:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     timer.reset();
                     state = AutonState.DUCK;
                 }
@@ -115,7 +114,7 @@ public class RedDuck extends OpMode {
             case DUCK:
                 if(timer.seconds() >= 4){
                     robot.duckSpinner.stop();
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.BACKTOHUB;
                     robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 45), 0.3);
                     robot.lift.setTargetLevel(liftLevel, 0.6);
@@ -126,7 +125,7 @@ public class RedDuck extends OpMode {
 
             case BACKTOHUB:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.TURNHUB;
                     robot.driveTrain.adjustHeading(90, 0.3);
                 } else{
@@ -136,7 +135,7 @@ public class RedDuck extends OpMode {
 
             case TURNHUB:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEHUB;
                     robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 33), 0.3);
                 } else{
@@ -146,7 +145,7 @@ public class RedDuck extends OpMode {
 
             case DRIVEHUB:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DUMP;
                 } else{
 
@@ -155,7 +154,7 @@ public class RedDuck extends OpMode {
 
             case DUMP:
                 if(robot.lift.getState() == Lift.LiftState.MOVEINTAKE){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DRIVESTORAGE;
                     robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 40), 0.3);
                 } else{
@@ -165,7 +164,7 @@ public class RedDuck extends OpMode {
 
             case DRIVESTORAGE:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.STRAFESTORAGE;
                     robot.driveTrain.setTargetAndStrafe((int)(RobotSubsystems.TICKS_PER_INCH * 15), 0.3);
                 } else{
@@ -175,7 +174,7 @@ public class RedDuck extends OpMode {
 
             case STRAFESTORAGE:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DONE;
 
                 } else{

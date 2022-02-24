@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
@@ -97,7 +95,7 @@ public class BlueHub extends OpMode {
         switch (state) {
             case PULLOUT:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.TURN;
                     robot.driveTrain.adjustHeading(180, 0.3);
                 } else{
@@ -107,7 +105,7 @@ public class BlueHub extends OpMode {
 
             case TURN:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.STRAFEHUB;
                     robot.driveTrain.setTargetAndStrafe((int)(RobotSubsystems.TICKS_PER_INCH * 25), 0.3);
                 } else{
@@ -117,7 +115,7 @@ public class BlueHub extends OpMode {
 
             case STRAFEHUB:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.LIFT;
                     robot.lift.setTargetLevel(liftLevel, 0.6);
                 } else{
@@ -127,7 +125,7 @@ public class BlueHub extends OpMode {
 
             case LIFT:
                 if(robot.lift.getState() == Lift.LiftState.ATLEVEL){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEHUB;
                     robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 20), 0.3);
                 } else{
@@ -137,7 +135,7 @@ public class BlueHub extends OpMode {
 
             case DRIVEHUB:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DUMP;
                 } else{
 
@@ -146,7 +144,7 @@ public class BlueHub extends OpMode {
 
             case DUMP:
                 if(robot.lift.getState() == Lift.LiftState.MOVEINTAKE){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.TURNWAREHOUSE;
                     robot.driveTrain.adjustHeading(270, 0.3);
                 } else{
@@ -156,7 +154,7 @@ public class BlueHub extends OpMode {
 
             case TURNWAREHOUSE:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEWAREHOUSE;
                     robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 70), 1.0);
                 } else{
@@ -166,7 +164,7 @@ public class BlueHub extends OpMode {
 
             case DRIVEWAREHOUSE:
                 if(robot.driveTrain.readyForNext()){
-                    robot.driveTrain.waitNext();
+                    robot.driveTrain.waitForNext();
                     state = AutonState.DONE;
                 } else{
 
