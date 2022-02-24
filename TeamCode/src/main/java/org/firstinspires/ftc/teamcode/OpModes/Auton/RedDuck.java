@@ -101,8 +101,6 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     state = AutonState.DRIVEDUCK;
                     robot.driveTrain.setTargetAndStrafe((int)(RobotSubsystems.TICKS_PER_INCH * 19), 0.3);
-                } else{
-
                 }
                 break;
 
@@ -111,8 +109,6 @@ public class RedDuck extends OpMode {
                     robot.driveTrain.waitNext();
                     timer.reset();
                     state = AutonState.DUCK;
-                } else{
-
                 }
                 break;
 

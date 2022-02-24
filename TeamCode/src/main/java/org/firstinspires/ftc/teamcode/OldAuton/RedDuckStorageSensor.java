@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton;
+package org.firstinspires.ftc.teamcode.OldAuton;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,9 +10,8 @@ import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name = "Blue Duck Storage Sensor", group = "Storage")
-
-public class BlueDuckStorageSensor extends OpMode {
+@Autonomous(name = "Red Duck Storage Sensor", group = "Storage")
+public class RedDuckStorageSensor extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 403.9;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
@@ -87,7 +86,6 @@ public class BlueDuckStorageSensor extends OpMode {
             telemetry.addData("distance back", bot.getBackDistanceCM());
             telemetry.addData("distance right", bot.getRightDistanceCM());
             telemetry.addData("distance left", bot.getLeftDistanceCM());
-
             telemetry.update();
         }
     }
@@ -100,15 +98,15 @@ public class BlueDuckStorageSensor extends OpMode {
     @Override
     public void loop() {
         switch (caseNum) {
-            case 0: // Stop openCV and set the motor modes
+            case 0:
                 this.vision.stop();
                 bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                 caseNum++;
                 break;
 
-            case 1: //  Drive forward 6 inches
-                if (bot.driveBackDistanceSensor(18.0, 0.4, MovementEnum.FORWARD)) {
+            case 1:
+                if (bot.driveBackDistanceSensor(17.0, 0.4, MovementEnum.FORWARD)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -117,38 +115,21 @@ public class BlueDuckStorageSensor extends OpMode {
 
                 break;
 
-            case 2: // Turn 90 degrees
-                // the amount to turn
-                int turn = 90;
-
-                // if the heading is at or greater than the target stop the bot
-                if (bot.adjustHeading(turn, 0.5, imu)) {
+            case 2:
+                if (bot.driveLeftDistanceSensor(23.0, 0.4, MovementEnum.LEFTSTRAFE)) {
                     bot.stop();
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    caseNum++;
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    if(bot.delay(0.20)){
+                        timer.reset();
+                        caseNum++;
+                    }
                 }
 
                 break;
 
-            case 3: // Drive backward 32 inches
-                int target = bot.autonDrive(MovementEnum.BACKWARD, (int) (TICKS_PER_INCH * 32));
-                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
-
-                if (target >= (int) (TICKS_PER_INCH * 32)) {
-                    bot.stop();
-                    bot.autonDrive(MovementEnum.STOP, 0);
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    timer.reset();
-                    caseNum++;
-                }
-
-                break;
-
-            case 4: // Run the duck spinner for 4 seconds
-                bot.runDuckSpinner(-0.7);
+            case 3:
+                bot.runDuckSpinner(0.7);
 
                 if (timer.seconds() > 4) {
                     bot.runDuckSpinner(0.0);
@@ -159,8 +140,8 @@ public class BlueDuckStorageSensor extends OpMode {
 
                 break;
 
-            case 5: // Strafe right 47 inches
-                if (bot.driveLeftDistanceSensor(96.0, 0.4, MovementEnum.LEFTSTRAFE)) {
+            case 4:
+                if (bot.driveBackDistanceSensor(103.0, 0.5, MovementEnum.FORWARD)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -169,11 +150,9 @@ public class BlueDuckStorageSensor extends OpMode {
 
                 break;
 
-            case 6: // Turn 270 degrees
-                turn = 270;
-
+            case 5:
                 // if the heading is at or greater than the target stop the bot
-                if (bot.adjustHeading(turn, 0.5, imu)) {
+                if (bot.adjustHeading(90, 0.5, imu)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -182,7 +161,7 @@ public class BlueDuckStorageSensor extends OpMode {
 
                 break;
 
-            case 7: // Extend the liner slide
+            case 6:
                 if (this.level == VisionWrapper.DetectionLevel.LEVEL_ONE) {
                     bot.linSlide.setTargetPosition(bot.FIRST_LEVEL);
 
@@ -191,7 +170,6 @@ public class BlueDuckStorageSensor extends OpMode {
                         bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        timer.reset();
                         caseNum++;
                     }
                 }
@@ -204,7 +182,6 @@ public class BlueDuckStorageSensor extends OpMode {
                         bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        timer.reset();
                         caseNum++;
                     }
                 }
@@ -217,7 +194,6 @@ public class BlueDuckStorageSensor extends OpMode {
                         bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                        timer.reset();
                         caseNum++;
                     }
                 }
@@ -227,20 +203,17 @@ public class BlueDuckStorageSensor extends OpMode {
 
                 break;
 
-            case 8:
-                telemetry.addData("case", "8");
+            case 7:
+                telemetry.addData("case", "7");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.6);
-
-                if (timer.seconds() > 3) {
-                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    caseNum++;
-                }
+                bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                caseNum++;
 
                 break;
 
-            case 9: // Drive backward to the hub
+            case 8:
                 if (bot.driveBackDistanceSensor(8.0, 0.4, MovementEnum.FORWARD)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -251,7 +224,7 @@ public class BlueDuckStorageSensor extends OpMode {
 
                 break;
 
-            case 10: // Flip the basket
+            case 9:
                 telemetry.addData("case", "9");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
@@ -265,13 +238,14 @@ public class BlueDuckStorageSensor extends OpMode {
 
                 break;
 
-            case 11: // Strafe right 16 inches
-                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 40));
+            case 10:
+                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 35));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.5, 0.5);
+                bot.drive(0.75, 0.75);
 
-                if (target >= (int) (TICKS_PER_INCH * 40)) {
+                if (target >= (int) (TICKS_PER_INCH * 35)) {
                     bot.stop();
+                    bot.cargoFlipper.setPosition(0.1);
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -280,8 +254,8 @@ public class BlueDuckStorageSensor extends OpMode {
 
                 break;
 
-            case 12: // Drive forward 40 inches
-                if (bot.driveRightDistanceSensor(62.0, 0.4, MovementEnum.RIGHTSTRAFE)) {
+            case 11:
+                if (bot.driveLeftDistanceSensor(65, 0.75, MovementEnum.LEFTSTRAFE)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -290,10 +264,10 @@ public class BlueDuckStorageSensor extends OpMode {
 
                 break;
 
-            case 13: // Retract the linear slide and stop the bot
+            case 12:
                 bot.linSlide.setTargetPosition(0);
                 bot.linSlide.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.linSlide.setPower(0.4);
+                bot.linSlide.setPower(0.5);
 
                 if (bot.linSlide.getCurrentPosition() >= 0) {
                     bot.linSlide.setPower(0.0);
@@ -306,9 +280,11 @@ public class BlueDuckStorageSensor extends OpMode {
                 break;
         }
 
-        telemetry.addData("distance back", bot.getBackDistanceCM());
-        telemetry.addData("distance right", bot.getRightDistanceCM());
-        telemetry.addData("distance left", bot.getLeftDistanceCM());
+        telemetry.addData("back sensor", bot.getBackDistanceCM());
+        telemetry.addData("right sensor", bot.getRightDistanceCM());
+        telemetry.addData("left sensor", bot.getLeftDistanceCM());
+        telemetry.addData("case", caseNum);
+
         telemetry.update();
     }
 

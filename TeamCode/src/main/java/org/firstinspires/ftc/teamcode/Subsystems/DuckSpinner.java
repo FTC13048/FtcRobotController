@@ -55,6 +55,7 @@ public class DuckSpinner extends Subsystem {
 
     @Override
     public void stop() {
+        duckState = DuckState.STOP;
         duckSpinner.setPower(DuckState.STOP.power);
     }
 

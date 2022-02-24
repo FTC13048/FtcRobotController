@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Auton;
+package org.firstinspires.ftc.teamcode.OldAuton;
 
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
 import org.firstinspires.ftc.teamcode.Hardware.Robot;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name = "Red Duck Storage Sensor", group = "Storage")
-public class RedDuckStorageSensor extends OpMode {
+@Autonomous(name = "Red Duck Storage Encoder", group = "Storage")
+public class RedDuckStorageEncoder extends OpMode {
     // Figure out ticks per revolution and ticks per inch
     private static final double TICKS_PER_REV = 403.9;
     private static final double TICKS_PER_INCH = TICKS_PER_REV / (4.0 * Math.PI);
@@ -30,29 +30,25 @@ public class RedDuckStorageSensor extends OpMode {
 
     @Override
     public void init() {
-        try{
-            this.bot = new Robot(this.hardwareMap, this.telemetry, true);
+        this.bot = new Robot(this.hardwareMap, this.telemetry, true);
 
-            // initialize the robot and the onboard gyro
-            this.bot.initBot();
-            initImu();
+        // initialize the robot and the onboard gyro
+        this.bot.initBot();
+        initImu();
 
-            // initialize the ai object recognition
-            vision = new VisionWrapper(telemetry);
-            vision.init(hardwareMap);
-            this.level = VisionWrapper.DetectionLevel.UNKNOWN; // immediately overwritten but safer without null
-            this.one = 0;
-            this.two = 0;
-            this.three = 0;
+        // initialize the ai object recognition
+        vision = new VisionWrapper(telemetry);
+        vision.init(hardwareMap);
+        this.level = VisionWrapper.DetectionLevel.UNKNOWN; // immediately overwritten but safer without null
+        this.one = 0;
+        this.two = 0;
+        this.three = 0;
 
-            // initialize the timer
-            timer = new ElapsedTime();
+        // initialize the timer
+        timer = new ElapsedTime();
 
-            telemetry.addData("Status", "Initialized");
-            telemetry.update();
-        } catch(NullPointerException e){
-            telemetry.addLine(e.getStackTrace().toString());
-        }
+        telemetry.addData("Status", "Initialized");
+        telemetry.update();
     }
 
     @Override
@@ -82,54 +78,56 @@ public class RedDuckStorageSensor extends OpMode {
             telemetry.addData("LEVEL 2: ", this.two);
             telemetry.addData("LEVEL 3: ", this.three);
 
-            telemetry.addLine("--------------------------------------");
-            telemetry.addData("distance back", bot.getBackDistanceCM());
-            telemetry.addData("distance right", bot.getRightDistanceCM());
-            telemetry.addData("distance left", bot.getLeftDistanceCM());
             telemetry.update();
         }
     }
 
     @Override
-    public void start() {
-        bot.start();
-    }
+    public void start() { bot.start(); }
 
     @Override
     public void loop() {
         switch (caseNum) {
             case 0:
                 this.vision.stop();
-                bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                 caseNum++;
                 break;
 
             case 1:
-                if (bot.driveBackDistanceSensor(17.0, 0.4, MovementEnum.FORWARD)) {
-                    bot.stop();
+                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 9));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(0.5, 0.5);
+
+                if (target >= (int) (TICKS_PER_INCH * 9)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    if(bot.delay(0.20)){ caseNum++; }
+                    bot.stop();
+                    caseNum++;
                 }
 
                 break;
 
             case 2:
-                if (bot.driveLeftDistanceSensor(23.0, 0.4, MovementEnum.LEFTSTRAFE)) {
-                    bot.stop();
+                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 23));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.strafe(0.5);
+
+                if (target >= (int) (TICKS_PER_INCH * 23)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    if(bot.delay(0.20)){
-                        timer.reset();
-                        caseNum++;
-                    }
+                    bot.stop();
+                    timer.reset();
+                    caseNum++;
                 }
 
                 break;
 
             case 3:
-                bot.runDuckSpinner(0.7);
+                bot.runDuckSpinner(0.5);
 
                 if (timer.seconds() > 4) {
                     bot.runDuckSpinner(0.0);
@@ -141,18 +139,26 @@ public class RedDuckStorageSensor extends OpMode {
                 break;
 
             case 4:
-                if (bot.driveBackDistanceSensor(103.0, 0.5, MovementEnum.FORWARD)) {
-                    bot.stop();
+                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 35));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(0.5, 0.5);
+
+                if (target >= (int) (TICKS_PER_INCH * 35)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                    if(bot.delay(0.20)){ caseNum++; }
+                    bot.stop();
+                    caseNum++;
                 }
 
                 break;
 
             case 5:
+                // the amount to turn
+                int turn = 90;
+
                 // if the heading is at or greater than the target stop the bot
-                if (bot.adjustHeading(90, 0.5, imu)) {
+                if (bot.adjustHeading(turn, 0.5, imu)) {
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -167,9 +173,10 @@ public class RedDuckStorageSensor extends OpMode {
 
                     if (bot.linSlide.getCurrentPosition() <= bot.FIRST_LEVEL) {
                         bot.linSlide.setPower(0.0);
-                        bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        bot.stop();
+                        timer.reset();
                         caseNum++;
                     }
                 }
@@ -179,9 +186,10 @@ public class RedDuckStorageSensor extends OpMode {
 
                     if (bot.linSlide.getCurrentPosition() <= bot.SECOND_LEVEL) {
                         bot.linSlide.setPower(0.0);
-                        bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        bot.stop();
+                        timer.reset();
                         caseNum++;
                     }
                 }
@@ -191,9 +199,10 @@ public class RedDuckStorageSensor extends OpMode {
 
                     if (bot.linSlide.getCurrentPosition() <= bot.THIRD_LEVEL) {
                         bot.linSlide.setPower(0.0);
-                        bot.stop();
                         bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                         bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                        bot.stop();
+                        timer.reset();
                         caseNum++;
                     }
                 }
@@ -206,15 +215,20 @@ public class RedDuckStorageSensor extends OpMode {
             case 7:
                 telemetry.addData("case", "7");
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
-                bot.cargoFlipper.setPosition(0.6);
-                bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-                bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-                caseNum++;
+                bot.cargoFlipper.setPosition(0.4);
+
+                if (timer.seconds() > 3) {
+                    bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+                    bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    caseNum++;
+                }
 
                 break;
 
             case 8:
-                if (bot.driveBackDistanceSensor(8.0, 0.4, MovementEnum.FORWARD)) {
+                bot.drive(0.5, 0.5);
+
+                if(bot.getBackDistanceCM() <= 12.0){
                     bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -229,7 +243,7 @@ public class RedDuckStorageSensor extends OpMode {
                 telemetry.addData("cargo pos", bot.cargoFlipper.getPosition());
                 bot.cargoFlipper.setPosition(0.9);
 
-                if (timer.seconds() > 2) {
+                if (timer.seconds() > 3) {
                     bot.cargoFlipper.setPosition(0.1);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -239,26 +253,30 @@ public class RedDuckStorageSensor extends OpMode {
                 break;
 
             case 10:
-                int target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 35));
+                target = bot.autonDrive(MovementEnum.LEFTSTRAFE, (int) (TICKS_PER_INCH * 16));
                 bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-                bot.drive(0.75, 0.75);
+                bot.strafe(0.5);
 
-                if (target >= (int) (TICKS_PER_INCH * 35)) {
-                    bot.stop();
-                    bot.cargoFlipper.setPosition(0.1);
+                if (target >= (int) (TICKS_PER_INCH * 16)) {
                     bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
                     caseNum++;
                 }
 
                 break;
 
             case 11:
-                if (bot.driveLeftDistanceSensor(65, 0.75, MovementEnum.LEFTSTRAFE)) {
-                    bot.stop();
+                target = bot.autonDrive(MovementEnum.FORWARD, (int) (TICKS_PER_INCH * 40));
+                bot.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+                bot.drive(1.0, 1.0);
+
+                if (target >= (int) (TICKS_PER_INCH * 40)) {
+                    bot.autonDrive(MovementEnum.STOP, 0);
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
                     caseNum++;
                 }
 
@@ -271,19 +289,14 @@ public class RedDuckStorageSensor extends OpMode {
 
                 if (bot.linSlide.getCurrentPosition() >= 0) {
                     bot.linSlide.setPower(0.0);
-                    bot.stop();
                     bot.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
                     bot.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                    bot.stop();
                     caseNum++;
                 }
 
                 break;
         }
-
-        telemetry.addData("back sensor", bot.getBackDistanceCM());
-        telemetry.addData("right sensor", bot.getRightDistanceCM());
-        telemetry.addData("left sensor", bot.getLeftDistanceCM());
-        telemetry.addData("case", caseNum);
 
         telemetry.update();
     }
