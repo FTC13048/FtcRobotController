@@ -1,22 +1,18 @@
 package org.firstinspires.ftc.teamcode.OpModes.Auton;
 
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Subsystems.DriveTrain;
 import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-/**
- * A boilerplate auton OpMode that can be used to make new auton OpModes that use subsystems
- *
- */
-//@Autonomous(name = "Subsystem Boilerplate Auton", group = "Subsystems") Uncomment this to make this OpMode useable
+@Autonomous(name="Red Duck Subsystems", group="Subsystems")
 public class BoilerplateAutonOpMode extends OpMode {
     private RobotSubsystems robot;
-    private VisionWrapper vision; // vision object for detection
+    private VisionWrapper vision;
 
     private RobotSubsystems.DetectedLevel level;
     private Lift.LiftLevel liftLevel;
@@ -25,9 +21,8 @@ public class BoilerplateAutonOpMode extends OpMode {
     private ElapsedTime timer;
     private int one, two, three;
 
-    public enum AutonState {
-        STATE1, STATE2, STATE3,
-        DONE
+    public enum AutonState{
+        STATE1, STATE2, STATE3
     }
 
     @Override
@@ -36,6 +31,7 @@ public class BoilerplateAutonOpMode extends OpMode {
         robot.init();
 
         vision = new VisionWrapper(telemetry);
+        this.level = RobotSubsystems.DetectedLevel.TOP; // immediately overwritten but safer without null
         this.one = 0;
         this.two = 0;
         this.three = 0;
@@ -45,10 +41,10 @@ public class BoilerplateAutonOpMode extends OpMode {
     }
 
     @Override
-    public void init_loop() { // init loop is always detection
+    public void init_loop() {
         // Get current detection every loop
         this.level = this.vision.currentDetermination();
-        if (this.level != null) { // add one the level variable of whatever is detected each loop
+        if (this.level != null) {
             // Add to value if detected
             switch (this.level) {
                 case BOTTOM:
@@ -75,7 +71,7 @@ public class BoilerplateAutonOpMode extends OpMode {
     }
 
     @Override
-    public void start() { // set the lift level to whatever is detected in init loop
+    public void start() {
         robot.driveTrain.startAuton();
         switch(level){
             case TOP:
@@ -88,41 +84,32 @@ public class BoilerplateAutonOpMode extends OpMode {
                 liftLevel = Lift.LiftLevel.BOT;
                 break;
         }
+        // ACTION FOR STATE 1 HERE
     }
 
     @Override
     public void loop() {
-        switch (state) {
+        switch(state){
             case STATE1:
-                if (robot.driveTrain.getState() == DriveTrain.DriveTrainState.IDLE) { // Switch to the next action if the bot is done moving
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitForNext();
-                    timer.reset(); // ALWAYS reset the timer before switching to a state that relies on a timer
                     state = AutonState.STATE2;
-                } else {
-                    // Perform STATE1 actions here
+                    // STATE2 ACTION
                 }
                 break;
 
             case STATE2:
-                if (timer.seconds() >= 4) { // Switch to the next action when the timer is past 4 secondss
+                if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitForNext();
                     state = AutonState.STATE3;
-                } else {
-                    // Perform STATE2 actions here
+                    // ACTION FOR STATE3
                 }
                 break;
 
             case STATE3:
-                if (false) { // Replace 'false' with the condition to end STATE3
-                    robot.driveTrain.waitForNext();
-                    state = AutonState.DONE;
-                } else {
-                    // Perform STATE3 actions here
-                }
-                break;
+                if(timer.seconds() >= 4){
 
-            case DONE: // End state. It stops the bot
-                robot.stop();
+                }
                 break;
         }
 
