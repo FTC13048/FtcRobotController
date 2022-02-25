@@ -255,8 +255,8 @@ public class Lift extends Subsystem {
     }
 
     public enum LiftLevel {
-        TOP(-1435, "Top"), MID(-800, "Middle"),
-        BOT(-881, "Bottom"), INTAKE(0, "Intake"), PIPES(-500, "Pipes");
+        TOP(-1435, "Top"), MID(-881, "Middle"),
+        BOT(-600, "Bottom"), INTAKE(0, "Intake"), PIPES(-500, "Pipes");
 
         private int numTicks;
         private String level;

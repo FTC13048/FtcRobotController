@@ -32,6 +32,12 @@ public class RobotSubsystems {
         duckSpinner = new DuckSpinner(hmap, tele, isAuton);
     }
 
+    public void initLoopAuton(){
+        driveTrain.initLoopAuton();
+        lift.initLoopAuton();
+        duckSpinner.initLoopAuton();
+    }
+
     public void updateTeleOpState(){
         lift.updateTeleOpState(gp1, gp2);
         driveTrain.updateTeleOpState(gp1, gp2);

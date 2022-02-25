@@ -105,6 +105,13 @@ public class DriveTrain extends Subsystem {
     }
 
     @Override
+    public void initLoopAuton() {
+        if(imu.isGyroCalibrated()){
+            telemetry.addData("Gyro", "Calibrated");
+        }
+    }
+
+    @Override
     public void startAuton() {
         setMotorMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }

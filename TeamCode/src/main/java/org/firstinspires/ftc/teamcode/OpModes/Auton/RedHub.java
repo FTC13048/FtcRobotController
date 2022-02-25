@@ -25,7 +25,7 @@ public class RedHub extends OpMode {
 
     public enum AutonState {
         PULLOUT, TURN, STRAFEHUB, LIFT, DRIVEHUB, DUMP,
-        TURNWAREHOUSE, DRIVEWAREHOUSE, DONE
+        BACKWAREHOUSE, TURNWAREHOUSE, DRIVEWAREHOUSE, DONE
     }
 
     @Override
@@ -34,6 +34,7 @@ public class RedHub extends OpMode {
         robot.init();
 
         vision = new VisionWrapper(telemetry);
+        vision.init(hardwareMap);
         this.level = RobotSubsystems.DetectedLevel.TOP; // immediately overwritten but safer without null
         this.one = 0;
         this.two = 0;
@@ -44,31 +45,36 @@ public class RedHub extends OpMode {
 
     @Override
     public void init_loop() {
-        // Get current detection every loop
-        this.level = this.vision.currentDetermination();
-        if (this.level != null) {
-            // Add to value if detected
-            switch (this.level) {
-                case BOTTOM:
-                    this.one++;
-                    break;
-                case MIDDLE:
-                    this.two++;
-                    break;
-                case TOP:
-                    this.three++;
-                    break;
+        try {
+            // Get current detection every loop
+            robot.initLoopAuton();
+            this.level = this.vision.currentDetermination();
+            if (this.level != null) {
+                // Add to value if detected
+                switch (this.level) {
+                    case BOTTOM:
+                        this.one++;
+                        break;
+                    case MIDDLE:
+                        this.two++;
+                        break;
+                    case TOP:
+                        this.three++;
+                        break;
+                }
+
+                telemetry.addData("Current detected level: ", this.level);
+
+                telemetry.addLine("-------------------------------------");
+                telemetry.addLine("Overall detection numbers: (PRESS A TO RESET)");
+                telemetry.addData("LEVEL 1: ", this.one);
+                telemetry.addData("LEVEL 2: ", this.two);
+                telemetry.addData("LEVEL 3: ", this.three);
+
+                telemetry.update();
             }
-
-            telemetry.addData("Current detected level: ", this.level);
-
-            telemetry.addLine("-------------------------------------");
-            telemetry.addLine("Overall detection numbers: (PRESS A TO RESET)");
-            telemetry.addData("LEVEL 1: ", this.one);
-            telemetry.addData("LEVEL 2: ", this.two);
-            telemetry.addData("LEVEL 3: ", this.three);
-
-            telemetry.update();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -94,10 +100,11 @@ public class RedHub extends OpMode {
     public void loop() {
         switch (state) {
             case PULLOUT:
+                vision.stop();
                 if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitForNext();
                     state = AutonState.TURN;
-                    robot.driveTrain.adjustHeading(180, 0.3);
+                    robot.driveTrain.adjustHeading(180, 0.2);
                 } else{
 
                 }
@@ -127,7 +134,7 @@ public class RedHub extends OpMode {
                 if(robot.lift.getState() == Lift.LiftState.ATLEVEL){
                     robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEHUB;
-                    robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 20), 0.3);
+                    robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 25), 0.3);
                 } else{
 
                 }
@@ -145,10 +152,18 @@ public class RedHub extends OpMode {
             case DUMP:
                 if(robot.lift.getState() == Lift.LiftState.MOVEINTAKE){
                     robot.driveTrain.waitForNext();
-                    state = AutonState.TURNWAREHOUSE;
-                    robot.driveTrain.adjustHeading(270, 0.3);
+                    state = AutonState.BACKWAREHOUSE;
+                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 10), 0.3);
                 } else{
                     robot.lift.dump();
+                }
+                break;
+
+            case BACKWAREHOUSE:
+                if(robot.driveTrain.readyForNext()){
+                    robot.driveTrain.waitForNext();
+                    state = AutonState.TURNWAREHOUSE;
+                    robot.driveTrain.adjustHeading(270, 0.2);
                 }
                 break;
 

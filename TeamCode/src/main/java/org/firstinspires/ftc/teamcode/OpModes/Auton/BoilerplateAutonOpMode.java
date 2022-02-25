@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.Subsystems.Lift;
 import org.firstinspires.ftc.teamcode.Subsystems.RobotSubsystems;
 import org.firstinspires.ftc.teamcode.VisionStuff.VisionWrapper;
 
-@Autonomous(name="Red Duck Subsystems", group="Subsystems")
+//@Autonomous(name="Auton Name Here", group="Subsystems")
 public class BoilerplateAutonOpMode extends OpMode {
     private RobotSubsystems robot;
     private VisionWrapper vision;

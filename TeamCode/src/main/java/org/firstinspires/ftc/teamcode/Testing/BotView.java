@@ -1,13 +1,11 @@
 package org.firstinspires.ftc.teamcode.Testing;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.modernrobotics.ModernRoboticsI2cRangeSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
-import org.firstinspires.ftc.teamcode.Hardware.MovementEnum;
+import org.firstinspires.ftc.teamcode.OldHardware.MovementEnum;
 
 // This class is mostly for debugging. When called, it will display an overview of the bot, showing various stats from motor directions and speeds to sensor data
 public class BotView {

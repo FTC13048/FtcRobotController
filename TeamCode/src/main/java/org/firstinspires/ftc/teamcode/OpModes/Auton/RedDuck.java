@@ -35,6 +35,7 @@ public class RedDuck extends OpMode {
         robot.init();
 
         vision = new VisionWrapper(telemetry);
+        vision.init(hardwareMap);
         this.level = RobotSubsystems.DetectedLevel.TOP; // immediately overwritten but safer without null
         this.one = 0;
         this.two = 0;
@@ -46,31 +47,35 @@ public class RedDuck extends OpMode {
 
     @Override
     public void init_loop() {
-        // Get current detection every loop
-        this.level = this.vision.currentDetermination();
-        if (this.level != null) {
-            // Add to value if detected
-            switch (this.level) {
-                case BOTTOM:
-                    this.one++;
-                    break;
-                case MIDDLE:
-                    this.two++;
-                    break;
-                case TOP:
-                    this.three++;
-                    break;
+        try{
+            // Get current detection every loop
+            this.level = this.vision.currentDetermination();
+            if (this.level != null) {
+                // Add to value if detected
+                switch (this.level) {
+                    case BOTTOM:
+                        this.one++;
+                        break;
+                    case MIDDLE:
+                        this.two++;
+                        break;
+                    case TOP:
+                        this.three++;
+                        break;
+                }
+
+                telemetry.addData("Current detected level: ", this.level);
+
+                telemetry.addLine("-------------------------------------");
+                telemetry.addLine("Overall detection numbers: (PRESS A TO RESET)");
+                telemetry.addData("LEVEL 1: ", this.one);
+                telemetry.addData("LEVEL 2: ", this.two);
+                telemetry.addData("LEVEL 3: ", this.three);
+
+                telemetry.update();
             }
-
-            telemetry.addData("Current detected level: ", this.level);
-
-            telemetry.addLine("-------------------------------------");
-            telemetry.addLine("Overall detection numbers: (PRESS A TO RESET)");
-            telemetry.addData("LEVEL 1: ", this.one);
-            telemetry.addData("LEVEL 2: ", this.two);
-            telemetry.addData("LEVEL 3: ", this.three);
-
-            telemetry.update();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -96,6 +101,7 @@ public class RedDuck extends OpMode {
     public void loop() {
         switch(state){
             case PULLOUT:
+                vision.stop();
                 if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEDUCK;
