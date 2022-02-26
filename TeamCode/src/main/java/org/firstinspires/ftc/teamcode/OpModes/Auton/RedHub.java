@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.OpModes.Auton;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Subsystems.GamePadEx;
 import org.firstinspires.ftc.teamcode.Subsystems.Lift;
@@ -20,6 +21,7 @@ public class RedHub extends OpMode {
     private RobotSubsystems.DetectedLevel level;
     private Lift.LiftLevel liftLevel;
 
+    private ElapsedTime timer;
     private AutonState state;
     private int one, two, three;
 
@@ -40,12 +42,20 @@ public class RedHub extends OpMode {
         this.two = 0;
         this.three = 0;
 
+        timer = new ElapsedTime();
+        timer.reset();
         state = AutonState.PULLOUT;
     }
 
     @Override
     public void init_loop() {
         try {
+            if(timer.seconds() >= 5.0){
+                this.one = 0;
+                this.two = 0;
+                this.three = 0;
+                timer.reset();
+            }
             // Get current detection every loop
             robot.initLoopAuton();
             this.level = this.vision.currentDetermination();
@@ -81,16 +91,12 @@ public class RedHub extends OpMode {
     @Override
     public void start() {
         robot.driveTrain.startAuton();
-        switch(level){
-            case TOP:
-                liftLevel = Lift.LiftLevel.TOP;
-                break;
-            case MIDDLE:
-                liftLevel = Lift.LiftLevel.MID;
-                break;
-            case BOTTOM:
-                liftLevel = Lift.LiftLevel.BOT;
-                break;
+        if(Math.max(this.one, Math.max(this.two, this.three)) == this.one){
+            liftLevel = Lift.LiftLevel.BOT;
+        } else if(Math.max(this.one, Math.max(this.two, this.three)) == this.two){
+            liftLevel = Lift.LiftLevel.MID;
+        } else{
+            liftLevel = Lift.LiftLevel.TOP;
         }
 
         robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 6), 0.1);
