@@ -186,7 +186,7 @@ public class BlueDuck extends OpMode {
                 if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitForNext();
                     state = AutonState.STRAFESTORAGE;
-                    robot.driveTrain.setTargetAndStrafe((int)(-RobotSubsystems.TICKS_PER_INCH * 15), 0.3);
+                    robot.driveTrain.setTargetAndStrafe((int)(-RobotSubsystems.TICKS_PER_INCH * 23), 0.3);
                 } else{
 
                 }

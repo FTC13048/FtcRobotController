@@ -87,6 +87,11 @@ public class DriveTrain extends Subsystem {
         initImu();
         runtime = new ElapsedTime();
 
+        BR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        BL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FR.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        FL.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+
         if (isAuton) { // Set the motors to brake for ONLY auton
             driveState = DriveTrainState.SENSORDRIVE;
 

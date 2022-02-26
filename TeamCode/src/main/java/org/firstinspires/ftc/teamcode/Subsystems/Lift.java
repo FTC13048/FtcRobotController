@@ -178,6 +178,7 @@ public class Lift extends Subsystem {
 
         // Start automatically moving the intake
         if (gp2.getControlDown(GamePadEx.ControllerButton.BACK) && liftState != LiftState.MANUAL) {
+            targetLevel = origLevel;
             liftState = LiftState.MOVEINTAKE;
         }
 
@@ -204,12 +205,17 @@ public class Lift extends Subsystem {
                 case BOT:
                     targetLevel = LiftLevel.MID;
                     break;
+
+                case PIPES:
+                    targetLevel = LiftLevel.TOP;
+                    break;
             }
         }
 
         telemetry.addData("Lift Pos", linSlide.getCurrentPosition());
         telemetry.addData("Current State", liftState.state);
         telemetry.addData("Current Target Level", targetLevel.level);
+        telemetry.addData("Original Level", origLevel);
     }
 
     @Override
