@@ -177,7 +177,7 @@ public class RedHub extends OpMode {
                 if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEWAREHOUSE;
-                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 70), 1.0);
+                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 80), 1.0);
                 } else{
 
                 }

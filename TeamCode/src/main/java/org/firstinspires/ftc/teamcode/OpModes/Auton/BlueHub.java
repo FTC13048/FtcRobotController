@@ -27,7 +27,7 @@ public class BlueHub extends OpMode {
 
     public enum AutonState {
         PULLOUT, TURN, STRAFEHUB, LIFT, DRIVEHUB, DUMP,
-        TURNWAREHOUSE, DRIVEWAREHOUSE, DONE
+        BACKWAREHOUSE, TURNWAREHOUSE, DRIVEWAREHOUSE, DONE
     }
 
     @Override
@@ -56,8 +56,9 @@ public class BlueHub extends OpMode {
                 this.three = 0;
                 timer.reset();
             }
+
             // Get current detection every loop
-            this.level = this.vision.currentDetermination();
+            this.level = this.vision.currentDeterminationReverse();
             if (this.level != null) {
                 // Add to value if detected
                 switch (this.level) {
@@ -139,7 +140,7 @@ public class BlueHub extends OpMode {
                 if(robot.lift.getState() == Lift.LiftState.ATLEVEL){
                     robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEHUB;
-                    robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 20), 0.3);
+                    robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 16), 0.3);
                 } else{
 
                 }
@@ -157,10 +158,18 @@ public class BlueHub extends OpMode {
             case DUMP:
                 if(robot.lift.getState() == Lift.LiftState.MOVEINTAKE){
                     robot.driveTrain.waitForNext();
-                    state = AutonState.TURNWAREHOUSE;
-                    robot.driveTrain.adjustHeading(270, 0.3);
+                    state = AutonState.BACKWAREHOUSE;
+                    robot.driveTrain.setTargetAndDrive((int)(-RobotSubsystems.TICKS_PER_INCH * 7), 0.3);
                 } else{
                     robot.lift.dump();
+                }
+                break;
+
+            case BACKWAREHOUSE:
+                if(robot.driveTrain.readyForNext()){
+                    robot.driveTrain.waitForNext();
+                    state = AutonState.TURNWAREHOUSE;
+                    robot.driveTrain.adjustHeading(270, 0.3);
                 }
                 break;
 
@@ -168,7 +177,7 @@ public class BlueHub extends OpMode {
                 if(robot.driveTrain.readyForNext()){
                     robot.driveTrain.waitForNext();
                     state = AutonState.DRIVEWAREHOUSE;
-                    robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 70), 1.0);
+                    robot.driveTrain.setTargetAndDrive((int)(RobotSubsystems.TICKS_PER_INCH * 80), 1.0);
                 } else{
 
                 }
