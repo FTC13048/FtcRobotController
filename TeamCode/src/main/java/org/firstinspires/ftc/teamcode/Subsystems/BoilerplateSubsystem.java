@@ -26,11 +26,15 @@ public class BoilerplateSubsystem extends Subsystem {
     }
 
     @Override
+    // This is where the system sends commands to the actual hardware based on the state
     public void updateState() {
 
     }
 
     @Override
+    // This is where the system is told what inputs make it move states
+    //     i.e. if the system is in STATE1 this is where it is told how it can
+    //     move to STATE2
     public void updateTeleOpState(GamePadEx gp1, GamePadEx gp2) {
 
     }
